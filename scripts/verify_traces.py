@@ -43,7 +43,7 @@ def main() -> int:
     from google.cloud import trace_v1
 
     client = trace_v1.TraceServiceClient()
-    end = datetime.datetime.now(datetime.timezone.utc)
+    end = datetime.datetime.now(datetime.UTC)
     start = end - datetime.timedelta(hours=args.hours)
 
     counts: dict[str, int] = {}

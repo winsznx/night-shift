@@ -121,7 +121,7 @@ Live Google Cloud deployment is in [SETUP.md](SETUP.md).
 |---|---|
 | Drill runs scored | 60 fully reconciled |
 | Authorization denials recorded | 24 |
-| Published manifests | 2 (0 CLOSED, 84 containers reconciled) |
+| Published manifests | 3 (1 CLOSED, 126 containers reconciled) |
 | Median drill wall clock | 0.54s |
 
 Every number above is read from `evidence/campaign/results.json` by

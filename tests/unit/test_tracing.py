@@ -188,14 +188,16 @@ def test_an_exception_inside_a_span_propagates_unchanged():
     and stalled the agent loop mid-incident.
     """
 
-    class Denied(Exception):
+    class DeniedError(Exception):
         pass
 
     otel.configure_tracing(get_settings(), service_name="test")
 
-    with pytest.raises(Denied):
-        with otel.span("test.denial", **{otel.ATTR_TOOL: "get_study_notes"}):
-            raise Denied("identity not permitted")
+    with (
+        pytest.raises(DeniedError),
+        otel.span("test.denial", **{otel.ATTR_TOOL: "get_study_notes"}),
+    ):
+        raise DeniedError("identity not permitted")
 
 
 def test_a_span_body_that_succeeds_still_closes():

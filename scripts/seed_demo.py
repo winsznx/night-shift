@@ -14,6 +14,8 @@ import json
 import os
 import subprocess
 import sys
+from dataclasses import dataclass
+from typing import Any
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -48,7 +50,42 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--rounds", type=int, default=8)
     p.add_argument("--driver", default="agent", choices=["agent", "scripted"])
     p.add_argument("--no-upload", action="store_true", help="skip Cloud Storage upload")
+    p.add_argument(
+        "--publish-only",
+        default=None,
+        metavar="INCIDENT_ID",
+        help=(
+            "Publish evidence for an incident that already ran, instead of running a new "
+            "one. Re-running a completed rescue to obtain its manifest would either "
+            "duplicate effects or open a second incident for the same real-world "
+            "condition, so the publish step has to be reachable on its own."
+        ),
+    )
     return p.parse_args()
+
+
+@dataclass
+class _AlreadyRan:
+    """Stands in for a run result when the incident already completed.
+
+    Carries only what the evidence bundle needs. The opening event ids and estate hash
+    are recovered from the stored incident rather than invented, so a published manifest
+    never claims provenance the run did not actually have.
+    """
+
+    incident_id: str
+    repo: Any
+
+    @property
+    def delivered_event_ids(self) -> list[str]:
+        incident = self.repo.get_incident(self.incident_id)
+        return list(getattr(incident, "source_event_ids", None) or [])
+
+    @property
+    def estate_hash(self) -> str:
+        from fixtures.estate import build_estate, estate_hash
+
+        return estate_hash(build_estate())
 
 
 async def main() -> int:
@@ -63,12 +100,15 @@ async def main() -> int:
         flush=True,
     )
 
-    runtime, run = await run_incident(
-        runtime=runtime,
-        scenario=ScenarioConfig(seed=args.seed, max_rounds=args.rounds, max_transfers=50),
-        namespace=namespace,
-        driver=args.driver,
-    )
+    if args.publish_only:
+        run = _AlreadyRan(incident_id=args.publish_only, repo=runtime.repo)
+    else:
+        runtime, run = await run_incident(
+            runtime=runtime,
+            scenario=ScenarioConfig(seed=args.seed, max_rounds=args.rounds, max_transfers=50),
+            namespace=namespace,
+            driver=args.driver,
+        )
 
     state = runtime.repo.load_kernel_state(run.incident_id)
     recon = reconciliation_snapshot(state)
