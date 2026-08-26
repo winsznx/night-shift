@@ -17,7 +17,9 @@ from typing import Any
 import httpx
 
 from nightshift.safety_kernel.authority import TOOL_REGISTRY
+from nightshift.schemas.enums import AgentName
 from services.common.identity import PRINCIPAL_HEADER
+from services.gateway.identity_tokens import AgentTokenMinter
 
 # Route table: tool name -> (method, path template, how to place the payload).
 # "path" params come from the payload; the rest go to query or body.
@@ -148,7 +150,11 @@ class InProcessTransport:
         return cls(clients=clients)
 
     def invoke(
-        self, tool_name: str, principal_token: str, payload: dict[str, Any]
+        self,
+        tool_name: str,
+        principal_token: str,
+        payload: dict[str, Any],
+        agent: AgentName | None = None,
     ) -> dict[str, Any]:
         spec = TOOL_REGISTRY[tool_name]
         client = self.clients.get(spec.service)
@@ -161,42 +167,81 @@ class InProcessTransport:
             if method == "GET"
             else client.post(path, json=body, headers=headers)
         )
-        return _decode(tool_name, response.status_code, _body(tool_name, response))
+        return _decode(tool_name, response)
 
 
 @dataclass
 class HttpTransport:
-    """Cloud Run path: authenticated HTTP, one base URL per service."""
+    """Cloud Run path: authenticated HTTP, one base URL per service.
+
+    Each call is made **as the calling agent's own service account**, not as the
+    container's ambient identity. That is what makes the §11.3 matrix enforceable by
+    Cloud Run IAM: an agent that is not a ``run.invoker`` on a service gets a 403 from
+    Google before the request reaches any Night Shift code.
+    """
 
     base_urls: dict[str, str]
     timeout: float = 30.0
-    _id_tokens: dict[str, str] = field(default_factory=dict, init=False)
+    minter: AgentTokenMinter | None = None
+    identity_notes: list[dict[str, str]] = field(default_factory=list, init=False)
+    """Per-call record of whether platform identity was actually exercised.
 
-    def _auth_header(self, base_url: str) -> dict[str, str]:
-        """Fetch a Google-issued OIDC ID token audience-scoped to the target service."""
-        token = self._id_tokens.get(base_url)
+    Recorded on success *and* on failure. Only writing the failures made the ledger
+    unfalsifiable in the wrong direction: an empty note list read as "everything was
+    impersonated" when it equally meant "nothing was". A claim that Cloud Run IAM
+    refused a call is only honest if the evidence shows that call carried the agent's
+    own identity, so the successful mint is the record that matters most.
+    """
+
+    def _auth_header(self, base_url: str, agent: AgentName | None) -> dict[str, str]:
+        if self.minter is None or agent is None:
+            self._note(agent, base_url, impersonated=False, reason="no per-agent minter configured")
+            return {}
+        token, reason = self.minter.mint(agent, base_url)
         if token is None:
-            try:
-                import google.auth.transport.requests
-                import google.oauth2.id_token
-
-                request = google.auth.transport.requests.Request()
-                token = google.oauth2.id_token.fetch_id_token(request, base_url)
-                self._id_tokens[base_url] = token
-            except Exception:
-                # Local runs against an unauthenticated service have no metadata server.
-                return {}
+            self._note(agent, base_url, impersonated=False, reason=reason)
+            return {}
+        self._note(
+            agent,
+            base_url,
+            impersonated=True,
+            reason="",
+            principal=self.minter.service_account(agent),
+        )
         return {"Authorization": f"Bearer {token}"}
 
+    def _note(
+        self,
+        agent: AgentName | None,
+        audience: str,
+        *,
+        impersonated: bool,
+        reason: str,
+        principal: str = "",
+    ) -> None:
+        self.identity_notes.append(
+            {
+                "agent": agent.value if agent else "unknown",
+                "audience": audience,
+                "principal": principal,
+                "impersonated": "yes" if impersonated else "no",
+                "reason": reason,
+            }
+        )
+
     def invoke(
-        self, tool_name: str, principal_token: str, payload: dict[str, Any]
+        self,
+        tool_name: str,
+        principal_token: str,
+        payload: dict[str, Any],
+        agent: AgentName | None = None,
     ) -> dict[str, Any]:
         spec = TOOL_REGISTRY[tool_name]
         base = self.base_urls.get(spec.service)
         if not base:
             raise TransportError(f"no base URL configured for service {spec.service!r}")
         method, path, params, body = _split_payload(tool_name, payload)
-        headers = {PRINCIPAL_HEADER: principal_token, **self._auth_header(base)}
+        headers = {PRINCIPAL_HEADER: principal_token, **self._auth_header(base, agent)}
         try:
             with httpx.Client(timeout=self.timeout) as client:
                 response = (
@@ -206,7 +251,7 @@ class HttpTransport:
                 )
         except httpx.HTTPError as exc:
             raise TransportError(f"{spec.service} unreachable: {exc}") from exc
-        return _decode(tool_name, response.status_code, _body(tool_name, response))
+        return _decode(tool_name, response)
 
 
 def _body(tool_name: str, response: Any) -> dict[str, Any]:
@@ -230,7 +275,54 @@ def _body(tool_name: str, response: Any) -> dict[str, Any]:
     return parsed if isinstance(parsed, dict) else {"result": parsed}
 
 
-def _decode(tool_name: str, status: int, data: dict[str, Any]) -> dict[str, Any]:
+def _soft_body(response: Any) -> dict[str, Any]:
+    """Best-effort parse that never raises.
+
+    Used only on the authorization statuses, where the body is decoration and the status
+    line is the fact. Cloud Run's own edge denial is an HTML page, so insisting on JSON
+    here is what turned a real IAM refusal into a reported outage.
+    """
+    try:
+        parsed = response.json()
+    except Exception:
+        return {}
+    return parsed if isinstance(parsed, dict) else {}
+
+
+def _decode(tool_name: str, response: Any) -> dict[str, Any]:
+    """Classify a response.
+
+    Authorization statuses are settled **before** the body is parsed. A 401/403 from
+    Cloud Run's edge carries an HTML body, and a denial is a denial whether or not the
+    thing that issued it speaks JSON. Getting this order wrong misfiled the single most
+    important result the system can produce — the platform refusing a forbidden call —
+    as N12 infrastructure noise, which is exactly the failure class that gets excused
+    rather than scored.
+    """
+    status = response.status_code
+    authorization_status = status in (401, 403)
+    data = _soft_body(response) if authorization_status else _body(tool_name, response)
+
+    if status == 401 and "identity" not in str(data).lower():
+        # Cloud Run refused the caller outright. That is the platform-level denial, and
+        # it is a refusal rather than an outage.
+        from nightshift.safety_kernel.decision import Decision, Verdict
+        from nightshift.schemas.enums import DenialReason, FailureClass
+        from services.gateway.broker import BrokerDeniedError
+
+        raise BrokerDeniedError(
+            Decision(
+                verdict=Verdict.REFUSE,
+                reason=(
+                    f"Cloud Run refused this identity for {tool_name}; the calling agent "
+                    "is not an invoker on that service"
+                ),
+                invariant="N7",
+                denial_reason=DenialReason.IDENTITY_NOT_PERMITTED,
+                failure_class=FailureClass.POLICY_DENIAL,
+                detail={"tool": tool_name, "layer": "cloud-run-iam"},
+            )
+        )
     if status == 403:
         from nightshift.safety_kernel.decision import Decision, Verdict
         from nightshift.schemas.enums import DenialReason, FailureClass

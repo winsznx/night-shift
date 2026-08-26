@@ -60,13 +60,33 @@ _repos: dict[str, Repository] = {}
 def repo(namespace: str | None = None) -> Repository:
     ns = namespace or settings.namespace
     if ns not in _repos:
-        _repos[ns] = Repository.create(
+        created = Repository.create(
             settings.store_backend,
             project=settings.project_id,
             database=settings.firestore_database,
             namespace=ns,
         )
+        if settings.store_backend == "memory":
+            _seed_memory_estate(created)
+        _repos[ns] = created
     return _repos[ns]
+
+
+def _seed_memory_estate(repository: Repository) -> None:
+    """Give the in-memory backend the fixture estate.
+
+    The memory store starts empty by definition, so ``make run-local`` served a console
+    with no freezers, no capacity, and no estate to reason about — every judge-path
+    screen rendered its own empty state and the browser suite had nothing to assert
+    against. Seeding the same synthetic estate the drills use makes the local stack show
+    the real product.
+
+    Firestore is never touched here: a persistent backend carries its own state, and
+    silently writing fixture data into it would be indistinguishable from a real estate.
+    """
+    from fixtures.estate import build_estate, seed_repository
+
+    seed_repository(repository, build_estate())
 
 
 # --------------------------------------------------------------------------------------
@@ -348,6 +368,7 @@ async def fleet(namespace: str | None = None) -> dict[str, Any]:
     r = repo(namespace)
     revisions = {row["agent"]: row for row in r.store.query("agentRevisions")}
     registry = _load_registry_snapshot()
+    qualification = _load_qualification()
     matrix = permission_matrix()
 
     operational = [
@@ -371,6 +392,7 @@ async def fleet(namespace: str | None = None) -> dict[str, Any]:
                 "identity": registry.get(a.value, {}).get("identity"),
                 "runtime_resource": registry.get(a.value, {}).get("runtime_resource"),
                 "registry_resource": registry.get(a.value, {}).get("registry_resource"),
+                "latest_drill": _drill_result_for(a.value, qualification),
                 "authority_domains": sorted(d.value for d in AGENT_TOOL_DOMAINS.get(a, [])),
                 "allowed_tools": tools_for(a),
                 "forbidden_tools": sorted(set(TOOL_REGISTRY) - set(tools_for(a))),
@@ -402,6 +424,40 @@ def _load_registry_snapshot() -> dict[str, dict[str, Any]]:
         return json.loads(path.read_text(encoding="utf-8")).get("agents", {})
     except Exception:
         return {}
+
+
+def _load_qualification() -> dict[str, Any]:
+    """The signed qualification record, if one has been produced."""
+    path = settings.evidence_dir / "qualification.json"
+    if not path.exists():
+        return {}
+    try:
+        loaded = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+    return loaded if isinstance(loaded, dict) else {}
+
+
+def _drill_result_for(agent: str, qualification: dict[str, Any]) -> dict[str, Any] | None:
+    """The corpus outcome covering this agent's current revision.
+
+    Drills exercise the whole fleet at once, so there is no per-agent drill result to
+    report and inventing one would imply an attribution the corpus does not make. What
+    is true per agent is which qualification run its revision was scored under, so that
+    is what this returns — named ``covered_by_run`` rather than anything that reads like
+    the agent was drilled alone.
+    """
+    revisions = qualification.get("agent_revisions") or {}
+    revision = revisions.get(agent)
+    if not revision:
+        return None
+    return {
+        "revision": revision,
+        "covered_by_run": qualification.get("run_id"),
+        "outcome": "PASS" if qualification.get("qualified") else "FAIL",
+        "corpus_version": qualification.get("corpus_version"),
+        "scope": "whole-fleet corpus run; drills are not attributed to a single agent",
+    }
 
 
 @app.get("/api/drills")

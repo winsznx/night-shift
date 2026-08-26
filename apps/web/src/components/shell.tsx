@@ -124,6 +124,15 @@ export async function AppShell({
               <Mono>{(meta?.source_commit ?? "local").slice(0, 10)}</Mono>
             </div>
           </header>
+          {/* The sidebar carries this notice, and the sidebar is hidden below lg. Without
+              a mobile copy, a phone viewer sees no synthetic-data labelling at all — the
+              one disclosure that must never depend on viewport width. */}
+          <div className="border-b border-[#fed7aa] bg-[#fff7ed] px-4 py-2 lg:hidden">
+            <p className="text-[11px] leading-snug text-[#9a3412]">
+              <span className="font-semibold">Synthetic data.</span> Field events are
+              simulated.
+            </p>
+          </div>
           <main className="px-4 py-5 lg:px-6 lg:py-6">{children}</main>
         </div>
       </div>

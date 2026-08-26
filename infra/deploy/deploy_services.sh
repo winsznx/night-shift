@@ -55,6 +55,9 @@ COMMON_ENV="${COMMON_ENV},NIGHTSHIFT_COMMIT=${TAG}"
 COMMON_ENV="${COMMON_ENV},NIGHTSHIFT_EVIDENCE_BUCKET=${BUCKET}"
 COMMON_ENV="${COMMON_ENV},NIGHTSHIFT_KMS_KEY=projects/${PROJECT}/locations/${REGION}/keyRings/nightshift/cryptoKeys/evidence-signer/cryptoKeyVersions/1"
 COMMON_ENV="${COMMON_ENV},NIGHTSHIFT_MODEL_ARMOR_TEMPLATE=projects/${PROJECT}/locations/${REGION}/templates/nightshift-vendor-content"
+# Live screening is opt-in, so the deployment is the thing that asks for it. Local runs
+# and the drill corpus stay deterministic and credential-free even with a populated .env.
+COMMON_ENV="${COMMON_ENV},NIGHTSHIFT_LIVE_CONTENT_SCREEN=1"
 
 if [[ -n "${NIGHTSHIFT_AGENT_SECRET:-}" ]]; then
   COMMON_ENV="${COMMON_ENV},NIGHTSHIFT_AGENT_SECRET=${NIGHTSHIFT_AGENT_SECRET}"

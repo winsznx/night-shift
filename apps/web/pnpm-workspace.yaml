@@ -1,2 +1,4 @@
+# sharp is Next's image-optimization backend. It ships prebuilt binaries and is a
+# direct optional dependency of next itself, so its install script is allowed to run.
 allowBuilds:
-  sharp: set this to true or false
+  sharp: true

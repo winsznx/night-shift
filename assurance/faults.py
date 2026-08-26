@@ -106,7 +106,11 @@ class CommitThenLoseTransport:
         self._counts: dict[tuple[str, str], int] = {}
 
     def invoke(
-        self, tool_name: str, principal_token: str, payload: dict[str, Any]
+        self,
+        tool_name: str,
+        principal_token: str,
+        payload: dict[str, Any],
+        agent: Any = None,
     ) -> dict[str, Any]:
         action_key = str(
             payload.get("action_id")
@@ -128,7 +132,7 @@ class CommitThenLoseTransport:
             raise InjectedToolFailureError(spec.message or f"injected tool failure on {tool_name}")
 
         # commit_loss: let the effect land, then lose the response.
-        self._inner.invoke(tool_name, principal_token, payload)
+        self._inner.invoke(tool_name, principal_token, payload, agent)
         self._record(spec, tool_name, action_key, call_number)
         raise InjectedCommitLossError(
             spec.message or f"{tool_name} committed but the response was lost (call {call_number})"

@@ -234,6 +234,61 @@ class LocalSemanticPolicy:
         return "ALLOW", ""
 
 
+@dataclass
+class LayeredScreen:
+    """Runs Model Armor and the local heuristic, and reports what each one said.
+
+    Not a fallback chain. Both verdicts are recorded because they disagree in ways worth
+    publishing: on the measured payload family, Model Armor caught a terse instruction
+    override and a role hijack but missed the same request wrapped in plausible vendor
+    business context — which is the realistic version of the attack.
+
+    Blocking on either is the safe composition, and the honest framing is that neither
+    is what actually protects the system. The Dispatch Agent holds no inventory
+    authority, so the payload has nothing to reach whatever these two conclude.
+    """
+
+    primary: Any
+    secondary: Any
+    backend: str = "layered"
+
+    def screen(self, text: str, direction: str) -> tuple[bool, dict[str, Any]]:
+        primary_blocked, primary_findings = self.primary.screen(text, direction)
+        secondary_blocked, secondary_findings = self.secondary.screen(text, direction)
+        blocked = bool(primary_blocked or secondary_blocked)
+        return blocked, {
+            "backend": self.backend,
+            "available": True,
+            "direction": direction,
+            "match_state": "MATCH_FOUND" if blocked else "NO_MATCH_FOUND",
+            "blocked_by": [
+                name
+                for name, hit in (
+                    (getattr(self.primary, "backend", "primary"), primary_blocked),
+                    (getattr(self.secondary, "backend", "secondary"), secondary_blocked),
+                )
+                if hit
+            ],
+            "layers": {
+                getattr(self.primary, "backend", "primary"): primary_findings,
+                getattr(self.secondary, "backend", "secondary"): secondary_findings,
+            },
+            "matched_filters": sorted(
+                set(primary_findings.get("matched_filters", []))
+                | set(secondary_findings.get("matched_filters", []))
+            ),
+        }
+
+
 def build_content_screen(template: str, location: str = "us-central1") -> Any:
-    """Live Model Armor when a template is configured, heuristic stand-in otherwise."""
-    return ModelArmorScreen(template=template, location=location) if template else HeuristicScreen()
+    """Live Model Armor layered with the local heuristic, or the heuristic alone.
+
+    When a Model Armor template is configured both run, so a miss by either is visible
+    rather than silently covered by the other.
+    """
+    if not template:
+        return HeuristicScreen()
+    return LayeredScreen(
+        primary=ModelArmorScreen(template=template, location=location),
+        secondary=HeuristicScreen(),
+    )

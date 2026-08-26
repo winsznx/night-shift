@@ -231,3 +231,64 @@ reasoning is recorded in the drill's own description.
 **Why this is worth recording.** Weakening a drill to make it pass is exactly the failure
 mode this project exists to prevent. The distinction is that the *system* was right and
 the assertion encoded an assumption about recovery that was never true.
+
+---
+
+## D-17 · Per-agent impersonation belongs to one runtime, not every service
+
+**Found by.** External review of the identity work, before deployment.
+
+**What was wrong.** The provisioning script granted every domain service account
+`serviceAccountTokenCreator` on every agent account — 49 bindings. The intent was to make
+per-agent identity work regardless of which process made the call. The effect was that a
+compromised Custody service could mint a token as the Dispatch Agent and call its peers
+holding that agent's authority.
+
+**Decision.** Only `ns-svc-bff`, the account the agent loop actually runs as, may
+impersonate agents. The script now also revokes the wider grant, so re-running it on an
+existing project tightens the policy instead of leaving the old bindings in place. 42
+were revoked from the live project.
+
+**Why this is worth recording.** The whole least-privilege claim is that an agent cannot
+reach what it has no business reaching. A grant that lets any service borrow any agent's
+identity does not weaken that claim slightly — it supplies exactly the lateral path the
+model is supposed to deny, while every layer above it keeps reporting success.
+
+---
+
+## D-18 · A platform denial is not an infrastructure error
+
+**Found by.** External review, reading `HttpTransport` against what Cloud Run actually
+returns.
+
+**What was wrong.** The transport parsed the response body before looking at the status.
+Cloud Run's edge refuses an unauthorized caller with an HTML error page, so the JSON
+decoder raised first and the denial surfaced as `TransportError` — classified N12
+INFRASTRUCTURE, which the qualification engine is designed to *excuse* rather than score.
+
+**Decision.** Authorization statuses are settled before the body is parsed, and 401/403
+bodies are parsed best-effort because on that path the status line is the fact and the
+body is decoration. `tests/unit/test_transport_authorization.py` pins the ordering with
+real Cloud Run HTML, and keeps a 500 classified as infrastructure so the guard cannot
+swallow genuine outages.
+
+**Why this is worth recording.** The single most valuable result this system can produce
+is the platform refusing a forbidden call. Filing it under the one failure class that
+gets waived meant the better the enforcement worked, the less the evidence showed.
+
+---
+
+## D-19 · Live screening is opt-in, so "credential-free" is structural
+
+**Found by.** External review noting that the deterministic suite's headline property
+depended on the developer's `.env` being empty.
+
+**What was wrong.** Live Model Armor was selected whenever a template happened to be
+configured. Anyone with a populated `.env` ran the "deterministic, credential-free" drill
+corpus against a live Google API without asking for it.
+
+**Decision.** `NIGHTSHIFT_LIVE_CONTENT_SCREEN` gates it, default off, independent of
+whether a template exists. The deployment sets it; local runs and CI do not.
+
+**Why this is worth recording.** A property that holds only on an unconfigured machine is
+not a property. It is a coincidence that passes CI.

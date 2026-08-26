@@ -38,13 +38,17 @@ test.describe("judge path", () => {
     await expect(page.getByRole("heading", { name: "Operations" })).toBeVisible();
     await expect(page.getByText(/active incidents/i).first()).toBeVisible();
     await expect(page.getByText("F-17").first()).toBeVisible();
-    await expect(page.getByText(/synthetic data/i).first()).toBeVisible();
+    // The notice is rendered twice, once per breakpoint, so assert that a *visible*
+    // one exists rather than that the first in DOM order happens to be shown.
+    await expect(
+      page.getByText(/synthetic data/i).locator("visible=true").first(),
+    ).toBeVisible();
   });
 
   test("fleet page shows the permission matrix with real gaps", async ({ page }) => {
     await page.goto("/app/fleet");
     await expect(page.getByRole("heading", { name: "Agent fleet" })).toBeVisible();
-    await expect(page.getByText("Permission matrix")).toBeVisible();
+    await expect(page.getByText("Permission matrix").first()).toBeVisible();
 
     // Every operational agent appears.
     for (const agent of [
@@ -90,7 +94,7 @@ test.describe("judge path", () => {
   test("evidence page shows the claim ledger", async ({ page }) => {
     await page.goto("/app/evidence");
     await expect(page.getByRole("heading", { name: "Evidence" })).toBeVisible();
-    await expect(page.getByText(/claim ledger/i)).toBeVisible();
+    await expect(page.getByText(/claim ledger/i).first()).toBeVisible();
   });
 });
 

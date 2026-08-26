@@ -230,6 +230,13 @@ export interface FleetAgent {
   identity: string | null;
   runtime_resource: string | null;
   registry_resource: string | null;
+  latest_drill: {
+    revision: string;
+    covered_by_run: string | null;
+    outcome: string;
+    corpus_version: string | null;
+    scope: string;
+  } | null;
   authority_domains: string[];
   allowed_tools: string[];
   forbidden_tools: string[];

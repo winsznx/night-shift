@@ -44,6 +44,17 @@ class Settings:
     model_armor_template: str = field(
         default_factory=lambda: _env("NIGHTSHIFT_MODEL_ARMOR_TEMPLATE")
     )
+    live_content_screen: bool = field(
+        default_factory=lambda: _flag("NIGHTSHIFT_LIVE_CONTENT_SCREEN", False)
+    )
+    """Opt in to calling Model Armor for real.
+
+    Deliberately independent of whether a template is configured. Keying live screening
+    off the template's mere presence meant that anyone with a populated ``.env`` ran the
+    "deterministic, credential-free" drill corpus against a live Google API without
+    asking for it, so the suite's headline property was true only on a machine that
+    happened to be unconfigured. The deployment sets this; local runs and CI do not.
+    """
     memory_bank_name: str = field(default_factory=lambda: _env("NIGHTSHIFT_MEMORY_BANK"))
     agent_registry_location: str = field(
         default_factory=lambda: _env("NIGHTSHIFT_REGISTRY_LOCATION", "us-central1")

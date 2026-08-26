@@ -328,3 +328,34 @@ async def send_vendor_message(
         trace_id=body.trace_id,
     )
     return {"sent": True, "blocked": False, "vendor_ref": f"VND-{body.work_order_id[-8:]}"}
+
+
+class VendorReplyRequest(BaseModel):
+    """A reply arriving *from* the vendor. Untrusted by definition."""
+
+    incident_id: str
+    work_order_id: str
+    reply: str = Field(max_length=4000)
+
+
+@app.post("/v1/vendor-replies", include_in_schema=False)
+async def receive_vendor_reply(
+    body: VendorReplyRequest,
+    repo: Repository = Depends(get_repository),
+) -> dict[str, Any]:
+    """Record an inbound vendor reply against its work order.
+
+    Deliberately not agent-callable — a vendor reply arrives from outside. It lands in
+    the work order's repair events, which is exactly where an agent will read it through
+    ``get_work_order``, and that is where the broker's content screening applies.
+    """
+    for wo in repo.list_work_orders(body.incident_id):
+        if wo.id != body.work_order_id:
+            continue
+        events = [
+            *wo.repair_events,
+            {"at": now_iso(), "status": "VENDOR_REPLY", "note": body.reply, "trusted": False},
+        ]
+        repo.put("workOrders", wo.id, wo.model_copy(update={"repair_events": events}))
+        return {"recorded": True, "work_order_id": wo.id, "events": len(events)}
+    return {"recorded": False, "reason": "unknown work order"}

@@ -22,6 +22,7 @@ from services.gateway.governance import (
     LocalSemanticPolicy,
     build_content_screen,
 )
+from services.gateway.identity_tokens import AgentTokenMinter
 from services.gateway.transport import HttpTransport, InProcessTransport
 
 
@@ -95,7 +96,7 @@ def build_runtime(
     live_screen = (
         use_live_content_screen
         if use_live_content_screen is not None
-        else bool(settings.model_armor_template)
+        else (settings.live_content_screen and bool(settings.model_armor_template))
     )
     content_screen = (
         build_content_screen(settings.model_armor_template, settings.region)
@@ -114,7 +115,12 @@ def build_runtime(
     }
     transport: Any
     if all(service_urls.values()):
-        transport = HttpTransport(base_urls=service_urls)
+        # Over HTTP each call is made as the calling agent's own service account, so the
+        # §11.3 matrix is enforced by Cloud Run IAM and not only by our own checks.
+        transport = HttpTransport(
+            base_urls=service_urls,
+            minter=AgentTokenMinter(project_id=settings.project_id),
+        )
     else:
         transport = InProcessTransport.build(repo)
 

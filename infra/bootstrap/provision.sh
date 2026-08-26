@@ -154,6 +154,40 @@ for sa in "${AGENT_SAS[@]}"; do
   grant "${sa}" roles/cloudtrace.agent
   grant "${sa}" roles/logging.logWriter
 done
+# Per-agent identity: the runtime that hosts agent execution must mint ID tokens *as*
+# each agent account, otherwise every outbound call carries the container's ambient
+# identity and the per-agent run.invoker grants are never exercised.
+#
+# Only ns-svc-bff gets this. An earlier version granted it to every domain service, which
+# meant the Custody service could mint a token as the Dispatch Agent — a lateral path
+# that contradicts the least-privilege claim this system is built on. The agent loop runs
+# in exactly one place, so exactly one identity needs to impersonate, and a domain service
+# that is compromised cannot borrow an agent's authority to call its peers.
+say "Per-agent impersonation"
+AGENT_RUNTIME_SA="ns-svc-bff"
+for agent_sa in "${AGENT_SAS[@]}"; do
+  gcloud iam service-accounts add-iam-policy-binding \
+    "${agent_sa}@${PROJECT}.iam.gserviceaccount.com" \
+    --member="serviceAccount:${AGENT_RUNTIME_SA}@${PROJECT}.iam.gserviceaccount.com" \
+    --role=roles/iam.serviceAccountTokenCreator \
+    --project="${PROJECT}" --quiet >/dev/null 2>&1 || true
+done
+ok "${AGENT_RUNTIME_SA} may mint tokens as the ${#AGENT_SAS[@]} agent accounts (no other service can)"
+
+# Revoke the over-broad grants an earlier revision of this script created, so re-running
+# it on an existing project actually tightens the policy instead of leaving it wide.
+for runtime_sa in "${SERVICE_SAS[@]}"; do
+  [[ "${runtime_sa}" == "${AGENT_RUNTIME_SA}" ]] && continue
+  for agent_sa in "${AGENT_SAS[@]}"; do
+    gcloud iam service-accounts remove-iam-policy-binding \
+      "${agent_sa}@${PROJECT}.iam.gserviceaccount.com" \
+      --member="serviceAccount:${runtime_sa}@${PROJECT}.iam.gserviceaccount.com" \
+      --role=roles/iam.serviceAccountTokenCreator \
+      --project="${PROJECT}" --quiet >/dev/null 2>&1 || true
+  done
+done
+ok "revoked impersonation from domain services (idempotent tightening)"
+
 grant ns-svc-bff roles/storage.objectViewer
 grant ns-svc-incident roles/cloudkms.signerVerifier
 grant ns-svc-incident roles/storage.objectAdmin

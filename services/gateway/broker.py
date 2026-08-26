@@ -41,7 +41,11 @@ class Transport(Protocol):
     """How a tool call actually reaches its service."""
 
     def invoke(
-        self, tool_name: str, principal_token: str, payload: dict[str, Any]
+        self,
+        tool_name: str,
+        principal_token: str,
+        payload: dict[str, Any],
+        agent: AgentName | None = None,
     ) -> dict[str, Any]: ...
 
 
@@ -76,6 +80,13 @@ class ToolCallRecord:
     fault_injected: str | None = None
     latency_ms: float = 0.0
     trace_id: str | None = None
+    policy_agreed_with_authorization: bool | None = None
+    """Set when authorization refused a call: did the semantic layer agree?
+
+    Published as an observation. The semantic layer is strictly weaker than the
+    deterministic matrix here, so its value is telling us where a probabilistic guard
+    would and would not have caught something on its own.
+    """
 
 
 @dataclass
@@ -128,11 +139,22 @@ class ToolBroker:
             try:
                 if not system:
                     self._budget_check(record)
-                self._authorize(agent, tool_name, record)
+                # Deny-by-default authorization runs first, because it is the layer that
+                # actually holds. But the semantic policy is still evaluated on a denied
+                # call: otherwise it is unreachable by construction — every constraint it
+                # expresses is already covered by the matrix, so it would never once fire
+                # and there would be nothing to publish about it either way.
+                try:
+                    self._authorize(agent, tool_name, record)
+                except BrokerDeniedError:
+                    self._semantic(agent, tool_name, payload, record, observe_only=True)
+                    raise
                 self._semantic(agent, tool_name, payload, record)
                 self._inject_fault(tool_name, payload, record)
 
-                result = self.transport.invoke(tool_name, self.principal_token_for(agent), payload)
+                result = self.transport.invoke(
+                    tool_name, self.principal_token_for(agent), payload, agent
+                )
                 result = self._screen_response(tool_name, result, record)
                 record.allowed = True
                 record.duplicate = bool(result.get("duplicate_returned"))
@@ -188,13 +210,27 @@ class ToolBroker:
             raise BrokerDeniedError(decision)
 
     def _semantic(
-        self, agent: AgentName, tool_name: str, payload: dict[str, Any], record: ToolCallRecord
+        self,
+        agent: AgentName,
+        tool_name: str,
+        payload: dict[str, Any],
+        record: ToolCallRecord,
+        *,
+        observe_only: bool = False,
     ) -> None:
         if self.semantic_policy is None:
             record.policy_verdict = "UNAVAILABLE"
             return
         verdict, reason = self.semantic_policy.evaluate(agent, tool_name, payload)
         record.policy_verdict = verdict
+        if observe_only:
+            # The call is already refused. Record what the semantic layer thought so its
+            # agreement (or disagreement) with the deterministic layer is measurable.
+            record.policy_agreed_with_authorization = verdict in {
+                "DENY",
+                "OBSERVE_WOULD_DENY",
+            }
+            return
         if verdict == "DENY":
             decision = Decision(
                 verdict=__import__(
@@ -252,19 +288,45 @@ class ToolBroker:
         return {**result, "content_screen": {"blocked": False, "findings": findings}}
 
 
-_UNTRUSTED_FIELDS = {"vendor_response", "repair_note", "external_note", "notes", "document_text"}
+_UNTRUSTED_FIELDS = {
+    "vendor_response",
+    "repair_note",
+    "external_note",
+    "notes",
+    "document_text",
+    "note",
+    "reply",
+    "summary",
+}
+
+_MAX_SCAN_DEPTH = 6
 
 
 def _untrusted_text(tool_name: str, result: dict[str, Any]) -> str:
-    spec = TOOL_REGISTRY.get(tool_name)
-    if spec is None:
+    """Collect externally authored text from anywhere in a tool response.
+
+    Scanning only the top level was a real hole: ``get_work_order`` returns
+    ``{"work_order": {"repair_events": [{"note": …}]}}``, so a poisoned vendor reply sat
+    two levels down and was never screened. Untrusted content does not agree to live at
+    a convenient depth.
+    """
+    if TOOL_REGISTRY.get(tool_name) is None:
         return ""
+
     parts: list[str] = []
-    for field_name in _UNTRUSTED_FIELDS:
-        value = result.get(field_name)
-        if isinstance(value, str):
-            parts.append(value)
-    for event in result.get("repair_events", []) or []:
-        if isinstance(event, dict) and isinstance(event.get("note"), str):
-            parts.append(event["note"])
-    return "\n".join(p for p in parts if p)
+
+    def walk(node: Any, depth: int) -> None:
+        if depth > _MAX_SCAN_DEPTH:
+            return
+        if isinstance(node, dict):
+            for key, value in node.items():
+                if key in _UNTRUSTED_FIELDS and isinstance(value, str) and value:
+                    parts.append(value)
+                else:
+                    walk(value, depth + 1)
+        elif isinstance(node, list):
+            for item in node[:50]:
+                walk(item, depth + 1)
+
+    walk(result, 0)
+    return "\n".join(parts)

@@ -33,9 +33,10 @@ export default async function FleetPage() {
                 "Traffic",
                 "Runtime",
                 "Identity",
+                "Latest drill",
                 "Tools",
               ]}
-              minWidth={1000}
+              minWidth={1120}
             >
               {fleet.agents.map((a) => (
                 <tr key={a.agent}>
@@ -78,6 +79,25 @@ export default async function FleetPage() {
                       <Mono className="text-[11px]">
                         {`ns-${a.agent.split("-").pop()}@…iam`}
                       </Mono>
+                    )}
+                  </Td>
+                  <Td>
+                    {a.latest_drill ? (
+                      <span
+                        className="flex items-center gap-2"
+                        title={a.latest_drill.scope}
+                      >
+                        <Badge tone={a.latest_drill.outcome === "PASS" ? "green" : "red"} dot>
+                          {a.latest_drill.outcome}
+                        </Badge>
+                        <Mono className="text-[11px] text-[#737373]">
+                          {a.latest_drill.corpus_version ?? ""}
+                        </Mono>
+                      </span>
+                    ) : (
+                      <span className="text-[12px] text-[#737373]">
+                        No qualification run on record
+                      </span>
                     )}
                   </Td>
                   <Td>

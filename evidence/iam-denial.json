@@ -1,0 +1,57 @@
+{
+  "generated_at": "2026-08-26T11:27:56.317Z",
+  "project": "project-2ac1d1fb-7da1-46b4-90e",
+  "region": "us-central1",
+  "source_commit": "unknown",
+  "claim": "An agent identity calling a service it holds no authority on is refused by Cloud Run IAM before the request reaches Night Shift code.",
+  "platform_denial_proven": true,
+  "contrasted_with_permitted_call": true,
+  "note": "A denial alone would not distinguish enforcement from an unreachable endpoint, so a permitted identity calls the same route and is allowed.",
+  "probes": [
+    {
+      "agent": "dispatch-agent",
+      "service": "inventory",
+      "principal": "ns-dispatch@project-2ac1d1fb-7da1-46b4-90e.iam.gserviceaccount.com",
+      "audience": "https://nightshift-inventory-xk6xxtobta-uc.a.run.app",
+      "path": "/v1/freezers/F-17/impacted",
+      "matrix_expectation": "forbidden",
+      "impersonated": true,
+      "impersonation_error": "",
+      "status": 403,
+      "denied_by_platform": true,
+      "responder": "cloud-run-edge",
+      "body_snippet": " <html><head> <meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\"> <title>403 Forbidden</title> </head> <body text=#000000 bgcolor=#ffffff> <h1>Error: Forbidden</h1> <h2>Your client does not have permission to get URL <code>/v1/freezers/F-17/impacted</code> from this server.</h2> <h2><",
+      "result": "DENIED"
+    },
+    {
+      "agent": "impact-analyst",
+      "service": "inventory",
+      "principal": "ns-impact@project-2ac1d1fb-7da1-46b4-90e.iam.gserviceaccount.com",
+      "audience": "https://nightshift-inventory-xk6xxtobta-uc.a.run.app",
+      "path": "/v1/freezers/F-17/impacted",
+      "matrix_expectation": "permitted",
+      "impersonated": true,
+      "impersonation_error": "",
+      "status": 200,
+      "denied_by_platform": false,
+      "responder": "nightshift-service",
+      "body_snippet": "{\"freezer_id\":\"F-17\",\"incident_id\":null,\"evaluated_at\":\"2026-08-26T11:27:53.993Z\",\"enumeration_complete\":true,\"container_count\":0,\"specimen_total\":0,\"study_ids\":[],\"priority_breakdown\":{},\"containers\":[]}",
+      "result": "ALLOWED"
+    },
+    {
+      "agent": "dispatch-agent",
+      "service": "facilities",
+      "principal": "ns-dispatch@project-2ac1d1fb-7da1-46b4-90e.iam.gserviceaccount.com",
+      "audience": "https://nightshift-facilities-xk6xxtobta-uc.a.run.app",
+      "path": "/v1/responders",
+      "matrix_expectation": "permitted",
+      "impersonated": true,
+      "impersonation_error": "",
+      "status": 200,
+      "denied_by_platform": false,
+      "responder": "nightshift-service",
+      "body_snippet": "{\"count\":3,\"responders\":[{\"id\":\"RESP-01\",\"display_name\":\"Avery Lin\",\"role\":\"LAB_TECH\",\"on_call\":true,\"site_id\":\"SITE-1\",\"synthetic\":true},{\"id\":\"RESP-03\",\"display_name\":\"Sam Okafor\",\"role\":\"FACILITIES_TECH\",\"on_call\":true,\"site_id\":\"SITE-1\",\"synthetic\":true},{\"id\":\"RESP-05\",\"display_name\":\"Casey Mor",
+      "result": "ALLOWED"
+    }
+  ]
+}

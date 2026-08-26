@@ -59,6 +59,7 @@ these boundaries:
 | Managed Runtime revision traffic splitting | **not delivered.** Qualification state is authoritative in Firestore and deployment code refuses unqualified revisions |
 | Agent Registry managed skill revisions | **not delivered.** Skills are content-addressed by SHA-256 and referenced by hash from the manifest |
 | Semantic Governance Policies | **local deterministic implementation of the §12 constraint set, in dry-run.** The managed Vertex policy engine was not provisioned |
+| Agent Gateway | **not delivered.** Every agent tool call goes through Night Shift's own broker (`services/gateway/broker.py`), which is the single egress path and applies the §11.3 matrix, budget caps, content screening, and semantic policy. The managed Gateway product was not provisioned, so the broker is a local implementation of that role and is not presented as the Google product |
 | Memory Bank | **local non-authoritative note store.** The managed Memory Bank resource was not provisioned |
 
 The fallbacks are the PRD §0.3 documented paths, and none of them is presented as the
@@ -75,8 +76,29 @@ and it was left undone rather than half-done and overclaimed.
 
 The authority separation that matters is delivered by a mechanism that is arguably
 stronger for this purpose: seven distinct Google service accounts with Cloud Run
-`run.invoker` grants that mirror the permission matrix. The Dispatch Agent's attempt to
-read specimen inventory is refused by Google's infrastructure, not by our code.
+`run.invoker` grants that mirror the permission matrix.
+
+Being exact about what that buys, because the obvious sentence to write here is an
+overclaim. An earlier version of this file said the Dispatch Agent's attempt to read
+specimen inventory "is refused by Google's infrastructure, not by our code". That was
+not true of any run that had actually happened. Every recorded denial in the drill
+corpus ran through `InProcessTransport`, where there is no network hop and therefore no
+Cloud Run edge to do the refusing — our own broker refused all 24 of them.
+
+What is true now, and measured: over HTTP each call is minted as the calling agent's own
+service account, and `evidence/iam-denial.json` records `ns-dispatch` being refused
+**HTTP 403 by the Cloud Run edge** on the Inventory service, while `ns-impact` gets 200
+on the same route. That contrast is the part that makes it a proof rather than an
+anecdote — a broken endpoint denies everyone.
+
+Each call records whether it actually carried that identity, successes included, so the
+evidence distinguishes the two cases instead of letting the stronger reading stand by
+default.
+
+Both layers are real and both are exercised. The honest phrasing is that the same denial
+is enforced twice, and only one of those two enforcers is Google's. The drill corpus
+still runs in-process, so its 24 denials remain **our** denials; the platform denial is
+demonstrated separately and is not pooled into the corpus counts.
 
 ## Deliberate operational choices
 
