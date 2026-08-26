@@ -251,6 +251,59 @@ def main() -> int:
         ),
     ]
 
+    iam = load(ROOT / "evidence" / "iam-denial.json")
+    if iam.get("platform_denial_proven"):
+        denied = [
+            p
+            for p in iam.get("probes", [])
+            if p.get("matrix_expectation") == "forbidden" and p.get("denied_by_platform")
+        ]
+        allowed = [
+            p for p in iam.get("probes", []) if p.get("matrix_expectation") == "permitted"
+        ]
+        first = denied[0]
+        claims.append(
+            claim(
+                "C-14",
+                f"A forbidden call is refused by Google, not only by our code: "
+                f"{first['principal'].split('@')[0]} calling the {first['service']} service "
+                f"received HTTP {first['status']} from the Cloud Run edge, while "
+                f"{len(allowed)} permitted identity/identities received 200 on the same "
+                f"routes.",
+                status="live",
+                evidence="evidence/iam-denial.json",
+                reproduce="uv run python scripts/prove_iam_denial.py",
+                limitation=(
+                    "Demonstrated by a dedicated probe against the deployed services. The "
+                    "drill corpus runs in-process, so its denials are enforced by the "
+                    "broker rather than by Cloud Run and are counted separately."
+                ),
+            )
+        )
+
+    screening = load(ROOT / "evidence" / "content-screening.json")
+    armor = (screening.get("summary", {}).get("by_layer") or {}).get("model-armor")
+    if armor:
+        total = armor["malicious_caught"] + armor["malicious_missed"]
+        claims.append(
+            claim(
+                "C-15",
+                f"Model Armor caught {armor['malicious_caught']} of {total} disclosed "
+                f"malicious payloads with {armor['false_positives']} false positive(s). "
+                f"The payloads it missed were the ones phrased as ordinary business "
+                f"requests rather than obvious instruction overrides.",
+                status="live",
+                evidence="evidence/content-screening.json",
+                reproduce="uv run python scripts/measure_content_screening.py",
+                limitation=(
+                    "Six payloads is a demonstration, not a detection rate. The local "
+                    "heuristic scores better only because its patterns were written "
+                    "against these payloads. Neither layer is what protects the system: "
+                    "the Dispatch Agent holds no inventory authority to begin with."
+                ),
+            )
+        )
+
     if manifest_states:
         closed = sum(1 for state in manifest_states if state == "CLOSED")
         claims.append(

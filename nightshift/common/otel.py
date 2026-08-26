@@ -13,8 +13,9 @@ take down a rescue is worse than no observability layer.
 from __future__ import annotations
 
 import logging
+import sys
 from collections.abc import Iterator
-from contextlib import contextmanager
+from contextlib import contextmanager, suppress
 from typing import Any
 
 from nightshift.common.config import Settings, get_settings
@@ -119,16 +120,41 @@ def span(name: str, **attributes: Any) -> Iterator[Any]:
     if tracer is None:
         yield None
         return
+
+    # Only failures *starting* the span may be swallowed. An earlier version wrapped the
+    # whole `with` block, including the caller's body, in one `except Exception` and then
+    # yielded a second time — so any exception raised inside a traced block came back as
+    # "generator didn't stop after throw()". That turned every broker denial into an
+    # unrelated RuntimeError and stalled the agent loop, which is the opposite of the
+    # promise that tracing never affects the rescue path.
     try:
-        with tracer.start_as_current_span(name) as current:
-            for key, value in attributes.items():
-                if value is not None:
-                    current.set_attribute(key, _coerce(value))
-            yield current
+        started = tracer.start_as_current_span(name)
+        current = started.__enter__()
     except Exception as exc:
-        # A tracing failure must never propagate into the rescue path.
-        log.debug("span %s failed: %s", name, exc)
+        log.debug("span %s could not start: %s", name, exc)
         yield None
+        return
+
+    for key, value in attributes.items():
+        if value is None:
+            continue
+        with suppress(Exception):  # an unrecordable attribute is not worth failing over
+            current.set_attribute(key, _coerce(value))
+
+    try:
+        yield current
+    except BaseException:
+        # The body failed. Let the span record it, then re-raise untouched.
+        try:
+            started.__exit__(*sys.exc_info())
+        except Exception as exc:
+            log.debug("span %s could not close after an error: %s", name, exc)
+        raise
+    else:
+        try:
+            started.__exit__(None, None, None)
+        except Exception as exc:
+            log.debug("span %s could not close: %s", name, exc)
 
 
 def _coerce(value: Any) -> Any:

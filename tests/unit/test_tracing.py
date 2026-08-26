@@ -11,6 +11,7 @@ from __future__ import annotations
 import pytest
 
 from nightshift.common import otel
+from nightshift.common.config import get_settings
 
 
 @pytest.fixture(autouse=True)
@@ -175,3 +176,31 @@ def test_effect_commits_record_the_trace_they_ran_under():
     assert receipt["trace_id"] is not None
     assert len(receipt["trace_id"]) == 32
     assert broker.records[0].trace_id == receipt["trace_id"]
+
+
+def test_an_exception_inside_a_span_propagates_unchanged():
+    """Tracing must never rewrite what the body raised.
+
+    The span helper used to wrap the caller's body in its own `except Exception` and then
+    yield a second time, so any exception raised inside a traced block resurfaced as
+    `RuntimeError: generator didn't stop after throw()`. Every broker denial travels by
+    exception, so this turned the system's most important result into an unrelated crash
+    and stalled the agent loop mid-incident.
+    """
+
+    class Denied(Exception):
+        pass
+
+    otel.configure_tracing(get_settings(), service_name="test")
+
+    with pytest.raises(Denied):
+        with otel.span("test.denial", **{otel.ATTR_TOOL: "get_study_notes"}):
+            raise Denied("identity not permitted")
+
+
+def test_a_span_body_that_succeeds_still_closes():
+    otel.configure_tracing(get_settings(), service_name="test")
+    seen = []
+    with otel.span("test.ok", **{otel.ATTR_AGENT: "dispatch-agent"}):
+        seen.append(otel.current_trace_id())
+    assert len(seen) == 1
