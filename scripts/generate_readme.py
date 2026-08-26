@@ -1,4 +1,115 @@
-# Night Shift
+"""Generate README.md with measured numbers filled in from evidence.
+
+The README's headline figures are read from the campaign results rather than typed, so a
+number in the README cannot drift away from what was actually measured. Prose lives in
+the template below; only the bracketed metrics are substituted.
+
+    uv run python scripts/generate_readme.py
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import sys
+from pathlib import Path
+from typing import Any
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def load(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def main() -> int:
+    scripted = (
+        load(ROOT / "evidence" / "campaign" / "results.json")
+        .get("metrics", {})
+        .get("by_driver", {})
+        .get("scripted", {})
+    )
+    agent = (
+        load(ROOT / "evidence" / "campaign-agent" / "results.json")
+        .get("metrics", {})
+        .get("by_driver", {})
+        .get("agent", {})
+    )
+    api_url = ""
+    urls = ROOT / "infra" / "deploy" / "urls.env"
+    if urls.exists():
+        for line in urls.read_text(encoding="utf-8").splitlines():
+            if line.startswith("NIGHTSHIFT_API_URL="):
+                api_url = line.split("=", 1)[1].strip()
+
+    manifests = sorted((ROOT / "evidence" / "incidents").glob("*.manifest.json"))
+    closed = 0
+    containers = 0
+    for path in manifests:
+        body = load(path)
+        if body.get("incident_state") == "CLOSED":
+            closed += 1
+        containers += int((body.get("reconciliation") or {}).get("total", 0))
+
+    if not scripted:
+        print("No campaign results found. Run `make evidence` first.", file=sys.stderr)
+        return 1
+
+    headline = (
+        f"Across **{scripted.get('scored_runs', 0)} disclosed disaster-drill runs**, it "
+        f"passed {scripted.get('passed', 0)}, produced "
+        f"**{scripted.get('capacity_overbooking_violations', 0)} capacity-overbooking "
+        f"violations**, and produced **{scripted.get('runs_with_duplicate_effect_after_fault', 0)} "
+        f"duplicate effects** under {scripted.get('faults_injected_total', 0)} injected "
+        f"faults — replaying an existing receipt "
+        f"{scripted.get('duplicate_receipts_returned', 0)} times instead."
+    )
+
+    agent_line = ""
+    if agent:
+        agent_line = (
+            f"\nA separate live-agent tier ran {agent.get('scored_runs', 0)} of the same "
+            f"drills against the real Gemini 3.5 Flash fleet, passing "
+            f"{agent.get('passed', 0)} with "
+            f"{agent.get('capacity_overbooking_violations', 0)} N1 and "
+            f"{agent.get('duplicate_effect_violations', 0)} N2 violations. The two tiers "
+            f"are reported separately and never pooled.\n"
+        )
+
+    links = []
+    if api_url:
+        links.append(f"[Live API]({api_url}/api/meta)")
+    links.append("[Architecture](ARCHITECTURE.md)")
+    links.append("[Proof](docs/PROOF.md)")
+    links.append("[Claims](docs/CLAIMS.json)")
+
+    readme = TEMPLATE.format(
+        headline=headline,
+        agent_line=agent_line,
+        links=" · ".join(links),
+        manifest_count=len(manifests),
+        closed=closed,
+        containers=containers,
+        denials=scripted.get("authorization_denials_total", 0),
+        reconciled=scripted.get("runs_fully_reconciled", 0),
+        median=scripted.get("wall_clock_median_s", "—"),
+        api_line=(
+            f"\nLive public API: <{api_url}/api/meta>\n" if api_url else ""
+        ),
+    )
+    (ROOT / "README.md").write_text(readme, encoding="utf-8")
+    print(f"Wrote README.md ({len(readme.splitlines())} lines)")
+    return 0
+
+
+TEMPLATE = """# Night Shift
 
 **Night Shift coordinates research-freezer rescue from alarm to reconciled custody.**
 
@@ -7,12 +118,10 @@ to happen next: work out whether it is real, find out what is inside, locate spa
 actually safe, get someone on site, track every box that moves, and know — provably — that
 nothing was left behind.
 
-Across **126 disclosed disaster-drill runs**, it passed 126, produced **0 capacity-overbooking violations**, and produced **0 duplicate effects** under 54 injected faults — replaying an existing receipt 67 times instead.
-
-[Live API](https://nightshift-api-xk6xxtobta-uc.a.run.app/api/meta) · [Architecture](ARCHITECTURE.md) · [Proof](docs/PROOF.md) · [Claims](docs/CLAIMS.json)
-
-Live public API: <https://nightshift-api-xk6xxtobta-uc.a.run.app/api/meta>
-
+{headline}
+{agent_line}
+{links}
+{api_line}
 ---
 
 ## The mechanism
@@ -111,10 +220,10 @@ Live Google Cloud deployment is in [SETUP.md](SETUP.md).
 
 | | |
 |---|---|
-| Drill runs scored | 60 fully reconciled |
-| Authorization denials recorded | 24 |
-| Published manifests | 0 (0 CLOSED, 0 containers reconciled) |
-| Median drill wall clock | 0.51s |
+| Drill runs scored | {reconciled} fully reconciled |
+| Authorization denials recorded | {denials} |
+| Published manifests | {manifest_count} ({closed} CLOSED, {containers} containers reconciled) |
+| Median drill wall clock | {median}s |
 
 Every number above is read from `evidence/campaign/results.json` by
 `scripts/generate_readme.py`. None of them is typed. Raw rows, methodology, and the claim
@@ -137,3 +246,8 @@ Every one of those is stated on the specific claim it affects in
 [Architecture](ARCHITECTURE.md) · [Security](SECURITY.md) · [Decisions](DECISIONS.md) ·
 [Setup](SETUP.md) · [Limitations](LIMITATIONS.md) · [Proof](docs/PROOF.md) ·
 [Contributions](CONTRIBUTIONS.md) · [Phase 0 spike](docs/SPIKE_RESULTS.md)
+"""
+
+
+if __name__ == "__main__":
+    sys.exit(main())

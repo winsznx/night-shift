@@ -138,7 +138,7 @@ class InProcessTransport:
             if method == "GET"
             else client.post(path, json=body, headers=headers)
         )
-        return _decode(tool_name, response.status_code, response.json() if response.content else {})
+        return _decode(tool_name, response.status_code, _body(tool_name, response))
 
 
 @dataclass
@@ -181,11 +181,28 @@ class HttpTransport:
                 )
         except httpx.HTTPError as exc:
             raise TransportError(f"{spec.service} unreachable: {exc}") from exc
-        try:
-            data = response.json() if response.content else {}
-        except ValueError as exc:
-            raise TransportError(f"{spec.service} returned non-JSON: {exc}") from exc
-        return _decode(tool_name, response.status_code, data)
+        return _decode(tool_name, response.status_code, _body(tool_name, response))
+
+
+def _body(tool_name: str, response: Any) -> dict[str, Any]:
+    """Parse a response body, or fail as infrastructure rather than crashing.
+
+    A 500 from a service returns an HTML or plain-text body. Letting the JSON decoder
+    raise here surfaced as an unhandled ``JSONDecodeError`` deep in the agent loop, which
+    told nobody which tool had failed. A TransportError is attributed as infrastructure
+    (N12) and names the tool.
+    """
+    if not response.content:
+        return {}
+    try:
+        parsed = response.json()
+    except ValueError:
+        snippet = response.text[:200].replace("\n", " ")
+        raise TransportError(
+            f"{tool_name}: service returned a non-JSON body with status "
+            f"{response.status_code}: {snippet}"
+        ) from None
+    return parsed if isinstance(parsed, dict) else {"result": parsed}
 
 
 def _decode(tool_name: str, status: int, data: dict[str, Any]) -> dict[str, Any]:

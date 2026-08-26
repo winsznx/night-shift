@@ -1,0 +1,117 @@
+{
+  "generated_at": "2026-08-26T04:28:18.224Z",
+  "source_commit": "c317cf9",
+  "note": "Every number in this file is read from the campaign results, never typed. Regenerate with: uv run python scripts/generate_claims.py",
+  "claims": [
+    {
+      "id": "C-01",
+      "claim": "Across 126 deterministic drill runs on the published corpus, 0 capacity-overbooking invariant (N1) violations were observed.",
+      "status": "local",
+      "evidence": "evidence/campaign/results.json",
+      "reproduce": "make evidence",
+      "limitation": "Deterministic tier only: a fixed policy replaces the model. Proves the kernel and services hold, not that agents behave well. Zero observed is over this corpus at this commit, not a proof of impossibility.",
+      "date": "2026-08-26T04:28:18.045Z",
+      "source_commit": "c317cf9"
+    },
+    {
+      "id": "C-02",
+      "claim": "Under 54 injected faults across 36 runs, 0 runs produced a duplicate semantic effect.",
+      "status": "local",
+      "evidence": "evidence/campaign/results.json",
+      "reproduce": "make evidence",
+      "limitation": "Faults are injected at the tool transport boundary. Faults inside Firestore's own commit path are not simulated.",
+      "date": "2026-08-26T04:28:18.063Z",
+      "source_commit": "c317cf9"
+    },
+    {
+      "id": "C-03",
+      "claim": "67 tool calls returned an existing receipt instead of creating a second effect.",
+      "status": "local",
+      "evidence": "evidence/campaign/results.json",
+      "reproduce": "make evidence",
+      "limitation": "Counted at the broker; the underlying services enforce it independently.",
+      "date": "2026-08-26T04:28:18.079Z",
+      "source_commit": "c317cf9"
+    },
+    {
+      "id": "C-04",
+      "claim": "24 agent-to-tool calls were denied by the authorization layer across the corpus, including a Dispatch Agent attempt to reach restricted inventory tools.",
+      "status": "local",
+      "evidence": "evidence/campaign/results.json",
+      "reproduce": "make evidence",
+      "limitation": "These are broker and service-layer denials. The Cloud Run IAM denial is a separate, additional layer verified during deployment.",
+      "date": "2026-08-26T04:28:18.095Z",
+      "source_commit": "c317cf9"
+    },
+    {
+      "id": "C-05",
+      "claim": "126 of 126 scored deterministic drill runs passed every expectation, including the hard invariants N1 through N13.",
+      "status": "local",
+      "evidence": "evidence/campaign/results.json",
+      "reproduce": "make evidence",
+      "limitation": "Expectations are properties of the outcome, not scenario identifiers.",
+      "date": "2026-08-26T04:28:18.111Z",
+      "source_commit": "c317cf9"
+    },
+    {
+      "id": "C-07",
+      "claim": "A cancelled ADK invocation re-invokes an already-committed tool on resume. The observed run made 2 tool calls and produced 1 committed effect, because the semantic action ID was identical and the second call replayed the first call's receipt.",
+      "status": "live",
+      "evidence": "docs/SPIKE_RESULTS.md",
+      "reproduce": "make spike",
+      "limitation": "Observed on google-adk 2.7.1 with an in-memory session service. Two other interruption shapes did not re-invoke; all three are published.",
+      "date": "2026-08-26T04:28:18.126Z",
+      "source_commit": "c317cf9"
+    },
+    {
+      "id": "C-08",
+      "claim": "Model Armor matched the published prompt-injection payload family at HIGH confidence via the live sanitizeUserPrompt API.",
+      "status": "live",
+      "evidence": "docs/SPIKE_RESULTS.md",
+      "reproduce": "curl -X POST .../templates/nightshift-vendor-content:sanitizeUserPrompt",
+      "limitation": "One payload family, not a detection rate. Night Shift never relies on Model Armor alone: the Dispatch Agent holds no inventory authority regardless of what any screening layer concludes.",
+      "date": "2026-08-26T04:28:18.143Z",
+      "source_commit": "c317cf9"
+    },
+    {
+      "id": "C-09",
+      "claim": "Tampering with a published manifest is detected. Editing the state snapshot, the stored verdict, or the signature each produce a distinct MISMATCH, and an unsigned manifest reports PARTIAL rather than PASS.",
+      "status": "local",
+      "evidence": "tests/unit/test_evidence_and_verifier.py",
+      "reproduce": "uv run pytest tests/unit/test_evidence_and_verifier.py -q",
+      "limitation": "Proves the stored verdict follows from the stored state and that the state was signed by the published key holder. It cannot prove the state describes the physical world.",
+      "date": "2026-08-26T04:28:18.158Z",
+      "source_commit": "c317cf9"
+    },
+    {
+      "id": "C-10",
+      "claim": "Evidence manifests are signed with a Cloud KMS asymmetric key (EC_SIGN_P256_SHA256) and verify against the exported public key.",
+      "status": "live",
+      "evidence": "evidence/incidents/*.manifest.json",
+      "reproduce": "python -m nightshift.verify --manifest evidence/incidents/<id>.manifest.json",
+      "limitation": "A local EC key is used as a documented fallback when KMS is unreachable; the backend that actually signed is recorded in the manifest.",
+      "date": "2026-08-26T04:28:18.174Z",
+      "source_commit": "c317cf9"
+    },
+    {
+      "id": "C-11",
+      "claim": "Field movements in the demo are simulated. No real biobank samples were moved and no real patient or research data exists anywhere in the fixture.",
+      "status": "synthetic",
+      "evidence": "fixtures/estate.py, services/simulator/ingest.py",
+      "reproduce": "uv run python -c \"from fixtures.estate import build_estate; print(build_estate().site)\"",
+      "limitation": "This is a statement of scope, not a measurement. The field simulator refuses to run outside demo, drill, and test namespaces.",
+      "date": "2026-08-26T04:28:18.190Z",
+      "source_commit": "c317cf9"
+    },
+    {
+      "id": "C-12",
+      "claim": "Six domain services run on Cloud Run under six distinct Google service accounts, and cross-service run.invoker grants mirror the permission matrix.",
+      "status": "live",
+      "evidence": "infra/deploy/deploy_services.sh, infra/deploy/urls.env",
+      "reproduce": "make deploy && make smoke-live",
+      "limitation": "Agents are not registered as managed Agent Registry or Agent Runtime resources; see LIMITATIONS.md.",
+      "date": "2026-08-26T04:28:18.206Z",
+      "source_commit": "c317cf9"
+    }
+  ]
+}

@@ -162,13 +162,19 @@ async def get_hold_state(
     repo: Repository = Depends(get_repository),
 ) -> dict[str, Any]:
     hold = repo.get_hold(freezer_id)
+    # Only load a kernel state when there is a real incident to load one for. An empty
+    # document id is a hard error in Firestore, and the answer is already known when no
+    # hold exists: normal operations are permitted.
+    permitted = True
+    if hold is not None:
+        permitted = check_normal_inventory_operation(
+            repo.load_kernel_state(hold.incident_id), freezer_id
+        ).allowed
     return {
         "freezer_id": freezer_id,
         "hold_active": bool(hold and hold.active),
         "hold": hold.model_dump(mode="json") if hold else None,
-        "normal_operations_permitted": check_normal_inventory_operation(
-            repo.load_kernel_state(hold.incident_id if hold else ""), freezer_id
-        ).allowed,
+        "normal_operations_permitted": permitted,
     }
 
 
