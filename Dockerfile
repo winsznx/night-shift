@@ -31,6 +31,12 @@ COPY skills ./skills
 COPY corpus ./corpus
 COPY apps/api ./apps/api
 
+# Published evidence and the claim ledger are read at request time by the public
+# evidence, drills, and proof surfaces. They are part of the deliverable, not build
+# scratch, so they ship inside the image.
+COPY evidence ./evidence
+COPY docs ./docs
+
 RUN uv sync --frozen --no-dev
 
 ENV PATH="/app/.venv/bin:$PATH" \

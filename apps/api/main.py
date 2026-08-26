@@ -539,17 +539,28 @@ async def responder_task(token: str, namespace: str | None = None) -> dict[str, 
         if container is None:
             continue
         transfer = transfers.get(container_id)
-        destination = transfer.destination_freezer if transfer else None
+        # Before a pickup there is no transfer record yet, so the destination has to
+        # come from the reservation the Broker made. Without this the responder screen
+        # showed no destination and the "Confirm pickup" button was permanently
+        # disabled — a deadlock that made the whole flow unusable.
+        destination = (
+            transfer.destination_freezer if transfer else _planned_destination(state, container_id)
+        )
         dest_freezer = r.get_freezer(destination) if destination else None
         dest_readings = r.list_readings(destination) if destination else []
         latest = dest_readings[-1] if dest_readings else None
+        planned_slot = (
+            transfer.destination_slot
+            if transfer
+            else (f"{destination}-SLOT-{container_id[-4:]}" if destination else None)
+        )
         tasks.append(
             {
                 "container_id": container_id,
                 "source_freezer": container.freezer_id if not transfer else transfer.source_freezer,
                 "source_slot": container.slot_id,
                 "destination_freezer": destination,
-                "destination_slot": transfer.destination_slot if transfer else None,
+                "destination_slot": planned_slot,
                 "custody_state": container.custody_state.value,
                 "destination_temp_c": latest.celsius
                 if latest
@@ -582,6 +593,30 @@ async def responder_task(token: str, namespace: str | None = None) -> dict[str, 
             ),
         },
     }
+
+
+def _planned_destination(state: Any, container_id: str) -> str | None:
+    """Where this container is *going*, from the reservation covering its group.
+
+    The responder needs to know the destination before they pick anything up, and the
+    transfer record that would normally carry it does not exist until they do.
+    """
+    if state.impact is None or state.incident is None:
+        return None
+    group_id = next(
+        (g.id for g in state.impact.placement_groups if container_id in g.container_ids),
+        None,
+    )
+    if group_id is None:
+        return None
+    for reservation in state.reservations.values():
+        if (
+            reservation.incident_id == state.incident.id
+            and reservation.placement_group_id == group_id
+            and reservation.state.value in {"ACTIVE", "CONSUMED"}
+        ):
+            return str(reservation.destination_freezer_id)
+    return None
 
 
 def _responder_broker(r: Repository) -> Any:

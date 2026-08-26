@@ -19,6 +19,25 @@ say() { printf '\n\033[1m%s\033[0m\n' "$*"; }
 
 [[ -n "${PROJECT}" && "${PROJECT}" != "(unset)" ]] || { echo "ERROR: no project" >&2; exit 1; }
 
+# PRD §23.5 traffic gate. Managed Runtime revision traffic splitting is not delivered on
+# this project, so the documented fallback applies: qualification state is authoritative
+# and deployment code must refuse an unqualified revision. This runs the drill corpus and
+# exits non-zero unless every scored drill passes, before anything is built or deployed.
+# NIGHTSHIFT_SKIP_QUALIFICATION=1 deploys a known-failing revision deliberately, and it
+# will show as BLOCKED in the fleet view.
+if [[ "${NIGHTSHIFT_SKIP_QUALIFICATION:-0}" != "1" ]]; then
+  say "Qualification gate"
+  if ! uv run python scripts/check_qualification.py --fast --record --revision "${TAG}"; then
+    echo >&2
+    echo "Deployment refused: revision ${TAG} is not qualified for operational traffic." >&2
+    echo "Fix the failing drills, or set NIGHTSHIFT_SKIP_QUALIFICATION=1 to deploy it" >&2
+    echo "deliberately as a BLOCKED revision." >&2
+    exit 1
+  fi
+else
+  say "Qualification gate SKIPPED (NIGHTSHIFT_SKIP_QUALIFICATION=1)"
+fi
+
 say "Building ${IMAGE}:${TAG}"
 gcloud builds submit --tag "${IMAGE}:${TAG}" --project="${PROJECT}" --quiet .
 

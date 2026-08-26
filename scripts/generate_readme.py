@@ -43,11 +43,14 @@ def main() -> int:
         .get("agent", {})
     )
     api_url = ""
+    web_url = ""
     urls = ROOT / "infra" / "deploy" / "urls.env"
     if urls.exists():
         for line in urls.read_text(encoding="utf-8").splitlines():
             if line.startswith("NIGHTSHIFT_API_URL="):
                 api_url = line.split("=", 1)[1].strip()
+            elif line.startswith("NIGHTSHIFT_WEB_URL="):
+                web_url = line.split("=", 1)[1].strip()
 
     manifests = sorted((ROOT / "evidence" / "incidents").glob("*.manifest.json"))
     closed = 0
@@ -84,8 +87,10 @@ def main() -> int:
         )
 
     links = []
+    if web_url:
+        links.append(f"**[Live product]({web_url})**")
     if api_url:
-        links.append(f"[Live API]({api_url}/api/meta)")
+        links.append(f"[Public API]({api_url}/api/meta)")
     links.append("[Architecture](ARCHITECTURE.md)")
     links.append("[Proof](docs/PROOF.md)")
     links.append("[Claims](docs/CLAIMS.json)")
@@ -100,11 +105,37 @@ def main() -> int:
         denials=scripted.get("authorization_denials_total", 0),
         reconciled=scripted.get("runs_fully_reconciled", 0),
         median=scripted.get("wall_clock_median_s", "—"),
-        api_line=(f"\nLive public API: <{api_url}/api/meta>\n" if api_url else ""),
+        api_line=_deployment_block(web_url, api_url),
     )
     (ROOT / "README.md").write_text(readme, encoding="utf-8")
     print(f"Wrote README.md ({len(readme.splitlines())} lines)")
     return 0
+
+
+def _deployment_block(web_url: str, api_url: str) -> str:
+    """The live links, in the first screen of the README."""
+    if not (web_url or api_url):
+        return ""
+    rows = ["", "## Deployed", "", "| | |", "|---|---|"]
+    if web_url:
+        rows += [
+            f"| Product (start here) | <{web_url}> |",
+            f"| Live incident | <{web_url}/app/incidents> |",
+            f"| Fleet and permission matrix | <{web_url}/app/fleet> |",
+            f"| Disaster drills | <{web_url}/app/drills> |",
+            f"| Evidence and claim ledger | <{web_url}/app/evidence> |",
+            f"| Verify a manifest | <{web_url}/verify> |",
+        ]
+    if api_url:
+        rows.append(f"| Public API | <{api_url}/api/meta> |")
+    rows += [
+        "",
+        "Google Cloud `project-2ac1d1fb-7da1-46b4-90e`, region `us-central1`. Six domain "
+        "services and the public API run as separate Cloud Run services under separate "
+        "service accounts.",
+        "",
+    ]
+    return "\n".join(rows)
 
 
 TEMPLATE = """# Night Shift

@@ -26,8 +26,16 @@ export default async function FleetPage() {
               subtitle="A revision with no qualification record is treated as unqualified, never as probably fine"
             />
             <Table
-              headers={["Agent", "Revision", "Qualification", "Traffic", "Identity", "Tools"]}
-              minWidth={860}
+              headers={[
+                "Agent",
+                "Revision",
+                "Qualification",
+                "Traffic",
+                "Runtime",
+                "Identity",
+                "Tools",
+              ]}
+              minWidth={1000}
             >
               {fleet.agents.map((a) => (
                 <tr key={a.agent}>
@@ -55,7 +63,22 @@ export default async function FleetPage() {
                     <Mono>{a.traffic_percent}%</Mono>
                   </Td>
                   <Td>
-                    <Mono className="text-[11px]">{a.identity ?? "local principal"}</Mono>
+                    {a.runtime_resource ? (
+                      <Mono className="text-[11px]">{a.runtime_resource}</Mono>
+                    ) : (
+                      <span className="text-[12px] text-[#737373]">
+                        Cloud Run (not managed Agent Runtime)
+                      </span>
+                    )}
+                  </Td>
+                  <Td>
+                    {a.identity ? (
+                      <Mono className="text-[11px]">{a.identity}</Mono>
+                    ) : (
+                      <Mono className="text-[11px]">
+                        {`ns-${a.agent.split("-").pop()}@…iam`}
+                      </Mono>
+                    )}
                   </Td>
                   <Td>
                     <span className="flex items-center gap-2">
@@ -66,6 +89,26 @@ export default async function FleetPage() {
                 </tr>
               ))}
             </Table>
+          </Card>
+
+          <Card>
+            <h2 className="text-[14px] font-semibold text-[#171717]">
+              What &ldquo;identity&rdquo; means here
+            </h2>
+            <p className="mt-1.5 max-w-[80ch] text-[13px] leading-relaxed text-[#525252]">
+              Each agent runs under its own Google service account, and the permission
+              matrix below is enforced as Cloud Run IAM: an identity with no business
+              calling a service is not a <Mono>run.invoker</Mono> on it, so the refusal
+              happens at Google&rsquo;s edge before any Night Shift code runs. The same
+              matrix is checked again by the tool broker and a third time inside each
+              domain service.
+            </p>
+            <p className="mt-2 max-w-[80ch] text-[13px] leading-relaxed text-[#525252]">
+              Agents are <span className="font-medium">not</span> registered as managed
+              Agent Registry or Agent Runtime resources on this deployment. That is
+              recorded on the specific claims it affects rather than glossed over — see{" "}
+              <Mono>LIMITATIONS.md</Mono>.
+            </p>
           </Card>
 
           <Card padded={false}>

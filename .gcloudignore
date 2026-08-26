@@ -6,7 +6,6 @@
 /node_modules/
 /apps/web/node_modules/
 /apps/web/.next/
-/evidence/
 /keys/
 /tests/
 /.env
@@ -15,3 +14,9 @@
 /.mypy_cache/
 __pycache__/
 *.pyc
+
+# Published evidence ships WITH the image. The manifests, campaign results, and claim
+# ledger are what the public evidence, drills, and proof surfaces read; excluding them
+# left three judge-facing pages empty in production while looking fine locally.
+# Only scratch output is excluded.
+/evidence/scratch/
