@@ -16,7 +16,7 @@ import pytest
 
 from assurance.controller import run_drill
 from assurance.corpus import DRILLS, HOLDOUT_DRILLS, load_corpus
-from assurance.qualify import qualify_revision, QualificationRun
+from assurance.qualify import QualificationRun, qualify_revision
 
 ALL = load_corpus(include_holdout=True)
 IDS = [d.id for d in ALL]
@@ -34,9 +34,7 @@ async def test_drill_passes(spec):
     unmet = [e for e in outcome.expectations if not e.met]
     assert not outcome.failed_invariants, (
         f"{spec.id} violated {outcome.failed_invariants}: "
-        + "; ".join(
-            r["detail"] for r in outcome.invariant_results if not r["holds"]
-        )
+        + "; ".join(r["detail"] for r in outcome.invariant_results if not r["holds"])
     )
     assert not unmet, f"{spec.id} unmet expectations: " + "; ".join(
         f"{e.key} ({e.detail})" for e in unmet
@@ -100,9 +98,9 @@ async def test_expectations_are_properties_not_scenario_ids():
             assert key not in drill_ids, (
                 f"{spec.id} has an expectation keyed on a drill id: {expectation.key}"
             )
-            assert not any(
-                key.startswith(f"{d}_") or key.endswith(f"_{d}") for d in drill_ids
-            ), f"{spec.id} expectation {expectation.key} references a scenario id"
+            assert not any(key.startswith(f"{d}_") or key.endswith(f"_{d}") for d in drill_ids), (
+                f"{spec.id} expectation {expectation.key} references a scenario id"
+            )
 
 
 async def test_a_deliberately_unsafe_revision_fails_qualification():
@@ -165,13 +163,23 @@ async def test_qualification_requires_every_scored_drill_to_pass():
         for i in range(1, 18)
     ]
     failing = DrillOutcome(
-        drill_id="D18", family="recovery", passed=False, infrastructure_error=False,
+        drill_id="D18",
+        family="recovery",
+        passed=False,
+        infrastructure_error=False,
         failed_invariants=["N13"],
     )
     run = QualificationRun(
-        run_id="mostly-good", agent_revisions={}, source_commit="c", adk_version="2.7.1",
-        model_id="m", skill_revisions={}, policy_versions={}, model_armor_template="",
-        domain_service_version="1.0.0", outcomes=[*passing, failing],
+        run_id="mostly-good",
+        agent_revisions={},
+        source_commit="c",
+        adk_version="2.7.1",
+        model_id="m",
+        skill_revisions={},
+        policy_versions={},
+        model_armor_template="",
+        domain_service_version="1.0.0",
+        outcomes=[*passing, failing],
     )
     assert not run.passed
     assert qualify_revision(run)["decision"] == "BLOCKED"
@@ -182,14 +190,23 @@ async def test_infrastructure_errors_are_excluded_from_the_verdict():
     from assurance.qualify import DrillOutcome
 
     run = QualificationRun(
-        run_id="infra", agent_revisions={}, source_commit="c", adk_version="2.7.1",
-        model_id="m", skill_revisions={}, policy_versions={}, model_armor_template="",
+        run_id="infra",
+        agent_revisions={},
+        source_commit="c",
+        adk_version="2.7.1",
+        model_id="m",
+        skill_revisions={},
+        policy_versions={},
+        model_armor_template="",
         domain_service_version="1.0.0",
         outcomes=[
             DrillOutcome(drill_id="D2", family="core", passed=True, infrastructure_error=False),
             DrillOutcome(
-                drill_id="D5", family="idempotency", passed=False,
-                infrastructure_error=True, error="TransportError: capacity unreachable",
+                drill_id="D5",
+                family="idempotency",
+                passed=False,
+                infrastructure_error=True,
+                error="TransportError: capacity unreachable",
             ),
         ],
     )
@@ -201,9 +218,16 @@ async def test_infrastructure_errors_are_excluded_from_the_verdict():
 async def test_a_run_with_no_scored_drills_is_never_qualified():
     """Missing qualification is not qualification."""
     run = QualificationRun(
-        run_id="empty", agent_revisions={}, source_commit="c", adk_version="2.7.1",
-        model_id="m", skill_revisions={}, policy_versions={}, model_armor_template="",
-        domain_service_version="1.0.0", outcomes=[],
+        run_id="empty",
+        agent_revisions={},
+        source_commit="c",
+        adk_version="2.7.1",
+        model_id="m",
+        skill_revisions={},
+        policy_versions={},
+        model_armor_template="",
+        domain_service_version="1.0.0",
+        outcomes=[],
     )
     assert not run.passed
     assert qualify_revision(run)["decision"] == "BLOCKED"
