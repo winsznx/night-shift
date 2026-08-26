@@ -91,6 +91,18 @@ evidence-agent: ## Run the live-agent tier of the campaign (slow)
 	$(PY) python -m assurance.campaign --seeds 2 --drivers agent \
 		--drills D1,D2,D3,D5,D8,D9,D10,D13,D16 --no-holdout --out evidence/campaign-agent
 
+.PHONY: evidence-screening
+evidence-screening: ## Measure both content-screening layers against the disclosed payloads
+	$(PY) python scripts/measure_content_screening.py
+
+.PHONY: evidence-iam
+evidence-iam: ## Prove a forbidden call is denied by Cloud Run IAM (needs deployed services)
+	set -a && . infra/deploy/urls.env && set +a && $(PY) python scripts/prove_iam_denial.py
+
+.PHONY: evidence-traces
+evidence-traces: ## Read Night Shift spans back out of Cloud Trace and record what was found
+	$(PY) python scripts/verify_traces.py --hours 3
+
 .PHONY: verify-demo
 verify-demo: ## Verify every published manifest (no credentials needed)
 	@$(PY) python scripts/verify_all.py

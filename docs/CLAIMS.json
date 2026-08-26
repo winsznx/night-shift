@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-26T11:30:24.308Z",
-  "source_commit": "562ea79",
+  "generated_at": "2026-08-26T12:20:54.607Z",
+  "source_commit": "cb081b7",
   "note": "Every number in this file is read from the campaign results, never typed. Regenerate with: uv run python scripts/generate_claims.py",
   "claims": [
     {
@@ -10,8 +10,8 @@
       "evidence": "evidence/campaign/results.json",
       "reproduce": "make evidence",
       "limitation": "Deterministic tier only: a fixed policy replaces the model. Proves the kernel and services hold, not that agents behave well. Zero observed is over this corpus at this commit, not a proof of impossibility.",
-      "date": "2026-08-26T11:30:24.051Z",
-      "source_commit": "562ea79"
+      "date": "2026-08-26T12:20:54.276Z",
+      "source_commit": "cb081b7"
     },
     {
       "id": "C-02",
@@ -20,8 +20,8 @@
       "evidence": "evidence/campaign/results.json",
       "reproduce": "make evidence",
       "limitation": "Faults are injected at the tool transport boundary. Faults inside Firestore's own commit path are not simulated.",
-      "date": "2026-08-26T11:30:24.071Z",
-      "source_commit": "562ea79"
+      "date": "2026-08-26T12:20:54.311Z",
+      "source_commit": "cb081b7"
     },
     {
       "id": "C-03",
@@ -30,8 +30,8 @@
       "evidence": "evidence/campaign/results.json",
       "reproduce": "make evidence",
       "limitation": "Counted at the broker; the underlying services enforce it independently.",
-      "date": "2026-08-26T11:30:24.088Z",
-      "source_commit": "562ea79"
+      "date": "2026-08-26T12:20:54.330Z",
+      "source_commit": "cb081b7"
     },
     {
       "id": "C-04",
@@ -40,8 +40,8 @@
       "evidence": "evidence/campaign/results.json",
       "reproduce": "make evidence",
       "limitation": "These are broker and service-layer denials. The Cloud Run IAM denial is a separate, additional layer verified during deployment.",
-      "date": "2026-08-26T11:30:24.106Z",
-      "source_commit": "562ea79"
+      "date": "2026-08-26T12:20:54.349Z",
+      "source_commit": "cb081b7"
     },
     {
       "id": "C-05",
@@ -50,8 +50,8 @@
       "evidence": "evidence/campaign/results.json",
       "reproduce": "make evidence",
       "limitation": "Expectations are properties of the outcome, not scenario identifiers.",
-      "date": "2026-08-26T11:30:24.124Z",
-      "source_commit": "562ea79"
+      "date": "2026-08-26T12:20:54.368Z",
+      "source_commit": "cb081b7"
     },
     {
       "id": "C-06",
@@ -60,8 +60,8 @@
       "evidence": "evidence/campaign-agent/results.json",
       "reproduce": "make evidence-agent",
       "limitation": "A much smaller sample than the deterministic tier because each run takes minutes. Reported separately and never pooled.",
-      "date": "2026-08-26T11:30:24.141Z",
-      "source_commit": "562ea79"
+      "date": "2026-08-26T12:20:54.387Z",
+      "source_commit": "cb081b7"
     },
     {
       "id": "C-07",
@@ -70,8 +70,8 @@
       "evidence": "docs/SPIKE_RESULTS.md",
       "reproduce": "make spike",
       "limitation": "Observed on google-adk 2.7.1 with an in-memory session service. Two other interruption shapes did not re-invoke; all three are published.",
-      "date": "2026-08-26T11:30:24.157Z",
-      "source_commit": "562ea79"
+      "date": "2026-08-26T12:20:54.418Z",
+      "source_commit": "cb081b7"
     },
     {
       "id": "C-08",
@@ -80,8 +80,8 @@
       "evidence": "docs/SPIKE_RESULTS.md",
       "reproduce": "curl -X POST .../templates/nightshift-vendor-content:sanitizeUserPrompt",
       "limitation": "One payload family, not a detection rate. Night Shift never relies on Model Armor alone: the Dispatch Agent holds no inventory authority regardless of what any screening layer concludes.",
-      "date": "2026-08-26T11:30:24.173Z",
-      "source_commit": "562ea79"
+      "date": "2026-08-26T12:20:54.438Z",
+      "source_commit": "cb081b7"
     },
     {
       "id": "C-09",
@@ -90,8 +90,8 @@
       "evidence": "tests/unit/test_evidence_and_verifier.py",
       "reproduce": "uv run pytest tests/unit/test_evidence_and_verifier.py -q",
       "limitation": "Proves the stored verdict follows from the stored state and that the state was signed by the published key holder. It cannot prove the state describes the physical world.",
-      "date": "2026-08-26T11:30:24.189Z",
-      "source_commit": "562ea79"
+      "date": "2026-08-26T12:20:54.454Z",
+      "source_commit": "cb081b7"
     },
     {
       "id": "C-10",
@@ -100,8 +100,8 @@
       "evidence": "evidence/incidents/*.manifest.json",
       "reproduce": "python -m nightshift.verify --manifest evidence/incidents/<id>.manifest.json",
       "limitation": "A local EC key is used as a documented fallback when KMS is unreachable; the backend that actually signed is recorded in the manifest.",
-      "date": "2026-08-26T11:30:24.207Z",
-      "source_commit": "562ea79"
+      "date": "2026-08-26T12:20:54.471Z",
+      "source_commit": "cb081b7"
     },
     {
       "id": "C-11",
@@ -110,8 +110,8 @@
       "evidence": "fixtures/estate.py, services/simulator/ingest.py",
       "reproduce": "uv run python -c 'from fixtures.estate import build_estate; print(build_estate().site)'",
       "limitation": "This is a statement of scope, not a measurement. The field simulator refuses to run outside demo, drill, and test namespaces.",
-      "date": "2026-08-26T11:30:24.225Z",
-      "source_commit": "562ea79"
+      "date": "2026-08-26T12:20:54.487Z",
+      "source_commit": "cb081b7"
     },
     {
       "id": "C-12",
@@ -120,8 +120,8 @@
       "evidence": "infra/deploy/deploy_services.sh, infra/deploy/urls.env",
       "reproduce": "make deploy && make smoke-live",
       "limitation": "Agents are not registered as managed Agent Registry or Agent Runtime resources; see LIMITATIONS.md.",
-      "date": "2026-08-26T11:30:24.241Z",
-      "source_commit": "562ea79"
+      "date": "2026-08-26T12:20:54.507Z",
+      "source_commit": "cb081b7"
     },
     {
       "id": "C-14",
@@ -130,8 +130,8 @@
       "evidence": "evidence/iam-denial.json",
       "reproduce": "uv run python scripts/prove_iam_denial.py",
       "limitation": "Demonstrated by a dedicated probe against the deployed services. The drill corpus runs in-process, so its denials are enforced by the broker rather than by Cloud Run and are counted separately.",
-      "date": "2026-08-26T11:30:24.259Z",
-      "source_commit": "562ea79"
+      "date": "2026-08-26T12:20:54.531Z",
+      "source_commit": "cb081b7"
     },
     {
       "id": "C-15",
@@ -140,8 +140,18 @@
       "evidence": "evidence/content-screening.json",
       "reproduce": "uv run python scripts/measure_content_screening.py",
       "limitation": "Six payloads is a demonstration, not a detection rate. The local heuristic scores better only because its patterns were written against these payloads. Neither layer is what protects the system: the Dispatch Agent holds no inventory authority to begin with.",
-      "date": "2026-08-26T11:30:24.275Z",
-      "source_commit": "562ea79"
+      "date": "2026-08-26T12:20:54.553Z",
+      "source_commit": "cb081b7"
+    },
+    {
+      "id": "C-16",
+      "claim": "Night Shift spans reach Cloud Trace: 25 trace(s) carrying 380 application span(s) across 36 span name(s) were read back out of the Cloud Trace API.",
+      "status": "live",
+      "evidence": "evidence/traces.json",
+      "reproduce": "uv run python scripts/verify_traces.py",
+      "limitation": "Counted over a recent time window, so the numbers reflect that window rather than the project's whole history. Span export is best-effort by design: tracing never blocks the rescue path.",
+      "date": "2026-08-26T12:20:54.572Z",
+      "source_commit": "cb081b7"
     },
     {
       "id": "C-13",
@@ -150,8 +160,8 @@
       "evidence": "evidence/incidents/",
       "reproduce": "make verify-demo",
       "limitation": "Synthetic estate; simulated responder movements.",
-      "date": "2026-08-26T11:30:24.291Z",
-      "source_commit": "562ea79"
+      "date": "2026-08-26T12:20:54.590Z",
+      "source_commit": "cb081b7"
     }
   ]
 }

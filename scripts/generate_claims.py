@@ -304,6 +304,26 @@ def main() -> int:
             )
         )
 
+    traces = load(ROOT / "evidence" / "traces.json")
+    if traces.get("exported"):
+        spans = traces.get("span_counts") or {}
+        claims.append(
+            claim(
+                "C-16",
+                f"Night Shift spans reach Cloud Trace: {traces['nightshift_traces']} trace(s) "
+                f"carrying {sum(spans.values())} application span(s) across "
+                f"{len(spans)} span name(s) were read back out of the Cloud Trace API.",
+                status="live",
+                evidence="evidence/traces.json",
+                reproduce="uv run python scripts/verify_traces.py",
+                limitation=(
+                    "Counted over a recent time window, so the numbers reflect that "
+                    "window rather than the project's whole history. Span export is "
+                    "best-effort by design: tracing never blocks the rescue path."
+                ),
+            )
+        )
+
     if manifest_states:
         closed = sum(1 for state in manifest_states if state == "CLOSED")
         claims.append(
