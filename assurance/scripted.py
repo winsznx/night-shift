@@ -126,6 +126,9 @@ class ScriptedOrchestrator:
                 stopped = f"incident reached {state.incident.state.value}"
                 break
 
+        if self._close_if_evidence_supports_it():
+            stopped = "incident closed on final evidence sweep"
+
         incident = self.repo.get_incident(self.incident_id)
         return ScriptedOutcome(
             incident_id=self.incident_id,
@@ -534,6 +537,18 @@ class ScriptedOrchestrator:
                 "validation_readings": window,
             },
         )
+
+    def _close_if_evidence_supports_it(self) -> bool:
+        """Same final sweep the agent orchestrator makes: close only if N6 already holds."""
+        from nightshift.safety_kernel.invariants import n6_would_hold
+        from nightshift.schemas.enums import TERMINAL_INCIDENT_STATES
+
+        incident = self.repo.get_incident(self.incident_id)
+        if incident is None or incident.state in TERMINAL_INCIDENT_STATES:
+            return False
+        self._advance()
+        ok, _reason = n6_would_hold(self.repo.load_kernel_state(self.incident_id))
+        return self._close() if ok else False
 
     def _close(self) -> bool:
         self._advance()

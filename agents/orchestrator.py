@@ -28,12 +28,14 @@ from google.genai import types
 from pydantic import ValidationError
 
 from agents.fleet import OUTPUT_SCHEMAS, AgentBuild, build_fleet
+from nightshift.common import otel
 from nightshift.common.ids import correlation_id
 from nightshift.safety_kernel.config import DEFAULT_CONFIG, KernelConfig
+from nightshift.safety_kernel.invariants import n6_would_hold
 from nightshift.safety_kernel.transitions import can_transition_incident, next_natural_state
 from nightshift.safety_kernel.world import reconciliation_snapshot
 from nightshift.schemas.agent_io import CommanderPlan
-from nightshift.schemas.enums import AgentName, IncidentState
+from nightshift.schemas.enums import TERMINAL_INCIDENT_STATES, AgentName, IncidentState
 from services.common.effects import record_event
 from services.common.repository import Repository
 from services.gateway.broker import BrokerDeniedError, ToolBroker
@@ -81,10 +83,12 @@ class RunOutcome:
     stopped_because: str = ""
     model_calls: int = 0
     wall_clock_s: float = 0.0
+    trace_id: str | None = None
 
     def as_dict(self) -> dict[str, Any]:
         return {
             "incident_id": self.incident_id,
+            "trace_id": self.trace_id,
             "final_state": self.final_state,
             "rounds": self.rounds,
             "specialists_run": [r.agent.value for r in self.specialist_results],
@@ -145,6 +149,26 @@ class IncidentOrchestrator:
     # -- public ---------------------------------------------------------------------
 
     async def run(self) -> RunOutcome:
+        with otel.span(
+            "incident.run",
+            **{otel.ATTR_INCIDENT: self.incident_id, "nightshift.model": self.model},
+        ):
+            outcome = await self._run_inner()
+            outcome.trace_id = otel.current_trace_id()
+            if outcome.trace_id:
+                self._record_trace_root(outcome.trace_id)
+            return outcome
+
+    def _record_trace_root(self, trace_id: str) -> None:
+        """Pin the incident's root trace so the proof surfaces can link to it."""
+        incident = self.repo.get_incident(self.incident_id)
+        if incident is None or incident.trace_root_id == trace_id:
+            return
+        self.repo.put(
+            "incidents", incident.id, incident.model_copy(update={"trace_root_id": trace_id})
+        )
+
+    async def _run_inner(self) -> RunOutcome:
         started = time.perf_counter()
         outcome = RunOutcome(incident_id=self.incident_id, final_state="", rounds=0)
 
@@ -176,7 +200,16 @@ class IncidentOrchestrator:
                 # fresh when the round started can age past the N4 freshness window
                 # before the custody agent reaches it.
                 self._tick_world(round_index)
-                result = await self._run_specialist(step.specialist, step.objective)
+                with otel.span(
+                    f"specialist.{step.specialist.value}",
+                    **{
+                        otel.ATTR_INCIDENT: self.incident_id,
+                        otel.ATTR_AGENT: step.specialist.value,
+                        otel.ATTR_AGENT_REVISION: self.fleet[step.specialist].revision,
+                        "nightshift.objective": step.objective[:200],
+                    },
+                ):
+                    result = await self._run_specialist(step.specialist, step.objective)
                 outcome.specialist_results.append(result)
                 if result.output and result.output.get("escalate"):
                     outcome.escalations.append(
@@ -200,6 +233,18 @@ class IncidentOrchestrator:
                 break
         else:
             outcome.stopped_because = "round budget exhausted"
+
+        # Final sweep. If the incident is deterministically closeable — every container
+        # in a terminal state, no uncertain effects, containment released against
+        # validated recovery, and nothing left in the failed freezer — close it.
+        #
+        # This is not the Commander's judgement being overridden. It is the same
+        # evidence-driven progress every other transition makes, applied once more at
+        # the end so a finished rescue does not sit open because a conversation ran out
+        # of turns. A live run reached RECONCILING with 42/42 committed and
+        # n6_would_hold() true, and stayed there.
+        if self._close_if_evidence_supports_it():
+            outcome.stopped_because = "incident closed on final evidence sweep"
 
         incident = self.repo.get_incident(self.incident_id)
         outcome.final_state = incident.state.value if incident else "UNKNOWN"
@@ -759,6 +804,44 @@ class IncidentOrchestrator:
             },
         )
         return bool(result.get("receipt", {}).get("status") == "COMMITTED")
+
+    def _close_if_evidence_supports_it(self) -> bool:
+        """Close only when the deterministic preconditions already hold.
+
+        Asks the kernel first and does nothing unless the answer is an unqualified yes,
+        so this can never turn a partial rescue into a closed one — N6 is the same guard
+        the Incident Control Service will apply to the request anyway.
+        """
+        incident = self.repo.get_incident(self.incident_id)
+        if incident is None or incident.state in TERMINAL_INCIDENT_STATES:
+            return False
+
+        self._advance_deterministically()
+        state = self.repo.load_kernel_state(self.incident_id)
+        ok, reason = n6_would_hold(state)
+        if not ok:
+            record_event(
+                self.repo,
+                self.incident_id,
+                kind="note",
+                source="incident-orchestrator",
+                summary=f"Incident left open at end of run: {reason}",
+                detail={"final_state": state.incident.state.value if state.incident else None},
+            )
+            return False
+
+        record_event(
+            self.repo,
+            self.incident_id,
+            kind="note",
+            source="incident-orchestrator",
+            summary=(
+                "Every closure precondition is satisfied; closing on the final evidence "
+                "sweep rather than leaving a finished rescue open."
+            ),
+            detail=reconciliation_snapshot(state).as_dict(),
+        )
+        return self._attempt_closure()
 
     def _attempt_closure(self) -> bool:
         state = self.repo.load_kernel_state(self.incident_id)

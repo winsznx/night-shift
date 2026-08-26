@@ -20,7 +20,7 @@ import {
 } from "@/components/ui";
 import { getIncident, getTimeline } from "@/lib/api";
 
-export const revalidate = 3;
+export const dynamic = "force-dynamic";
 
 export default async function IncidentDetail({
   params,
@@ -357,6 +357,53 @@ export default async function IncidentDetail({
             />
             <div className="max-h-[720px] overflow-y-auto">
               <Timeline events={(timeline?.events ?? []).slice().reverse()} />
+            </div>
+          </Card>
+
+          <Card padded={false}>
+            <CardHeader
+              title="Cloud Trace"
+              subtitle="Every tool call, effect, and specialist turn under one incident trace"
+              right={
+                <Badge tone={detail.trace.enabled ? "green" : "neutral"} dot={detail.trace.enabled}>
+                  {detail.trace.enabled ? "exporting" : "not enabled"}
+                </Badge>
+              }
+            />
+            <div className="p-4">
+              {detail.trace.root_trace_id ? (
+                <>
+                  <div className="text-[11px] tracking-wide text-[#737373] uppercase">
+                    Root trace
+                  </div>
+                  <Mono className="mt-1 block break-all text-[12px] text-[#171717]">
+                    {detail.trace.root_trace_id}
+                  </Mono>
+                  {detail.trace.console_url ? (
+                    <a
+                      href={detail.trace.console_url}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="mt-3 inline-block text-[13px] font-medium text-[#2563eb] hover:underline"
+                    >
+                      Open in Cloud Trace →
+                    </a>
+                  ) : null}
+                  <p className="mt-3 text-[12px] leading-relaxed text-[#737373]">
+                    {detail.trace.trace_ids.length} trace
+                    {detail.trace.trace_ids.length === 1 ? "" : "s"} recorded on this
+                    incident&apos;s receipts. Each receipt carries the trace it committed
+                    under, so the ledger and the execution are joinable.
+                  </p>
+                </>
+              ) : (
+                <p className="text-[13px] leading-relaxed text-[#737373]">
+                  No trace was recorded for this incident. Tracing is enabled with{" "}
+                  <Mono>NIGHTSHIFT_TRACING=1</Mono> and exports to Cloud Trace when a
+                  project is configured; it is deliberately inert otherwise, so a
+                  tracing failure can never affect a rescue.
+                </p>
+              )}
             </div>
           </Card>
 

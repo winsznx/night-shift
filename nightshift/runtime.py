@@ -10,6 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
+from nightshift.common import otel
 from nightshift.common.config import Settings, get_settings
 from nightshift.common.skills import skill_refs
 from nightshift.schemas.enums import AgentName
@@ -80,6 +81,7 @@ def build_runtime(
     fault_hook: Any = None,
 ) -> Runtime:
     settings = settings or get_settings()
+    otel.configure_tracing(settings, service_name="runtime")
     namespace = namespace or settings.namespace
     backend = store_backend or settings.store_backend
 

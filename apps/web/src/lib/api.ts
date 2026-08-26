@@ -56,6 +56,7 @@ export interface Meta {
   store_backend: string;
   signer_backend: string;
   model_armor_configured: boolean;
+  tracing: { enabled: boolean; requested: boolean; project_id: string; exporter: string };
   evaluated_at: string;
 }
 
@@ -158,6 +159,12 @@ export interface IncidentDetail {
     }[];
   };
   evaluated_at: string;
+  trace: {
+    root_trace_id: string | null;
+    trace_ids: string[];
+    console_url: string;
+    enabled: boolean;
+  };
   freezer: FreezerRow | null;
   temperature_series: { id: string; celsius: number; recorded_at: string }[];
   impact: {

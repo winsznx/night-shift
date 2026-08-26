@@ -18,6 +18,7 @@ from typing import Any
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.responses import JSONResponse
 
+from nightshift.common import otel
 from nightshift.common.config import Settings, get_settings
 from nightshift.safety_kernel.decision import Decision
 from services.common.identity import (
@@ -81,6 +82,7 @@ def create_app(
     repository: Repository | None = None,
 ) -> FastAPI:
     settings = settings or get_settings()
+    otel.configure_tracing(settings, service_name=service_name)
     app = FastAPI(title=title, description=description, version="1.0.0")
     app.state.settings = settings
     app.state.service_name = service_name
@@ -103,6 +105,7 @@ def create_app(
             "namespace": app.state.repository.namespace,
             "env": settings.deployment_env,
             "commit": settings.source_commit,
+            "tracing": otel.tracing_status(),
         }
 
     return app

@@ -20,6 +20,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+from nightshift.common import otel
 from nightshift.common.clock import age_seconds, now_iso
 from nightshift.common.config import get_settings
 from nightshift.common.skills import load_skills
@@ -152,6 +153,7 @@ async def meta() -> dict[str, Any]:
         "store_backend": repo().store.backend,
         "signer_backend": "cloud-kms" if settings.kms_key else "local-ec-p256",
         "model_armor_configured": bool(settings.model_armor_template),
+        "tracing": otel.tracing_status(),
         "evaluated_at": now_iso(),
     }
 
@@ -244,9 +246,23 @@ async def get_incident(incident_id: str, namespace: str | None = None) -> dict[s
     freezer = r.get_freezer(incident.failed_freezer_id)
     readings = r.list_readings(incident.failed_freezer_id)
 
+    trace_ids = sorted(
+        {rc.trace_id for rc in r.list_receipts(incident_id) if rc.trace_id}
+        | ({incident.trace_root_id} if incident.trace_root_id else set())
+    )
     return {
         "incident": incident.model_dump(mode="json"),
         "evaluated_at": now,
+        "trace": {
+            "root_trace_id": incident.trace_root_id,
+            "trace_ids": trace_ids,
+            "console_url": (
+                otel.cloud_trace_url(incident.trace_root_id, settings.project_id)
+                if incident.trace_root_id
+                else ""
+            ),
+            "enabled": otel.tracing_status()["enabled"],
+        },
         "freezer": freezer.model_dump(mode="json") if freezer else None,
         "temperature_series": [
             {"id": x.id, "celsius": x.celsius, "recorded_at": x.recorded_at}

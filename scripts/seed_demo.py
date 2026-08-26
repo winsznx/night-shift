@@ -108,7 +108,14 @@ async def main() -> int:
             "semantic_governance_mode": runtime.semantic_policy.mode,
             "observations": len(runtime.semantic_policy.observations),
         },
-        trace_ids=[],
+        trace_ids=sorted(
+            {rc.trace_id for rc in state.receipts.values() if rc.trace_id}
+            | (
+                {state.incident.trace_root_id}
+                if state.incident and state.incident.trace_root_id
+                else set()
+            )
+        ),
         delivered_event_ids=run.delivered_event_ids,
         source_commit=source_commit(),
         deployment_env=settings.deployment_env,

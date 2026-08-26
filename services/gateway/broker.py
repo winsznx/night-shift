@@ -22,6 +22,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
+from nightshift.common import otel
 from nightshift.common.clock import now_iso
 from nightshift.safety_kernel.authority import TOOL_REGISTRY, authorize_tool
 from nightshift.safety_kernel.decision import Decision
@@ -74,6 +75,7 @@ class ToolCallRecord:
     screen_findings: dict[str, Any] = field(default_factory=dict)
     fault_injected: str | None = None
     latency_ms: float = 0.0
+    trace_id: str | None = None
 
 
 @dataclass
@@ -111,24 +113,56 @@ class ToolBroker:
 
         started = time.perf_counter()
         record = ToolCallRecord(tool=tool_name, agent=agent.value, at=now_iso(), allowed=False)
+        spec = TOOL_REGISTRY.get(tool_name)
 
-        try:
-            if not system:
-                self._budget_check(record)
-            self._authorize(agent, tool_name, record)
-            self._semantic(agent, tool_name, payload, record)
-            self._inject_fault(tool_name, payload, record)
+        with otel.span(
+            f"tool.{tool_name}",
+            **{
+                otel.ATTR_TOOL: tool_name,
+                otel.ATTR_AGENT: agent.value,
+                otel.ATTR_SERVICE: spec.service if spec else "unregistered",
+                otel.ATTR_INCIDENT: payload.get("incident_id"),
+                otel.ATTR_ACTION_ID: payload.get("action_id"),
+            },
+        ):
+            try:
+                if not system:
+                    self._budget_check(record)
+                self._authorize(agent, tool_name, record)
+                self._semantic(agent, tool_name, payload, record)
+                self._inject_fault(tool_name, payload, record)
 
-            result = self.transport.invoke(tool_name, self.principal_token_for(agent), payload)
-            result = self._screen_response(tool_name, result, record)
-            record.allowed = True
-            record.duplicate = bool(result.get("duplicate_returned"))
-            return result
-        finally:
-            record.latency_ms = round((time.perf_counter() - started) * 1000, 2)
-            self.records.append(record)
-            if self.on_record is not None:
-                self.on_record(record)
+                result = self.transport.invoke(tool_name, self.principal_token_for(agent), payload)
+                result = self._screen_response(tool_name, result, record)
+                record.allowed = True
+                record.duplicate = bool(result.get("duplicate_returned"))
+                otel.set_attributes(
+                    **{
+                        otel.ATTR_DUPLICATE: record.duplicate,
+                        otel.ATTR_POLICY: record.policy_verdict,
+                        otel.ATTR_SCREEN: record.screen_findings.get("match_state"),
+                        otel.ATTR_DECISION: "ALLOW",
+                    }
+                )
+                return result
+            except BrokerDeniedError as denied:
+                otel.set_attributes(
+                    **{
+                        otel.ATTR_DECISION: "REFUSE",
+                        otel.ATTR_INVARIANT: denied.decision.invariant,
+                        otel.ATTR_FAILURE_CLASS: denied.decision.failure_class.value,
+                    }
+                )
+                raise
+            except Exception as exc:
+                otel.record_exception(exc)
+                raise
+            finally:
+                record.latency_ms = round((time.perf_counter() - started) * 1000, 2)
+                record.trace_id = otel.current_trace_id()
+                self.records.append(record)
+                if self.on_record is not None:
+                    self.on_record(record)
 
     # -- layers ---------------------------------------------------------------------
 

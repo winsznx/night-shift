@@ -22,6 +22,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
+from nightshift.common import otel
 from nightshift.common.clock import now_iso
 from nightshift.common.ids import event_id
 from nightshift.common.store import TxnContext
@@ -89,9 +90,7 @@ def commit_effect(
             if existing.status is ActionStatus.COMMITTED:
                 return EffectOutcome(
                     receipt=existing.model_copy(update={"duplicate_returned": True}),
-                    decision=Decision(
-                        verdict=Verdict.ALLOW, reason="existing receipt replayed"
-                    ),
+                    decision=Decision(verdict=Verdict.ALLOW, reason="existing receipt replayed"),
                     duplicate=True,
                 )
 
@@ -141,7 +140,30 @@ def commit_effect(
         )
         return EffectOutcome(receipt=receipt, decision=decision, duplicate=False)
 
-    return repo.store.run_transaction(txn)
+    with otel.span(
+        f"effect.{request.action_type.value.lower()}",
+        **{
+            otel.ATTR_INCIDENT: request.incident_id,
+            otel.ATTR_ACTION_ID: request.action_id,
+            otel.ATTR_ACTION_TYPE: request.action_type.value,
+            otel.ATTR_AGENT: request.actor_identity,
+            otel.ATTR_AGENT_REVISION: request.requested_by_agent_revision,
+        },
+    ):
+        # The receipt records the trace it was committed under, so an auditor holding a
+        # manifest can find the exact execution in Cloud Trace.
+        trace_id = trace_id or otel.current_trace_id()
+        outcome = repo.store.run_transaction(txn)
+        otel.set_attributes(
+            **{
+                otel.ATTR_RECEIPT: outcome.receipt.receipt_id,
+                otel.ATTR_DECISION: outcome.receipt.status.value,
+                otel.ATTR_DUPLICATE: outcome.duplicate,
+                otel.ATTR_INVARIANT: outcome.decision.invariant,
+                otel.ATTR_FAILURE_CLASS: outcome.receipt.failure_class.value,
+            }
+        )
+        return outcome
 
 
 def _receipt(

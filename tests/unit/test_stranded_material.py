@@ -21,8 +21,7 @@ from tests import builders as b
 
 def _state(*, custody: CustodyState, freezer_id: str, incident_state: IncidentState):
     containers = {
-        cid: b.container(cid, custody=custody, freezer_id=freezer_id)
-        for cid in ("C-001", "C-002")
+        cid: b.container(cid, custody=custody, freezer_id=freezer_id) for cid in ("C-001", "C-002")
     }
     return b.base_state(
         incident=b.incident(state=incident_state),
