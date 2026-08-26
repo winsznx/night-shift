@@ -327,8 +327,13 @@ def main() -> int:  # pragma: no cover - CLI
         status = (
             "INFRA" if row.infrastructure_error else ("pass" if row.passed else "FAIL")
         )
-        print(f"  [{row.run_index:>4}] {row.driver:<9} {row.drill_id:<4} seed={row.seed} "
-              f"{status:<5} {row.final_state}")
+        # flush: a long campaign is watched through a log file, and buffered progress
+        # is indistinguishable from a hung run.
+        print(
+            f"  [{row.run_index:>4}] {row.driver:<9} {row.drill_id:<4} seed={row.seed} "
+            f"{status:<5} {row.final_state}",
+            flush=True,
+        )
 
     campaign = asyncio.run(
         run_campaign(

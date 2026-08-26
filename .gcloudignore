@@ -1,0 +1,17 @@
+# Anchored with a leading slash on purpose. An unanchored `evidence/` also matches
+# `nightshift/evidence/`, which silently stripped a package out of the build context
+# and produced a ModuleNotFoundError only at container start.
+/.git/
+/.venv/
+/node_modules/
+/apps/web/node_modules/
+/apps/web/.next/
+/evidence/
+/keys/
+/tests/
+/.env
+/.pytest_cache/
+/.ruff_cache/
+/.mypy_cache/
+__pycache__/
+*.pyc
