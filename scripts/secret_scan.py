@@ -26,9 +26,32 @@ ALLOWED = {".env.example", "scripts/secret_scan.py", "SECURITY.md", "SETUP.md"}
 SKIP_SUFFIXES = {".pub.pem", ".lock", ".png", ".jpg", ".svg", ".ico", ".woff2"}
 
 
+SKIP_DIRS = {
+    ".git", ".venv", "node_modules", "__pycache__", ".next", ".ruff_cache",
+    ".pytest_cache", ".mypy_cache", "dist", "build",
+}
+
+
 def tracked_files() -> list[str]:
-    out = subprocess.run(["git", "ls-files"], capture_output=True, text=True, check=True)
-    return [line for line in out.stdout.splitlines() if line]
+    """Files to scan.
+
+    Prefers `git ls-files`, which scans exactly what would be published. Falls back to
+    walking the tree when there is no git repo — the clean-room reproduction extracts a
+    `git archive` tarball, which has no `.git`, and a scanner that crashes there is a
+    scanner that silently stops protecting the one place it matters most.
+    """
+    try:
+        out = subprocess.run(
+            ["git", "ls-files"], capture_output=True, text=True, check=True
+        )
+        return [line for line in out.stdout.splitlines() if line]
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        root = Path(".")
+        return [
+            str(p)
+            for p in root.rglob("*")
+            if p.is_file() and not any(part in SKIP_DIRS for part in p.parts)
+        ]
 
 
 def main() -> int:
