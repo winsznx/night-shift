@@ -16,7 +16,7 @@ from nightshift.safety_kernel.authority import (
     domains_for,
     is_registered_tool,
 )
-from nightshift.safety_kernel.config import KernelConfig, DEFAULT_CONFIG
+from nightshift.safety_kernel.config import DEFAULT_CONFIG, KernelConfig
 from nightshift.safety_kernel.decision import Decision, Verdict, allow, refuse
 from nightshift.safety_kernel.invariants import (
     INVARIANTS,
@@ -53,16 +53,16 @@ from nightshift.safety_kernel.world import (
 
 __all__ = [
     "AGENT_TOOL_DOMAINS",
-    "ActionRequest",
     "DEFAULT_CONFIG",
-    "Decision",
     "INCIDENT_TRANSITIONS",
     "INVARIANTS",
+    "TOOL_REGISTRY",
+    "ActionRequest",
+    "Decision",
     "InvariantResult",
     "KernelConfig",
     "KernelState",
     "ReconciliationSnapshot",
-    "TOOL_REGISTRY",
     "ToolSpec",
     "Verdict",
     "allow",

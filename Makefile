@@ -125,3 +125,7 @@ e2e: ## Run the Playwright judge-path suite
 .PHONY: clean-room
 clean-room: ## Reproduce from a clean clone in a temp directory
 	@./scripts/clean_room.sh
+
+.PHONY: deploy-web
+deploy-web: ## Build and deploy the web app to Cloud Run
+	./infra/deploy/deploy_web.sh $(PROJECT) $(REGION)

@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-26T04:28:18.224Z",
-  "source_commit": "c317cf9",
+  "generated_at": "2026-08-26T05:05:32.737Z",
+  "source_commit": "08139d1",
   "note": "Every number in this file is read from the campaign results, never typed. Regenerate with: uv run python scripts/generate_claims.py",
   "claims": [
     {
@@ -10,8 +10,8 @@
       "evidence": "evidence/campaign/results.json",
       "reproduce": "make evidence",
       "limitation": "Deterministic tier only: a fixed policy replaces the model. Proves the kernel and services hold, not that agents behave well. Zero observed is over this corpus at this commit, not a proof of impossibility.",
-      "date": "2026-08-26T04:28:18.045Z",
-      "source_commit": "c317cf9"
+      "date": "2026-08-26T05:05:32.525Z",
+      "source_commit": "08139d1"
     },
     {
       "id": "C-02",
@@ -20,18 +20,18 @@
       "evidence": "evidence/campaign/results.json",
       "reproduce": "make evidence",
       "limitation": "Faults are injected at the tool transport boundary. Faults inside Firestore's own commit path are not simulated.",
-      "date": "2026-08-26T04:28:18.063Z",
-      "source_commit": "c317cf9"
+      "date": "2026-08-26T05:05:32.549Z",
+      "source_commit": "08139d1"
     },
     {
       "id": "C-03",
-      "claim": "67 tool calls returned an existing receipt instead of creating a second effect.",
+      "claim": "6 tool calls returned an existing receipt instead of creating a second effect.",
       "status": "local",
       "evidence": "evidence/campaign/results.json",
       "reproduce": "make evidence",
       "limitation": "Counted at the broker; the underlying services enforce it independently.",
-      "date": "2026-08-26T04:28:18.079Z",
-      "source_commit": "c317cf9"
+      "date": "2026-08-26T05:05:32.565Z",
+      "source_commit": "08139d1"
     },
     {
       "id": "C-04",
@@ -40,8 +40,8 @@
       "evidence": "evidence/campaign/results.json",
       "reproduce": "make evidence",
       "limitation": "These are broker and service-layer denials. The Cloud Run IAM denial is a separate, additional layer verified during deployment.",
-      "date": "2026-08-26T04:28:18.095Z",
-      "source_commit": "c317cf9"
+      "date": "2026-08-26T05:05:32.580Z",
+      "source_commit": "08139d1"
     },
     {
       "id": "C-05",
@@ -50,8 +50,18 @@
       "evidence": "evidence/campaign/results.json",
       "reproduce": "make evidence",
       "limitation": "Expectations are properties of the outcome, not scenario identifiers.",
-      "date": "2026-08-26T04:28:18.111Z",
-      "source_commit": "c317cf9"
+      "date": "2026-08-26T05:05:32.596Z",
+      "source_commit": "08139d1"
+    },
+    {
+      "id": "C-06",
+      "claim": "With the live Gemini 3.5 Flash fleet driving the same corpus, 17 of 18 scored runs passed, with 0 N1 violations and 0 N2 violations.",
+      "status": "live",
+      "evidence": "evidence/campaign-agent/results.json",
+      "reproduce": "make evidence-agent",
+      "limitation": "A much smaller sample than the deterministic tier because each run takes minutes. Reported separately and never pooled.",
+      "date": "2026-08-26T05:05:32.611Z",
+      "source_commit": "08139d1"
     },
     {
       "id": "C-07",
@@ -60,8 +70,8 @@
       "evidence": "docs/SPIKE_RESULTS.md",
       "reproduce": "make spike",
       "limitation": "Observed on google-adk 2.7.1 with an in-memory session service. Two other interruption shapes did not re-invoke; all three are published.",
-      "date": "2026-08-26T04:28:18.126Z",
-      "source_commit": "c317cf9"
+      "date": "2026-08-26T05:05:32.627Z",
+      "source_commit": "08139d1"
     },
     {
       "id": "C-08",
@@ -70,8 +80,8 @@
       "evidence": "docs/SPIKE_RESULTS.md",
       "reproduce": "curl -X POST .../templates/nightshift-vendor-content:sanitizeUserPrompt",
       "limitation": "One payload family, not a detection rate. Night Shift never relies on Model Armor alone: the Dispatch Agent holds no inventory authority regardless of what any screening layer concludes.",
-      "date": "2026-08-26T04:28:18.143Z",
-      "source_commit": "c317cf9"
+      "date": "2026-08-26T05:05:32.646Z",
+      "source_commit": "08139d1"
     },
     {
       "id": "C-09",
@@ -80,8 +90,8 @@
       "evidence": "tests/unit/test_evidence_and_verifier.py",
       "reproduce": "uv run pytest tests/unit/test_evidence_and_verifier.py -q",
       "limitation": "Proves the stored verdict follows from the stored state and that the state was signed by the published key holder. It cannot prove the state describes the physical world.",
-      "date": "2026-08-26T04:28:18.158Z",
-      "source_commit": "c317cf9"
+      "date": "2026-08-26T05:05:32.661Z",
+      "source_commit": "08139d1"
     },
     {
       "id": "C-10",
@@ -90,18 +100,18 @@
       "evidence": "evidence/incidents/*.manifest.json",
       "reproduce": "python -m nightshift.verify --manifest evidence/incidents/<id>.manifest.json",
       "limitation": "A local EC key is used as a documented fallback when KMS is unreachable; the backend that actually signed is recorded in the manifest.",
-      "date": "2026-08-26T04:28:18.174Z",
-      "source_commit": "c317cf9"
+      "date": "2026-08-26T05:05:32.677Z",
+      "source_commit": "08139d1"
     },
     {
       "id": "C-11",
       "claim": "Field movements in the demo are simulated. No real biobank samples were moved and no real patient or research data exists anywhere in the fixture.",
       "status": "synthetic",
       "evidence": "fixtures/estate.py, services/simulator/ingest.py",
-      "reproduce": "uv run python -c \"from fixtures.estate import build_estate; print(build_estate().site)\"",
+      "reproduce": "uv run python -c 'from fixtures.estate import build_estate; print(build_estate().site)'",
       "limitation": "This is a statement of scope, not a measurement. The field simulator refuses to run outside demo, drill, and test namespaces.",
-      "date": "2026-08-26T04:28:18.190Z",
-      "source_commit": "c317cf9"
+      "date": "2026-08-26T05:05:32.693Z",
+      "source_commit": "08139d1"
     },
     {
       "id": "C-12",
@@ -110,8 +120,18 @@
       "evidence": "infra/deploy/deploy_services.sh, infra/deploy/urls.env",
       "reproduce": "make deploy && make smoke-live",
       "limitation": "Agents are not registered as managed Agent Registry or Agent Runtime resources; see LIMITATIONS.md.",
-      "date": "2026-08-26T04:28:18.206Z",
-      "source_commit": "c317cf9"
+      "date": "2026-08-26T05:05:32.708Z",
+      "source_commit": "08139d1"
+    },
+    {
+      "id": "C-13",
+      "claim": "1 incident manifest(s) are published, of which 0 reached CLOSED with every impacted container in a terminal custody state.",
+      "status": "live",
+      "evidence": "evidence/incidents/",
+      "reproduce": "make verify-demo",
+      "limitation": "Synthetic estate; simulated responder movements.",
+      "date": "2026-08-26T05:05:32.723Z",
+      "source_commit": "08139d1"
     }
   ]
 }

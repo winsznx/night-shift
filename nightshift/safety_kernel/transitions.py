@@ -27,51 +27,117 @@ from nightshift.schemas.enums import (
 _S = IncidentState
 
 INCIDENT_TRANSITIONS: dict[IncidentState, frozenset[IncidentState]] = {
-    _S.OBSERVING: frozenset({
-        _S.CONFIRMED, _S.ABORTED_SAFE, _S.NEEDS_REASSESSMENT, _S.ESCALATED,
-    }),
-    _S.CONFIRMED: frozenset({
-        _S.CONTAINED, _S.NEEDS_REASSESSMENT, _S.ESCALATED, _S.ABORTED_SAFE,
-    }),
-    _S.CONTAINED: frozenset({
-        _S.RESCUE_PLANNING, _S.NEEDS_REASSESSMENT, _S.ESCALATED, _S.PARTIAL,
-    }),
-    _S.RESCUE_PLANNING: frozenset({
-        _S.CAPACITY_RESERVED, _S.NEEDS_REASSESSMENT, _S.ESCALATED, _S.PARTIAL,
-    }),
-    _S.CAPACITY_RESERVED: frozenset({
-        _S.DISPATCHED, _S.RESCUE_PLANNING, _S.NEEDS_REASSESSMENT, _S.ESCALATED, _S.PARTIAL,
-    }),
-    _S.DISPATCHED: frozenset({
-        _S.TRANSFER_IN_PROGRESS, _S.RESCUE_PLANNING, _S.NEEDS_REASSESSMENT,
-        _S.ESCALATED, _S.PARTIAL,
-    }),
-    _S.TRANSFER_IN_PROGRESS: frozenset({
-        _S.RECOVERY_MONITORING, _S.RECONCILING, _S.RESCUE_PLANNING,
-        _S.NEEDS_REASSESSMENT, _S.ESCALATED, _S.PARTIAL,
-    }),
-    _S.RECOVERY_MONITORING: frozenset({
-        _S.RECONCILING, _S.NEEDS_REASSESSMENT, _S.ESCALATED, _S.PARTIAL,
-    }),
-    _S.RECONCILING: frozenset({
-        _S.CLOSED, _S.PARTIAL, _S.NEEDS_REASSESSMENT, _S.ESCALATED,
-    }),
+    _S.OBSERVING: frozenset(
+        {
+            _S.CONFIRMED,
+            _S.ABORTED_SAFE,
+            _S.NEEDS_REASSESSMENT,
+            _S.ESCALATED,
+        }
+    ),
+    _S.CONFIRMED: frozenset(
+        {
+            _S.CONTAINED,
+            _S.NEEDS_REASSESSMENT,
+            _S.ESCALATED,
+            _S.ABORTED_SAFE,
+        }
+    ),
+    _S.CONTAINED: frozenset(
+        {
+            _S.RESCUE_PLANNING,
+            _S.NEEDS_REASSESSMENT,
+            _S.ESCALATED,
+            _S.PARTIAL,
+        }
+    ),
+    _S.RESCUE_PLANNING: frozenset(
+        {
+            _S.CAPACITY_RESERVED,
+            _S.NEEDS_REASSESSMENT,
+            _S.ESCALATED,
+            _S.PARTIAL,
+        }
+    ),
+    _S.CAPACITY_RESERVED: frozenset(
+        {
+            _S.DISPATCHED,
+            _S.RESCUE_PLANNING,
+            _S.NEEDS_REASSESSMENT,
+            _S.ESCALATED,
+            _S.PARTIAL,
+        }
+    ),
+    _S.DISPATCHED: frozenset(
+        {
+            _S.TRANSFER_IN_PROGRESS,
+            _S.RESCUE_PLANNING,
+            _S.NEEDS_REASSESSMENT,
+            _S.ESCALATED,
+            _S.PARTIAL,
+        }
+    ),
+    _S.TRANSFER_IN_PROGRESS: frozenset(
+        {
+            _S.RECOVERY_MONITORING,
+            _S.RECONCILING,
+            _S.RESCUE_PLANNING,
+            _S.NEEDS_REASSESSMENT,
+            _S.ESCALATED,
+            _S.PARTIAL,
+        }
+    ),
+    _S.RECOVERY_MONITORING: frozenset(
+        {
+            _S.RECONCILING,
+            _S.NEEDS_REASSESSMENT,
+            _S.ESCALATED,
+            _S.PARTIAL,
+        }
+    ),
+    _S.RECONCILING: frozenset(
+        {
+            _S.CLOSED,
+            _S.PARTIAL,
+            _S.NEEDS_REASSESSMENT,
+            _S.ESCALATED,
+        }
+    ),
     _S.CLOSED: frozenset(),
     _S.ABORTED_SAFE: frozenset(),
-
     # Non-success states are recoverable — that is the point of having them.
-    _S.NEEDS_REASSESSMENT: frozenset({
-        _S.OBSERVING, _S.CONFIRMED, _S.CONTAINED, _S.RESCUE_PLANNING,
-        _S.CAPACITY_RESERVED, _S.DISPATCHED, _S.TRANSFER_IN_PROGRESS,
-        _S.RECOVERY_MONITORING, _S.RECONCILING, _S.ESCALATED, _S.ABORTED_SAFE,
-    }),
-    _S.ESCALATED: frozenset({
-        _S.RESCUE_PLANNING, _S.RECONCILING, _S.PARTIAL, _S.ABORTED_SAFE,
-        _S.NEEDS_REASSESSMENT,
-    }),
-    _S.PARTIAL: frozenset({
-        _S.RECONCILING, _S.ESCALATED, _S.NEEDS_REASSESSMENT, _S.ABORTED_SAFE,
-    }),
+    _S.NEEDS_REASSESSMENT: frozenset(
+        {
+            _S.OBSERVING,
+            _S.CONFIRMED,
+            _S.CONTAINED,
+            _S.RESCUE_PLANNING,
+            _S.CAPACITY_RESERVED,
+            _S.DISPATCHED,
+            _S.TRANSFER_IN_PROGRESS,
+            _S.RECOVERY_MONITORING,
+            _S.RECONCILING,
+            _S.ESCALATED,
+            _S.ABORTED_SAFE,
+        }
+    ),
+    _S.ESCALATED: frozenset(
+        {
+            _S.RESCUE_PLANNING,
+            _S.RECONCILING,
+            _S.PARTIAL,
+            _S.ABORTED_SAFE,
+            _S.NEEDS_REASSESSMENT,
+        }
+    ),
+    _S.PARTIAL: frozenset(
+        {
+            _S.RECONCILING,
+            _S.ESCALATED,
+            _S.NEEDS_REASSESSMENT,
+            _S.ABORTED_SAFE,
+        }
+    ),
 }
 
 
@@ -94,8 +160,11 @@ def can_transition_incident(
         return refuse(
             "SM-INCIDENT",
             f"{frm.value} -> {to_state.value} is not a legal transition",
-            detail={"from": frm.value, "to": to_state.value,
-                    "legal": sorted(s.value for s in allowed)},
+            detail={
+                "from": frm.value,
+                "to": to_state.value,
+                "legal": sorted(s.value for s in allowed),
+            },
         )
 
     guard = _INCIDENT_ENTRY_GUARDS.get(to_state)
@@ -120,8 +189,11 @@ def _guard_confirmed(state: KernelState, config: KernelConfig) -> Decision:
         return allow({"basis": "freezer already recorded FAILED"})
     if freezer.current_temp_c > freezer.alarm_high_c:
         return allow(
-            {"basis": "current temperature above alarm threshold",
-             "current_temp_c": freezer.current_temp_c, "alarm_high_c": freezer.alarm_high_c}
+            {
+                "basis": "current temperature above alarm threshold",
+                "current_temp_c": freezer.current_temp_c,
+                "alarm_high_c": freezer.alarm_high_c,
+            }
         )
     return refuse(
         "SM-INCIDENT",
@@ -167,7 +239,8 @@ def _guard_rescue_planning(state: KernelState, _c: KernelConfig) -> Decision:
 def _guard_capacity_reserved(state: KernelState, _c: KernelConfig) -> Decision:
     assert state.incident is not None
     live = [
-        r for r in state.reservations.values()
+        r
+        for r in state.reservations.values()
         if r.incident_id == state.incident.id
         and r.state in {ReservationState.ACTIVE, ReservationState.CONSUMED}
     ]
@@ -263,12 +336,20 @@ def freezer_transition_allowed(frm: FreezerState, to: FreezerState) -> bool:
 # --------------------------------------------------------------------------------------
 
 RESERVATION_TRANSITIONS: dict[ReservationState, frozenset[ReservationState]] = {
-    ReservationState.PROPOSED: frozenset({
-        ReservationState.ACTIVE, ReservationState.RELEASED, ReservationState.INVALIDATED,
-    }),
-    ReservationState.ACTIVE: frozenset({
-        ReservationState.CONSUMED, ReservationState.RELEASED, ReservationState.INVALIDATED,
-    }),
+    ReservationState.PROPOSED: frozenset(
+        {
+            ReservationState.ACTIVE,
+            ReservationState.RELEASED,
+            ReservationState.INVALIDATED,
+        }
+    ),
+    ReservationState.ACTIVE: frozenset(
+        {
+            ReservationState.CONSUMED,
+            ReservationState.RELEASED,
+            ReservationState.INVALIDATED,
+        }
+    ),
     ReservationState.CONSUMED: frozenset(),
     ReservationState.RELEASED: frozenset(),
     ReservationState.INVALIDATED: frozenset(),
@@ -284,19 +365,35 @@ def reservation_transition_allowed(frm: ReservationState, to: ReservationState) 
 # --------------------------------------------------------------------------------------
 
 CUSTODY_TRANSITIONS: dict[CustodyState, frozenset[CustodyState]] = {
-    CustodyState.AT_SOURCE: frozenset({
-        CustodyState.PICKED_UP, CustodyState.QUARANTINED, CustodyState.UNRESOLVED,
-    }),
-    CustodyState.PICKED_UP: frozenset({
-        CustodyState.IN_TRANSIT, CustodyState.RECEIVED,
-        CustodyState.QUARANTINED, CustodyState.UNRESOLVED,
-    }),
-    CustodyState.IN_TRANSIT: frozenset({
-        CustodyState.RECEIVED, CustodyState.QUARANTINED, CustodyState.UNRESOLVED,
-    }),
-    CustodyState.RECEIVED: frozenset({
-        CustodyState.COMMITTED, CustodyState.QUARANTINED, CustodyState.UNRESOLVED,
-    }),
+    CustodyState.AT_SOURCE: frozenset(
+        {
+            CustodyState.PICKED_UP,
+            CustodyState.QUARANTINED,
+            CustodyState.UNRESOLVED,
+        }
+    ),
+    CustodyState.PICKED_UP: frozenset(
+        {
+            CustodyState.IN_TRANSIT,
+            CustodyState.RECEIVED,
+            CustodyState.QUARANTINED,
+            CustodyState.UNRESOLVED,
+        }
+    ),
+    CustodyState.IN_TRANSIT: frozenset(
+        {
+            CustodyState.RECEIVED,
+            CustodyState.QUARANTINED,
+            CustodyState.UNRESOLVED,
+        }
+    ),
+    CustodyState.RECEIVED: frozenset(
+        {
+            CustodyState.COMMITTED,
+            CustodyState.QUARANTINED,
+            CustodyState.UNRESOLVED,
+        }
+    ),
     CustodyState.COMMITTED: frozenset(),
     # An unresolved container can still be dispositioned by a human — that is how it
     # eventually reaches a terminal state without inventing a reconciliation.

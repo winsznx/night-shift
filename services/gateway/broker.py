@@ -24,11 +24,11 @@ from typing import Any, Protocol
 
 from nightshift.common.clock import now_iso
 from nightshift.safety_kernel.authority import TOOL_REGISTRY, authorize_tool
-from nightshift.safety_kernel.decision import Decision, allow
+from nightshift.safety_kernel.decision import Decision
 from nightshift.schemas.enums import AgentName, DenialReason, FailureClass
 
 
-class BrokerDenied(RuntimeError):
+class BrokerDeniedError(RuntimeError):
     """The broker refused the call. Carries the kernel decision for the ledger."""
 
     def __init__(self, decision: Decision) -> None:
@@ -53,8 +53,9 @@ class ContentScreen(Protocol):
 class SemanticPolicy(Protocol):
     """Semantic Governance or an equivalent. Advisory only."""
 
-    def evaluate(self, agent: AgentName, tool_name: str,
-                 payload: dict[str, Any]) -> tuple[str, str]: ...
+    def evaluate(
+        self, agent: AgentName, tool_name: str, payload: dict[str, Any]
+    ) -> tuple[str, str]: ...
 
 
 FaultHook = Callable[[str, str, int], None]
@@ -118,9 +119,7 @@ class ToolBroker:
             self._semantic(agent, tool_name, payload, record)
             self._inject_fault(tool_name, payload, record)
 
-            result = self.transport.invoke(
-                tool_name, self.principal_token_for(agent), payload
-            )
+            result = self.transport.invoke(tool_name, self.principal_token_for(agent), payload)
             result = self._screen_response(tool_name, result, record)
             record.allowed = True
             record.duplicate = bool(result.get("duplicate_returned"))
@@ -146,13 +145,13 @@ class ToolBroker:
                 failure_class=FailureClass.POLICY_DENIAL,
             )
             record.denial = decision.as_dict()
-            raise BrokerDenied(decision)
+            raise BrokerDeniedError(decision)
 
     def _authorize(self, agent: AgentName, tool_name: str, record: ToolCallRecord) -> None:
         decision = authorize_tool(agent, tool_name)
         if not decision.allowed:
             record.denial = decision.as_dict()
-            raise BrokerDenied(decision)
+            raise BrokerDeniedError(decision)
 
     def _semantic(
         self, agent: AgentName, tool_name: str, payload: dict[str, Any], record: ToolCallRecord
@@ -173,7 +172,7 @@ class ToolBroker:
                 failure_class=FailureClass.POLICY_DENIAL,
             )
             record.denial = decision.as_dict()
-            raise BrokerDenied(decision)
+            raise BrokerDeniedError(decision)
 
     def _inject_fault(
         self, tool_name: str, payload: dict[str, Any], record: ToolCallRecord

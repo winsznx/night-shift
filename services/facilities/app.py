@@ -233,8 +233,9 @@ def _pick_responder(repo: Repository, role: ResponderRole) -> str:
         (r for r in repo.list_responders() if r.role is role and r.on_call), key=lambda r: r.id
     )
     if not candidates:
-        candidates = sorted((r for r in repo.list_responders() if r.role is role),
-                            key=lambda r: r.id)
+        candidates = sorted(
+            (r for r in repo.list_responders() if r.role is role), key=lambda r: r.id
+        )
     return candidates[0].id if candidates else ""
 
 
@@ -260,8 +261,11 @@ async def record_repair_status(
         if wo is None:
             raise ValueError(f"work order {body.work_order_id!r} does not exist")
         events = [*wo.repair_events, {"at": req.now, "status": body.status, "note": body.note}]
-        status_map = {"IN_PROGRESS": "IN_PROGRESS", "RESOLVED": "RESOLVED",
-                      "CANCELLED": "CANCELLED"}
+        status_map = {
+            "IN_PROGRESS": "IN_PROGRESS",
+            "RESOLVED": "RESOLVED",
+            "CANCELLED": "CANCELLED",
+        }
         updated = wo.model_copy(
             update={"repair_events": events, "status": status_map.get(body.status, wo.status)}
         )
@@ -289,8 +293,9 @@ async def send_vendor_message(
     or specimen metadata, it does not leave. This is the layer that still holds when
     Model Armor is unavailable (PRD §32.7).
     """
-    findings = [label for pattern, label in _FORBIDDEN_IN_VENDOR_MESSAGE
-                if pattern.search(body.message)]
+    findings = [
+        label for pattern, label in _FORBIDDEN_IN_VENDOR_MESSAGE if pattern.search(body.message)
+    ]
     if findings:
         record_event(
             repo,
@@ -298,8 +303,7 @@ async def send_vendor_message(
             kind="security",
             source=principal.identity,
             summary=(
-                "Outbound vendor message blocked: it contained "
-                + ", ".join(sorted(set(findings)))
+                "Outbound vendor message blocked: it contained " + ", ".join(sorted(set(findings)))
             ),
             detail={"findings": sorted(set(findings)), "layer": "deterministic egress filter"},
             agent=principal.agent,

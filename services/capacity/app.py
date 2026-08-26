@@ -19,7 +19,7 @@ from nightshift.safety_kernel import ActionRequest, KernelState
 from nightshift.safety_kernel.config import DEFAULT_CONFIG
 from nightshift.safety_kernel.invariants import n4_would_hold
 from nightshift.schemas.core import Reservation
-from nightshift.schemas.enums import ActionType, AgentName, ReservationState
+from nightshift.schemas.enums import ActionType, ReservationState
 from services.common.app import create_app, get_repository, require_tool
 from services.common.effects import EffectResult, commit_effect
 from services.common.identity import AgentPrincipal
@@ -74,8 +74,8 @@ async def list_qualified_destinations(
         reserved = sum(
             r.held_slots
             for r in repo.list_reservations(destination_freezer_id=f.id)
-            if r.state in {ReservationState.PROPOSED, ReservationState.ACTIVE,
-                           ReservationState.CONSUMED}
+            if r.state
+            in {ReservationState.PROPOSED, ReservationState.ACTIVE, ReservationState.CONSUMED}
         )
         temp_ok, temp_reason = n4_would_hold(f.current_temp_c, f.last_reading_at, now)
         held = repo.get_hold(f.id)
@@ -127,8 +127,8 @@ async def get_capacity(
     reserved = sum(
         r.held_slots
         for r in repo.list_reservations(destination_freezer_id=freezer_id)
-        if r.state in {ReservationState.PROPOSED, ReservationState.ACTIVE,
-                       ReservationState.CONSUMED}
+        if r.state
+        in {ReservationState.PROPOSED, ReservationState.ACTIVE, ReservationState.CONSUMED}
     )
     return {
         "freezer_id": freezer_id,
@@ -164,9 +164,7 @@ async def reserve_capacity(
     return reserve_capacity_op(repo, principal, body).as_dict()
 
 
-def reserve_capacity_op(
-    repo: Repository, principal: AgentPrincipal, body: ReserveRequest
-) -> Any:
+def reserve_capacity_op(repo: Repository, principal: AgentPrincipal, body: ReserveRequest) -> Any:
     action_id = reservation_action_id(
         body.incident_id, body.destination_freezer_id, body.placement_group_id
     )

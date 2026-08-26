@@ -2,16 +2,14 @@
 
 from __future__ import annotations
 
-import copy
 import json
 
 import pytest
 
-from nightshift.common.config import get_settings
 from nightshift.evidence.manifest import build_manifest, restore_state, snapshot_state
 from nightshift.evidence.signing import LocalSigner, NullSigner, verify_signature
 from nightshift.evidence.store import write_evidence
-from nightshift.verify.verifier import VerificationStatus, verify_manifest, verify_manifest_file
+from nightshift.verify.verifier import VerificationStatus, verify_manifest_file
 from tests import builders as b
 
 NOW = b.T_NOW
@@ -69,8 +67,12 @@ def test_manifest_carries_the_kernel_config_it_was_evaluated_under(closed_state)
 def test_valid_signed_manifest_passes(closed_state, tmp_path):
     signer = LocalSigner(tmp_path / "keys")
     bundle = write_evidence(
-        closed_state, signer=signer, out_dir=tmp_path, upload=False,
-        evaluated_at=NOW, delivered_event_ids=["e1", "e1"],
+        closed_state,
+        signer=signer,
+        out_dir=tmp_path,
+        upload=False,
+        evaluated_at=NOW,
+        delivered_event_ids=["e1", "e1"],
     )
     result = verify_manifest_file(bundle.manifest_path)
     assert result.status is VerificationStatus.PASS, result.render()
@@ -79,8 +81,12 @@ def test_valid_signed_manifest_passes(closed_state, tmp_path):
 
 def test_unsigned_manifest_is_partial_not_pass(closed_state, tmp_path):
     bundle = write_evidence(
-        closed_state, signer=NullSigner(), out_dir=tmp_path, upload=False,
-        evaluated_at=NOW, delivered_event_ids=["e1"],
+        closed_state,
+        signer=NullSigner(),
+        out_dir=tmp_path,
+        upload=False,
+        evaluated_at=NOW,
+        delivered_event_ids=["e1"],
     )
     result = verify_manifest_file(bundle.manifest_path)
     assert result.status is VerificationStatus.PARTIAL, result.render()
@@ -92,8 +98,12 @@ def test_unsigned_manifest_is_partial_not_pass(closed_state, tmp_path):
 def test_tampering_with_the_state_snapshot_fails_verification(closed_state, tmp_path):
     signer = LocalSigner(tmp_path / "keys")
     bundle = write_evidence(
-        closed_state, signer=signer, out_dir=tmp_path, upload=False,
-        evaluated_at=NOW, delivered_event_ids=["e1"],
+        closed_state,
+        signer=signer,
+        out_dir=tmp_path,
+        upload=False,
+        evaluated_at=NOW,
+        delivered_event_ids=["e1"],
     )
     tampered = json.loads(bundle.manifest_path.read_text())
     # Quietly mark an unresolved container as committed — the kind of edit that would
@@ -112,8 +122,12 @@ def test_tampering_with_the_state_snapshot_fails_verification(closed_state, tmp_
 def test_tampering_with_the_stored_verdict_fails_verification(closed_state, tmp_path):
     signer = LocalSigner(tmp_path / "keys")
     bundle = write_evidence(
-        closed_state, signer=signer, out_dir=tmp_path, upload=False,
-        evaluated_at=NOW, delivered_event_ids=["e1"],
+        closed_state,
+        signer=signer,
+        out_dir=tmp_path,
+        upload=False,
+        evaluated_at=NOW,
+        delivered_event_ids=["e1"],
     )
     tampered = json.loads(bundle.manifest_path.read_text())
     for entry in tampered["invariant_results"]:
@@ -129,8 +143,12 @@ def test_tampering_with_the_stored_verdict_fails_verification(closed_state, tmp_
 def test_tampering_with_the_signature_fails(closed_state, tmp_path):
     signer = LocalSigner(tmp_path / "keys")
     bundle = write_evidence(
-        closed_state, signer=signer, out_dir=tmp_path, upload=False,
-        evaluated_at=NOW, delivered_event_ids=["e1"],
+        closed_state,
+        signer=signer,
+        out_dir=tmp_path,
+        upload=False,
+        evaluated_at=NOW,
+        delivered_event_ids=["e1"],
     )
     tampered = json.loads(bundle.manifest_path.read_text())
     tampered["signature"]["signature_b64"] = "AAAA" + tampered["signature"]["signature_b64"][4:]
@@ -142,8 +160,7 @@ def test_tampering_with_the_signature_fails(closed_state, tmp_path):
     # sidecar must not mask an edit to the copy that travels with the manifest.
     assert any(c.name == "signature (embedded)" and c.ok is False for c in result.checks)
     assert any(
-        c.name == "embedded and detached signatures agree" and c.ok is False
-        for c in result.checks
+        c.name == "embedded and detached signatures agree" and c.ok is False for c in result.checks
     )
 
 
@@ -154,30 +171,37 @@ def test_manifest_claiming_closed_with_unresolved_containers_is_caught(tmp_path)
     state = b.closed_state_all_committed()
     broken = dict(state.containers)
     victim = sorted(broken)[0]
-    broken[victim] = broken[victim].model_copy(
-        update={"custody_state": CustodyState.IN_TRANSIT}
-    )
+    broken[victim] = broken[victim].model_copy(update={"custody_state": CustodyState.IN_TRANSIT})
     from nightshift.safety_kernel.world import KernelState
 
     lying = KernelState(
-        incident=state.incident, freezers=state.freezers, containers=broken,
-        impact=state.impact, reservations=state.reservations, transfers=state.transfers,
-        receipts=state.receipts, revision_states=state.revision_states, holds=state.holds,
+        incident=state.incident,
+        freezers=state.freezers,
+        containers=broken,
+        impact=state.impact,
+        reservations=state.reservations,
+        transfers=state.transfers,
+        receipts=state.receipts,
+        revision_states=state.revision_states,
+        holds=state.holds,
     )
     assert lying.incident is not None and lying.incident.state is IncidentState.CLOSED
 
     signer = LocalSigner(tmp_path / "keys")
     bundle = write_evidence(
-        lying, signer=signer, out_dir=tmp_path, upload=False,
-        evaluated_at=NOW, delivered_event_ids=["e1"],
+        lying,
+        signer=signer,
+        out_dir=tmp_path,
+        upload=False,
+        evaluated_at=NOW,
+        delivered_event_ids=["e1"],
     )
     # The manifest is internally consistent and correctly signed — and still fails,
     # because the recomputed invariants say the incident should not be CLOSED.
     result = verify_manifest_file(bundle.manifest_path)
     assert result.status is VerificationStatus.MISMATCH
     assert any(
-        c.name == "closed incident is fully reconciled" and c.ok is False
-        for c in result.checks
+        c.name == "closed incident is fully reconciled" and c.ok is False for c in result.checks
     )
     assert bundle.manifest["invariants_all_hold"] is False
     assert "N5" in bundle.manifest["failed_invariants"]
@@ -189,8 +213,12 @@ def test_verifier_needs_no_model_or_network(closed_state, tmp_path, monkeypatch)
 
     signer = LocalSigner(tmp_path / "keys")
     bundle = write_evidence(
-        closed_state, signer=signer, out_dir=tmp_path, upload=False,
-        evaluated_at=NOW, delivered_event_ids=["e1"],
+        closed_state,
+        signer=signer,
+        out_dir=tmp_path,
+        upload=False,
+        evaluated_at=NOW,
+        delivered_event_ids=["e1"],
     )
 
     def _no_network(*_a, **_k):

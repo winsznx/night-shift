@@ -110,8 +110,9 @@ class EstateFixture:
         }
 
 
-def build_estate(seed: int = 20260826, *, epoch: str | None = None,
-                 specs: list[FreezerSpec] | None = None) -> EstateFixture:
+def build_estate(
+    seed: int = 20260826, *, epoch: str | None = None, specs: list[FreezerSpec] | None = None
+) -> EstateFixture:
     """Build the estate. ``epoch=None`` anchors telemetry to now; pass one to pin it."""
     rng = random.Random(seed)
     specs = specs or DEFAULT_FREEZERS
@@ -127,7 +128,7 @@ def build_estate(seed: int = 20260826, *, epoch: str | None = None,
     container_seq = 0
 
     for spec in specs:
-        occupied = int(round(spec.total_slots * spec.occupancy))
+        occupied = round(spec.total_slots * spec.occupancy)
         maintenance = _maintenance_for(rng, spec, epoch)
         freezer = Freezer(
             id=spec.fid,
@@ -160,7 +161,9 @@ def build_estate(seed: int = 20260826, *, epoch: str | None = None,
                 Container(
                     id=f"C-{container_seq:04d}",
                     freezer_id=spec.fid,
-                    slot_id=f"{spec.fid}-R{(container_seq % 12) + 1:02d}-P{(container_seq % 6) + 1}",
+                    slot_id=(
+                        f"{spec.fid}-R{(container_seq % 12) + 1:02d}-P{(container_seq % 6) + 1}"
+                    ),
                     kind=rng.choice(["box", "box", "cryobox", "rack"]),
                     study_id=study_id,
                     owner_ref=f"owner-{study_id.lower()}",
@@ -214,8 +217,12 @@ def _maintenance_for(rng: random.Random, spec: FreezerSpec, epoch: str) -> list[
     for i in range(rng.randrange(1, 4)):
         days_ago = rng.randrange(20, 400)
         fault = rng.choice(
-            [FaultClass.DOOR_SEAL, FaultClass.CONTROLLER_FAULT, FaultClass.COMPRESSOR_FAILURE,
-             FaultClass.UNKNOWN]
+            [
+                FaultClass.DOOR_SEAL,
+                FaultClass.CONTROLLER_FAULT,
+                FaultClass.COMPRESSOR_FAILURE,
+                FaultClass.UNKNOWN,
+            ]
         )
         records.append(
             MaintenanceRecord(
@@ -225,7 +232,9 @@ def _maintenance_for(rng: random.Random, spec: FreezerSpec, epoch: str) -> list[
                 summary={
                     FaultClass.DOOR_SEAL: "Door gasket replaced during preventive service",
                     FaultClass.CONTROLLER_FAULT: "Controller firmware updated after alarm latch",
-                    FaultClass.COMPRESSOR_FAILURE: "Stage-2 compressor serviced, refrigerant topped",
+                    FaultClass.COMPRESSOR_FAILURE: (
+                        "Stage-2 compressor serviced, refrigerant topped"
+                    ),
                     FaultClass.UNKNOWN: "Routine preventive maintenance completed",
                 }[fault],
                 fault_class=fault,

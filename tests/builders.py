@@ -130,7 +130,10 @@ def placement_group(
 
 
 def impact(
-    *, incident_id: str = "INC-1", containers: list[str] | None = None, groups: list[PlacementGroup] | None = None
+    *,
+    incident_id: str = "INC-1",
+    containers: list[str] | None = None,
+    groups: list[PlacementGroup] | None = None,
 ) -> ImpactSnapshot:
     cids = containers or ["C-001", "C-002"]
     body: dict[str, Any] = {
@@ -241,7 +244,9 @@ def receipt(
         request_hash=ZERO_HASH,
         effect_ref=effect_ref,
         status=status,
-        failure_class=FailureClass.NONE if status is ActionStatus.COMMITTED else FailureClass.AGENT_DECISION,
+        failure_class=FailureClass.NONE
+        if status is ActionStatus.COMMITTED
+        else FailureClass.AGENT_DECISION,
         committed_at=T_NOW,
         duplicate_returned=duplicate,
         evidence_sources=evidence_sources or ["firestore:reservations"],
@@ -279,7 +284,9 @@ def dispatch(*, incident_id: str = "INC-1") -> Dispatch:
     )
 
 
-def hold(*, freezer_id: str = "F-17", active: bool = True, evidence: str | None = None) -> ContainmentHold:
+def hold(
+    *, freezer_id: str = "F-17", active: bool = True, evidence: str | None = None
+) -> ContainmentHold:
     return ContainmentHold(
         id=f"HOLD-{freezer_id}",
         incident_id="INC-1",
@@ -343,9 +350,7 @@ def closed_state_all_committed() -> KernelState:
             agent=AgentName.CUSTODY_AGENT,
             effect_ref=t.transfer_id,
         )
-    receipts[res.action_id] = receipt(
-        res.action_id, ActionType.CAPACITY_RESERVE, effect_ref=res.id
-    )
+    receipts[res.action_id] = receipt(res.action_id, ActionType.CAPACITY_RESERVE, effect_ref=res.id)
 
     state = KernelState(
         incident=incident(state=IncidentState.RECONCILING),

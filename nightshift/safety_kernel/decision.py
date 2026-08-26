@@ -67,9 +67,7 @@ def refuse(
     )
 
 
-def unavailable(
-    invariant: str, reason: str, detail: dict[str, Any] | None = None
-) -> Decision:
+def unavailable(invariant: str, reason: str, detail: dict[str, Any] | None = None) -> Decision:
     return Decision(
         verdict=Verdict.UNAVAILABLE,
         reason=reason,

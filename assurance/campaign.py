@@ -69,8 +69,7 @@ class CampaignRow:
         return dict(self.__dict__)
 
 
-def _row(index: int, spec: DrillSpec, seed: int, driver: str,
-         outcome: DrillOutcome) -> CampaignRow:
+def _row(index: int, spec: DrillSpec, seed: int, driver: str, outcome: DrillOutcome) -> CampaignRow:
     recon = outcome.reconciliation or {}
     return CampaignRow(
         run_index=index,
@@ -128,8 +127,7 @@ async def run_campaign(
         wanted = set(drill_ids)
         corpus = [d for d in corpus if d.id in wanted]
 
-    campaign = Campaign(started_at=now_iso(), seeds=list(seeds),
-                        include_holdout=include_holdout)
+    campaign = Campaign(started_at=now_iso(), seeds=list(seeds), include_holdout=include_holdout)
     index = 0
     for driver in drivers:
         for seed in seeds:
@@ -138,13 +136,16 @@ async def run_campaign(
                 try:
                     result = await run_drill(spec, seed=seed, driver=driver, model=model)
                     outcome = result.outcome
-                except Exception as exc:  # noqa: BLE001
+                except Exception as exc:
                     # A harness failure is recorded as an infrastructure error, never
                     # dropped and never counted as a passing run.
                     log.warning("campaign run %s (%s/%s) raised: %s", index, spec.id, seed, exc)
                     outcome = DrillOutcome(
-                        drill_id=spec.id, family=spec.family, passed=False,
-                        infrastructure_error=True, error=f"{type(exc).__name__}: {exc}",
+                        drill_id=spec.id,
+                        family=spec.family,
+                        passed=False,
+                        infrastructure_error=True,
+                        error=f"{type(exc).__name__}: {exc}",
                     )
                 row = _row(index, spec, seed, driver, outcome)
                 campaign.add(row)
@@ -188,8 +189,7 @@ def derive_metrics(rows: list[CampaignRow]) -> dict[str, Any]:
 
         fault_runs = [r for r in scored if r.faults_injected > 0]
         reconciled = [
-            r for r in scored
-            if r.total_containers > 0 and r.unresolved == 0 and r.in_flight == 0
+            r for r in scored if r.total_containers > 0 and r.unresolved == 0 and r.in_flight == 0
         ]
         closed = [r for r in scored if r.final_state == "CLOSED"]
         refusal_runs = [r for r in scored if r.tool_denials > 0]
@@ -242,9 +242,7 @@ def _per_drill(rows: list[CampaignRow]) -> dict[str, Any]:
             "runs": len(group),
             "passed": sum(1 for r in group if r.passed),
             "failed": sum(1 for r in group if not r.passed),
-            "unmet_expectations": sorted(
-                {key for r in group for key in r.unmet_expectations}
-            ),
+            "unmet_expectations": sorted({key for r in group for key in r.unmet_expectations}),
             "failed_invariants": sorted({n for r in group for n in r.failed_invariants}),
         }
         for drill_id, group in sorted(grouped.items())
@@ -256,7 +254,7 @@ def _percentile(sorted_values: list[float], pct: int) -> float | None:
         return None
     if len(sorted_values) == 1:
         return round(sorted_values[0], 3)
-    index = min(len(sorted_values) - 1, int(round((pct / 100) * (len(sorted_values) - 1))))
+    index = min(len(sorted_values) - 1, round((pct / 100) * (len(sorted_values) - 1)))
     return round(sorted_values[index], 3)
 
 
@@ -312,8 +310,7 @@ def main() -> int:  # pragma: no cover - CLI
     parser = argparse.ArgumentParser(description="Run the Night Shift measurement campaign.")
     parser.add_argument("--seeds", type=int, default=6, help="number of seeds")
     parser.add_argument("--base-seed", type=int, default=20260826)
-    parser.add_argument("--drivers", default="scripted",
-                        help="comma-separated: scripted,agent")
+    parser.add_argument("--drivers", default="scripted", help="comma-separated: scripted,agent")
     parser.add_argument("--drills", default="", help="comma-separated drill ids")
     parser.add_argument("--no-holdout", action="store_true")
     parser.add_argument("--out", default="evidence/campaign")
@@ -324,9 +321,7 @@ def main() -> int:  # pragma: no cover - CLI
     drill_ids = [d.strip() for d in args.drills.split(",") if d.strip()] or None
 
     def progress(row: CampaignRow) -> None:
-        status = (
-            "INFRA" if row.infrastructure_error else ("pass" if row.passed else "FAIL")
-        )
+        status = "INFRA" if row.infrastructure_error else ("pass" if row.passed else "FAIL")
         # flush: a long campaign is watched through a log file, and buffered progress
         # is indistinguishable from a hung run.
         print(
@@ -337,8 +332,11 @@ def main() -> int:  # pragma: no cover - CLI
 
     campaign = asyncio.run(
         run_campaign(
-            seeds=seeds, drivers=drivers, include_holdout=not args.no_holdout,
-            drill_ids=drill_ids, progress=progress,
+            seeds=seeds,
+            drivers=drivers,
+            include_holdout=not args.no_holdout,
+            drill_ids=drill_ids,
+            progress=progress,
         )
     )
     command = (
@@ -351,10 +349,12 @@ def main() -> int:  # pragma: no cover - CLI
     print()
     print(f"total runs: {metrics['total_runs']}")
     for driver, block in metrics["by_driver"].items():
-        print(f"  {driver}: {block['passed']}/{block['scored_runs']} passed, "
-              f"{block['infrastructure_errors']} infrastructure error(s), "
-              f"N1 violations={block['capacity_overbooking_violations']}, "
-              f"N2 violations={block['duplicate_effect_violations']}")
+        print(
+            f"  {driver}: {block['passed']}/{block['scored_runs']} passed, "
+            f"{block['infrastructure_errors']} infrastructure error(s), "
+            f"N1 violations={block['capacity_overbooking_violations']}, "
+            f"N2 violations={block['duplicate_effect_violations']}"
+        )
     return 0
 
 

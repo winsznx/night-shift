@@ -120,7 +120,7 @@ def _upload(settings: Settings, bundle: EvidenceBundle) -> str | None:
             if path.exists():
                 bucket.blob(name).upload_from_filename(str(path), content_type=content_type)
         return f"gs://{settings.evidence_bucket}/{prefix}/manifest.json"
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         import logging
 
         logging.getLogger(__name__).warning(

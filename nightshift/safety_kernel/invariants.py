@@ -18,14 +18,12 @@ from typing import Any
 from nightshift.common.clock import age_seconds
 from nightshift.safety_kernel.config import DEFAULT_CONFIG, KernelConfig
 from nightshift.safety_kernel.world import (
-    ActionRequest,
     KernelState,
     reconciliation_snapshot,
     reservation_is_live,
 )
 from nightshift.schemas.enums import (
     REVISION_STATES_ELIGIBLE_FOR_WORK,
-    TERMINAL_CUSTODY_STATES,
     ActionStatus,
     ActionType,
     CustodyState,
@@ -215,7 +213,9 @@ def n3_valid_custody_prerequisite(
 
     if violations:
         return _bad(
-            "N3", N3_TITLE, f"{len(violations)} committed transfer(s) lack prerequisites",
+            "N3",
+            N3_TITLE,
+            f"{len(violations)} committed transfer(s) lack prerequisites",
             violations=violations,
         )
     return _ok("N3", N3_TITLE, "all committed transfers carry a complete evidence chain")
@@ -275,7 +275,9 @@ def n4_fresh_destination_evidence(
             violations.append({"transfer_id": t.transfer_id, "reason": reason, **evidence})
     if violations:
         return _bad(
-            "N4", N4_TITLE, f"{len(violations)} commit(s) relied on unusable destination evidence",
+            "N4",
+            N4_TITLE,
+            f"{len(violations)} commit(s) relied on unusable destination evidence",
             violations=violations,
         )
     return _ok("N4", N4_TITLE, "every commit used fresh, in-bounds destination evidence")
@@ -335,7 +337,8 @@ def n5_complete_reconciliation(state: KernelState) -> InvariantResult:
         return _ok(
             "N5",
             N5_TITLE,
-            f"incident is {state.incident.state.value}; reconciliation completeness not yet required",
+            f"incident is {state.incident.state.value}; reconciliation completeness "
+            f"not yet required",
             **snap.as_dict(),
         )
 
@@ -353,8 +356,9 @@ def n5_complete_reconciliation(state: KernelState) -> InvariantResult:
         seen[cid] = seen.get(cid, 0) + 1
     dupes = sorted(c for c, n in seen.items() if n > 1)
     if dupes:
-        return _bad("N5", N5_TITLE, "container resolved to more than one terminal state",
-                    duplicates=dupes)
+        return _bad(
+            "N5", N5_TITLE, "container resolved to more than one terminal state", duplicates=dupes
+        )
     return _ok("N5", N5_TITLE, "every impacted container resolved exactly once", **snap.as_dict())
 
 
@@ -387,8 +391,9 @@ def n6_no_premature_close(state: KernelState) -> InvariantResult:
     blockers.extend(_containment_blockers(state))
 
     if blockers:
-        return _bad("N6", N6_TITLE, "; ".join(blockers), uncertain_actions=uncertain,
-                    **snap.as_dict())
+        return _bad(
+            "N6", N6_TITLE, "; ".join(blockers), uncertain_actions=uncertain, **snap.as_dict()
+        )
     return _ok("N6", N6_TITLE, "closure preconditions were satisfied")
 
 
@@ -410,6 +415,27 @@ def _containment_blockers(state: KernelState) -> list[str]:
         return ["containment hold still active on the failed freezer"]
     if hold.release_evidence_ref is None:
         return ["containment hold was released without recovery evidence"]
+
+    # Paperwork is not a rescue. QUARANTINED is a legitimate terminal disposition for a
+    # container that cannot safely continue, but it says nothing about where the
+    # container physically is. A live drill run had the Custody Agent quarantine all 42
+    # containers when the destination warmed, which made reconciliation "complete" and
+    # let the incident close with every specimen still sitting in the failing freezer.
+    #
+    # Closure therefore also requires that the failed unit no longer holds incident
+    # material. If it does, the honest outcome is PARTIAL or ESCALATED.
+    stranded = sorted(
+        cid
+        for cid in state.incident_container_ids()
+        if (c := state.containers.get(cid)) is not None and c.freezer_id == freezer_id
+    )
+    if stranded:
+        return [
+            f"{len(stranded)} impacted container(s) are still located in {freezer_id}; "
+            f"material that never left the failed freezer has not been rescued, "
+            f"whatever custody disposition it carries "
+            f"(first few: {', '.join(stranded[:5])})"
+        ]
     return []
 
 
@@ -427,7 +453,8 @@ def n6_would_hold(state: KernelState) -> tuple[bool, str]:
     if snap.in_flight:
         return False, f"{len(snap.in_flight)} transfer(s) still in flight: {snap.in_flight[:5]}"
     uncertain = [
-        aid for aid, r in state.receipts.items()
+        aid
+        for aid, r in state.receipts.items()
         if r.status in {ActionStatus.ERROR, ActionStatus.UNAVAILABLE}
     ]
     if uncertain:
@@ -486,8 +513,12 @@ def n7_least_privilege_effect_authority(state: KernelState) -> InvariantResult:
                 }
             )
     if violations:
-        return _bad("N7", N7_TITLE, f"{len(violations)} effect(s) committed under wrong identity",
-                    violations=violations)
+        return _bad(
+            "N7",
+            N7_TITLE,
+            f"{len(violations)} effect(s) committed under wrong identity",
+            violations=violations,
+        )
     return _ok("N7", N7_TITLE, "every committed effect came from an authorized principal")
 
 
@@ -525,8 +556,12 @@ def n8_memory_non_authority(state: KernelState) -> InvariantResult:
         if sources and all(s.startswith("memory:") for s in sources):
             violations.append({"action_id": action_id, "sources": ",".join(sources)})
     if violations:
-        return _bad("N8", N8_TITLE, "effect authorized solely from Memory Bank context",
-                    violations=violations)
+        return _bad(
+            "N8",
+            N8_TITLE,
+            "effect authorized solely from Memory Bank context",
+            violations=violations,
+        )
     return _ok("N8", N8_TITLE, "no effect was authorized from memory alone")
 
 
@@ -543,7 +578,9 @@ def n8_would_hold(evidence_sources: list[str]) -> tuple[bool, str]:
 N9_TITLE = "Duplicate event safety"
 
 
-def n9_duplicate_event_safety(state: KernelState, delivered_event_ids: list[str]) -> InvariantResult:
+def n9_duplicate_event_safety(
+    state: KernelState, delivered_event_ids: list[str]
+) -> InvariantResult:
     """Redelivery must not multiply effects.
 
     The check compares the number of *distinct* semantic actions against the number of
@@ -602,8 +639,12 @@ def n10_revision_qualification(state: KernelState) -> InvariantResult:
         if rev_state not in REVISION_STATES_ELIGIBLE_FOR_WORK:
             violations.append({"action_id": action_id, "revision": key, "state": rev_state.value})
     if violations:
-        return _bad("N10", N10_TITLE, f"{len(violations)} effect(s) from unqualified revisions",
-                    violations=violations)
+        return _bad(
+            "N10",
+            N10_TITLE,
+            f"{len(violations)} effect(s) from unqualified revisions",
+            violations=violations,
+        )
     return _ok("N10", N10_TITLE, "all effects came from qualified revisions")
 
 
@@ -687,8 +728,12 @@ def n12_failure_attribution(state: KernelState) -> InvariantResult:
         if receipt.failure_class is FailureClass.NONE:
             unattributed.append(action_id)
     if unattributed:
-        return _bad("N12", N12_TITLE, f"{len(unattributed)} non-success receipt(s) unattributed",
-                    action_ids=sorted(unattributed))
+        return _bad(
+            "N12",
+            N12_TITLE,
+            f"{len(unattributed)} non-success receipt(s) unattributed",
+            action_ids=sorted(unattributed),
+        )
     return _ok("N12", N12_TITLE, "every non-success outcome carries a failure class")
 
 
@@ -711,8 +756,12 @@ def n13_containment_integrity(state: KernelState) -> InvariantResult:
                 {"freezer_id": freezer_id, "problem": "hold released without recovery evidence"}
             )
     if violations:
-        return _bad("N13", N13_TITLE, "containment hold released without valid evidence",
-                    violations=violations)
+        return _bad(
+            "N13",
+            N13_TITLE,
+            "containment hold released without valid evidence",
+            violations=violations,
+        )
     return _ok("N13", N13_TITLE, "containment holds intact")
 
 
@@ -740,8 +789,7 @@ def n13_release_would_hold(
     too_warm = [t for t, c in ordered if c > config.recovery_validation_ceiling_c]
     if too_warm:
         return False, (
-            f"{len(too_warm)} validation reading(s) above "
-            f"{config.recovery_validation_ceiling_c}C"
+            f"{len(too_warm)} validation reading(s) above {config.recovery_validation_ceiling_c}C"
         )
     span = age_seconds(ordered[0][0], ordered[-1][0])
     if span < config.recovery_validation_seconds:
@@ -760,7 +808,19 @@ def n13_release_would_hold(
 # --------------------------------------------------------------------------------------
 
 INVARIANTS: tuple[str, ...] = (
-    "N1", "N2", "N3", "N4", "N5", "N6", "N7", "N8", "N9", "N10", "N11", "N12", "N13",
+    "N1",
+    "N2",
+    "N3",
+    "N4",
+    "N5",
+    "N6",
+    "N7",
+    "N8",
+    "N9",
+    "N10",
+    "N11",
+    "N12",
+    "N13",
 )
 
 

@@ -120,8 +120,7 @@ async def reconcile_incident(
     """
     state = repo.load_kernel_state(incident_id)
     snap = reconciliation_snapshot(state)
-    return {**snap.as_dict(), "reconciliation_hash": snap.snapshot_hash,
-            "evaluated_at": now_iso()}
+    return {**snap.as_dict(), "reconciliation_hash": snap.snapshot_hash, "evaluated_at": now_iso()}
 
 
 @app.post("/v1/pickups")
@@ -139,7 +138,9 @@ async def record_pickup(
         requested_by_agent_revision=principal.revision,
         payload={
             "container_id": body.container_id,
-            "responder_authorized": _responder_authorized(repo, body.incident_id, body.responder_id),
+            "responder_authorized": _responder_authorized(
+                repo, body.incident_id, body.responder_id
+            ),
         },
         now=now_iso(),
     )
@@ -181,8 +182,7 @@ async def record_pickup(
             collection="transfers",
             summary=f"{body.container_id} picked up from {body.source_freezer}",
             evidence_sources=["custody:record_pickup"],
-            detail={"destination_freezer": body.destination_freezer,
-                    "simulated": body.simulated},
+            detail={"destination_freezer": body.destination_freezer, "simulated": body.simulated},
         )
 
     return commit_effect(repo, request, build, trace_id=body.trace_id).as_dict()
@@ -206,7 +206,9 @@ async def record_destination_scan(
         payload={
             "container_id": body.container_id,
             "destination_freezer_id": body.destination_freezer_id,
-            "responder_authorized": _responder_authorized(repo, body.incident_id, body.responder_id),
+            "responder_authorized": _responder_authorized(
+                repo, body.incident_id, body.responder_id
+            ),
         },
         now=now_iso(),
     )
@@ -245,8 +247,10 @@ async def record_destination_scan(
             effect_ref=updated.transfer_id,
             collection="transfers",
             summary=f"{body.container_id} received at {body.destination_freezer_id}",
-            evidence_sources=["custody:record_destination_scan",
-                              "telemetry:get_destination_temperature"],
+            evidence_sources=[
+                "custody:record_destination_scan",
+                "telemetry:get_destination_temperature",
+            ],
             detail={
                 "destination_slot": body.destination_slot,
                 "destination_temp_c": reading[1],
@@ -396,9 +400,7 @@ async def commit_ready_transfers(
     """
     state = repo.load_kernel_state(body.incident_id)
     ready = sorted(
-        t.container_id
-        for t in state.transfers.values()
-        if t.state is CustodyState.RECEIVED
+        t.container_id for t in state.transfers.values() if t.state is CustodyState.RECEIVED
     )
     committed: list[str] = []
     refused: list[dict[str, Any]] = []
@@ -406,8 +408,9 @@ async def commit_ready_transfers(
 
     for container_id in ready[: body.limit]:
         outcome = await commit_transfer(
-            CommitRequest(incident_id=body.incident_id, container_id=container_id,
-                          trace_id=body.trace_id),
+            CommitRequest(
+                incident_id=body.incident_id, container_id=container_id, trace_id=body.trace_id
+            ),
             principal=principal,
             repo=repo,
         )
@@ -452,7 +455,9 @@ async def flag_custody_exception(
     """
     disposition = CustodyState(body.disposition)
     request = ActionRequest(
-        action_id=scan_action_id(body.incident_id, body.container_id, f"exception:{body.disposition}"),
+        action_id=scan_action_id(
+            body.incident_id, body.container_id, f"exception:{body.disposition}"
+        ),
         action_type=ActionType.CUSTODY_EXCEPTION,
         incident_id=body.incident_id,
         actor_identity=principal.identity,
@@ -512,7 +517,9 @@ def _reservation_for(state: KernelState, destination: str) -> str | None:
     return live[0].id if live else None
 
 
-def _latest_reading(repo: Repository, freezer_id: str) -> tuple[str | None, float | None, str | None]:
+def _latest_reading(
+    repo: Repository, freezer_id: str
+) -> tuple[str | None, float | None, str | None]:
     readings = repo.list_readings(freezer_id)
     if readings:
         latest = readings[-1]

@@ -92,8 +92,11 @@ def test_reservation_never_exceeds_verified_capacity(total, occupied, existing, 
         actor_identity="capacity-broker",
         requested_by_agent=AgentName.CAPACITY_BROKER,
         requested_by_agent_revision="rev-1",
-        payload={"destination_freezer_id": "F-03", "placement_group_id": "PG-NEW",
-                 "slots": request},
+        payload={
+            "destination_freezer_id": "F-03",
+            "placement_group_id": "PG-NEW",
+            "slots": request,
+        },
         now=b.T_NOW,
     )
     decision = evaluate_action(state, req)
@@ -103,8 +106,12 @@ def test_reservation_never_exceeds_verified_capacity(total, occupied, existing, 
         new = b.reservation(destination="F-03", group_id="PG-NEW", slots=request)
         after[new.id] = new
         post = KernelState(
-            incident=state.incident, freezers=state.freezers, containers=state.containers,
-            impact=state.impact, reservations=after, revision_states=state.revision_states,
+            incident=state.incident,
+            freezers=state.freezers,
+            containers=state.containers,
+            impact=state.impact,
+            reservations=after,
+            revision_states=state.revision_states,
             holds=state.holds,
         )
         assert n1_capacity_conservation(post).holds
@@ -182,8 +189,7 @@ def test_all_action_id_derivers_are_pure_and_64_hex(
 def test_replaying_the_same_effect_never_multiplies_it(n):
     """Whatever the retry count, one semantic action indexes one effect record."""
     r = b.reservation()
-    receipts = {r.action_id: b.receipt(r.action_id, ActionType.CAPACITY_RESERVE,
-                                       effect_ref=r.id)}
+    receipts = {r.action_id: b.receipt(r.action_id, ActionType.CAPACITY_RESERVE, effect_ref=r.id)}
     reservations = {r.id: r}
     for _ in range(n):
         # A retry finds the existing receipt and re-inserts nothing new.
@@ -235,8 +241,9 @@ def test_reconciliation_hash_is_order_independent(states):
     }
     forward = b.base_state(containers=containers, impact=b.impact(containers=list(containers)))
     reversed_containers = dict(reversed(list(containers.items())))
-    backward = b.base_state(containers=reversed_containers,
-                            impact=b.impact(containers=list(reversed_containers)))
+    backward = b.base_state(
+        containers=reversed_containers, impact=b.impact(containers=list(reversed_containers))
+    )
     assert (
         reconciliation_snapshot(forward).snapshot_hash
         == reconciliation_snapshot(backward).snapshot_hash
@@ -274,8 +281,7 @@ def test_custody_graph_never_leaves_a_terminal_state(frm, to):
 @SETTINGS
 @given(frm=st.sampled_from(list(ReservationState)))
 def test_reservation_terminal_states_are_absorbing(frm):
-    if frm in {ReservationState.CONSUMED, ReservationState.RELEASED,
-               ReservationState.INVALIDATED}:
+    if frm in {ReservationState.CONSUMED, ReservationState.RELEASED, ReservationState.INVALIDATED}:
         assert RESERVATION_TRANSITIONS[frm] == frozenset()
 
 

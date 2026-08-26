@@ -81,9 +81,7 @@ def evaluate_action(
 # --------------------------------------------------------------------------------------
 
 
-def _pre_capacity_reserve(
-    state: KernelState, req: ActionRequest, config: KernelConfig
-) -> Decision:
+def _pre_capacity_reserve(state: KernelState, req: ActionRequest, config: KernelConfig) -> Decision:
     freezer_id = str(req.payload.get("destination_freezer_id", ""))
     group_id = str(req.payload.get("placement_group_id", ""))
     slots = int(req.payload.get("slots", 0))
@@ -113,7 +111,9 @@ def _pre_capacity_reserve(
         return refuse("N4", f"destination {freezer_id} is not a safe target: {reason}")
 
     if state.active_hold(freezer_id) is not None:
-        return refuse("N13", f"{freezer_id} is under a containment hold and cannot receive material")
+        return refuse(
+            "N13", f"{freezer_id} is under a containment hold and cannot receive material"
+        )
 
     # One live reservation per placement group. Without this, a broker that loses a
     # reservation response and re-plans to a different destination derives a *different*
@@ -261,8 +261,9 @@ def _pre_custody_commit(state: KernelState, req: ActionRequest, config: KernelCo
         state, container_id, destination, reservation_id, responder_authorized
     )
     if not ok:
-        return refuse("N3", f"custody commit refused: {reason}",
-                      detail={"container_id": container_id})
+        return refuse(
+            "N3", f"custody commit refused: {reason}", detail={"container_id": container_id}
+        )
 
     ok, reason = n4_would_hold(
         req.payload.get("destination_temp_c"),
@@ -271,8 +272,11 @@ def _pre_custody_commit(state: KernelState, req: ActionRequest, config: KernelCo
         config,
     )
     if not ok:
-        return refuse("N4", f"custody commit refused: {reason}",
-                      detail={"container_id": container_id, "destination": destination})
+        return refuse(
+            "N4",
+            f"custody commit refused: {reason}",
+            detail={"container_id": container_id, "destination": destination},
+        )
 
     container = state.containers.get(container_id)
     assert container is not None  # n3_would_hold already proved it exists

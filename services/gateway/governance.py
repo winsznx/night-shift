@@ -17,8 +17,8 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
-from nightshift.schemas.enums import AgentName, ToolDomain
 from nightshift.safety_kernel.authority import TOOL_REGISTRY
+from nightshift.schemas.enums import AgentName, ToolDomain
 
 log = logging.getLogger(__name__)
 
@@ -58,10 +58,13 @@ class ModelArmorScreen:
                     json={"userPromptData": {"text": text[:20_000]}},
                 )
             if response.status_code != 200:
-                return False, {"backend": self.backend, "available": False,
-                               "status": response.status_code}
+                return False, {
+                    "backend": self.backend,
+                    "available": False,
+                    "status": response.status_code,
+                }
             data = response.json().get("sanitizationResult", {})
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             log.warning("Model Armor unavailable (%s); continuing on remaining layers", exc)
             return False, {"backend": self.backend, "available": False, "error": str(exc)}
 
@@ -82,18 +85,32 @@ class ModelArmorScreen:
 
 
 _INJECTION_PATTERNS = [
-    (re.compile(r"ignore\s+(all\s+)?(previous|prior|above)\s+instructions?", re.I),
-     "instruction override"),
-    (re.compile(r"\b(disregard|forget)\s+(your|the)\s+(rules|instructions|policy)", re.I),
-     "instruction override"),
-    (re.compile(r"\b(export|exfiltrate|send|email|upload)\b.{0,40}\b(inventory|specimen|manifest|database)\b", re.I),
-     "data exfiltration request"),
-    (re.compile(r"\bretrieve\b.{0,30}\b(specimen|inventory|study)\b", re.I),
-     "restricted data request"),
-    (re.compile(r"\byou are now\b|\bnew system prompt\b|\bdeveloper mode\b", re.I),
-     "role hijack"),
-    (re.compile(r"\b(attacker|evil|exfil)@|\bhttps?://(?!localhost)\S+\?.*=(?:key|token|secret)", re.I),
-     "suspicious destination"),
+    (
+        re.compile(r"ignore\s+(all\s+)?(previous|prior|above)\s+instructions?", re.I),
+        "instruction override",
+    ),
+    (
+        re.compile(r"\b(disregard|forget)\s+(your|the)\s+(rules|instructions|policy)", re.I),
+        "instruction override",
+    ),
+    (
+        re.compile(
+            r"\b(export|exfiltrate|send|email|upload)\b.{0,40}\b(inventory|specimen|manifest|database)\b",
+            re.I,
+        ),
+        "data exfiltration request",
+    ),
+    (
+        re.compile(r"\bretrieve\b.{0,30}\b(specimen|inventory|study)\b", re.I),
+        "restricted data request",
+    ),
+    (re.compile(r"\byou are now\b|\bnew system prompt\b|\bdeveloper mode\b", re.I), "role hijack"),
+    (
+        re.compile(
+            r"\b(attacker|evil|exfil)@|\bhttps?://(?!localhost)\S+\?.*=(?:key|token|secret)", re.I
+        ),
+        "suspicious destination",
+    ),
 ]
 
 
@@ -205,8 +222,13 @@ class LocalSemanticPolicy:
                 continue
             reason = f"{policy['id']}: {policy['constraint']}"
             self.observations.append(
-                {"policy": policy["id"], "agent": agent.value, "tool": tool_name,
-                 "mode": self.mode, "would_deny": True}
+                {
+                    "policy": policy["id"],
+                    "agent": agent.value,
+                    "tool": tool_name,
+                    "mode": self.mode,
+                    "would_deny": True,
+                }
             )
             return ("DENY" if self.mode == "enforce" else "OBSERVE_WOULD_DENY"), reason
         return "ALLOW", ""

@@ -58,12 +58,17 @@ class Repository:
 
     @classmethod
     def create(
-        cls, backend: str, *, project: str = "", database: str = "(default)",
+        cls,
+        backend: str,
+        *,
+        project: str = "",
+        database: str = "(default)",
         namespace: str = "demo",
     ) -> Repository:
         prefix = f"ns_{namespace}__"
-        return cls(build_store(backend, project=project, database=database, prefix=prefix),
-                   namespace)
+        return cls(
+            build_store(backend, project=project, database=database, prefix=prefix), namespace
+        )
 
     # -- typed accessors -----------------------------------------------------------
 

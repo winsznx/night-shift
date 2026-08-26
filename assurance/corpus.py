@@ -58,8 +58,12 @@ class DrillSpec:
             "holdout": self.holdout,
             "requires_model": self.requires_model,
             "faults": [
-                {"tool": f.tool, "call_number": f.call_number, "kind": f.kind,
-                 "action_id_contains": f.action_id_contains}
+                {
+                    "tool": f.tool,
+                    "call_number": f.call_number,
+                    "kind": f.kind,
+                    "action_id_contains": f.action_id_contains,
+                }
                 for f in self.faults
             ],
             "expectations": [
@@ -278,9 +282,7 @@ DRILLS: list[DrillSpec] = [
         id="D13",
         family="partial",
         title="Partial transfer",
-        description=(
-            "Some containers move and one is left behind. The incident cannot close."
-        ),
+        description=("Some containers move and one is left behind. The incident cannot close."),
         scenario=ScenarioConfig(skip_containers=("C-0001", "C-0002"), max_rounds=7),
         expectations=[
             ALL_INVARIANTS_HOLD,
@@ -314,7 +316,9 @@ DRILLS: list[DrillSpec] = [
         scenario=ScenarioConfig(max_rounds=4),
         faults=[
             FaultSpec(
-                tool="list_impacted_containers", call_number=0, kind="tool_failure",
+                tool="list_impacted_containers",
+                call_number=0,
+                kind="tool_failure",
                 max_injections=12,
             )
         ],
@@ -333,13 +337,10 @@ DRILLS: list[DrillSpec] = [
             "The Capacity Broker's revision is BLOCKED. It must not produce a new "
             "consequential effect."
         ),
-        scenario=ScenarioConfig(
-            blocked_agent=(AgentName.CAPACITY_BROKER, "rev-1"), max_rounds=4
-        ),
+        scenario=ScenarioConfig(blocked_agent=(AgentName.CAPACITY_BROKER, "rev-1"), max_rounds=4),
         expectations=[
             ALL_INVARIANTS_HOLD,
-            _e("blocked_revision_committed_nothing",
-               "The blocked agent committed no effect"),
+            _e("blocked_revision_committed_nothing", "The blocked agent committed no effect"),
             _e("no_reservations", "No reservation was created"),
         ],
     ),
@@ -354,7 +355,9 @@ DRILLS: list[DrillSpec] = [
         scenario=ScenarioConfig(max_rounds=4),
         faults=[
             FaultSpec(
-                tool="list_qualified_destinations", call_number=0, kind="tool_failure",
+                tool="list_qualified_destinations",
+                call_number=0,
+                kind="tool_failure",
                 max_injections=12,
             )
         ],
@@ -375,8 +378,10 @@ DRILLS: list[DrillSpec] = [
         scenario=ScenarioConfig(max_rounds=6),
         expectations=[
             ALL_INVARIANTS_HOLD,
-            _e("hold_release_requires_validation",
-               "A hold release without a full validation window is refused"),
+            _e(
+                "hold_release_requires_validation",
+                "A hold release without a full validation window is refused",
+            ),
         ],
         requires_model=False,
     ),

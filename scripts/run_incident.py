@@ -17,12 +17,12 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from nightshift.common.config import get_settings  # noqa: E402
-from nightshift.incident_runner import ScenarioConfig, run_incident  # noqa: E402
-from nightshift.runtime import build_runtime  # noqa: E402
-from nightshift.safety_kernel.invariants import check_all_invariants  # noqa: E402
-from nightshift.common.clock import now_iso  # noqa: E402
-from nightshift.safety_kernel.world import reconciliation_snapshot  # noqa: E402
+from nightshift.common.clock import now_iso
+from nightshift.common.config import get_settings
+from nightshift.incident_runner import ScenarioConfig, run_incident
+from nightshift.runtime import build_runtime
+from nightshift.safety_kernel.invariants import check_all_invariants
+from nightshift.safety_kernel.world import reconciliation_snapshot
 
 
 def parse_args() -> argparse.Namespace:
@@ -52,8 +52,10 @@ async def main() -> int:
     )
 
     if not args.json:
-        print(f"store={runtime.repo.store.backend} namespace={namespace} "
-              f"model={args.model or settings.model_id}")
+        print(
+            f"store={runtime.repo.store.backend} namespace={namespace} "
+            f"model={args.model or settings.model_id}"
+        )
         print("Injecting freezer failure and opening the incident…\n")
 
     runtime, run = await run_incident(
@@ -92,8 +94,10 @@ async def main() -> int:
     print(f"  unresolved  {len(recon.unresolved)}")
     print(f"  complete    {recon.complete}")
     print()
-    print(f"Tool calls    {summary['tool_calls']}  "
-          f"(denied {summary['tool_denials']}, duplicate receipts {summary['duplicate_receipts']})")
+    print(
+        f"Tool calls    {summary['tool_calls']}  "
+        f"(denied {summary['tool_denials']}, duplicate receipts {summary['duplicate_receipts']})"
+    )
     print()
     print("Invariants:")
     for r in invariants:

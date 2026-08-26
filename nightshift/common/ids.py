@@ -14,6 +14,7 @@ from nightshift.common.canonical import sha256_hex
 from nightshift.schemas.enums import ActionType, FaultClass, ResponderRole, ResponsePhase
 
 __all__ = [
+    "action_id_for",
     "close_action_id",
     "containment_action_id",
     "correlation_id",
@@ -26,7 +27,6 @@ __all__ = [
     "scan_action_id",
     "transfer_action_id",
     "work_order_action_id",
-    "action_id_for",
 ]
 
 
@@ -41,9 +41,7 @@ def work_order_action_id(incident_id: str, failed_freezer_id: str, fault_class: 
 def dispatch_action_id(
     incident_id: str, response_phase: ResponsePhase, responder_role: ResponderRole
 ) -> str:
-    return sha256_hex(
-        "dispatch", incident_id, str(response_phase.value), str(responder_role.value)
-    )
+    return sha256_hex("dispatch", incident_id, str(response_phase.value), str(responder_role.value))
 
 
 def transfer_action_id(incident_id: str, container_id: str, destination_slot_id: str) -> str:

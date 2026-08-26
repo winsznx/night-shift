@@ -27,16 +27,30 @@ ROUTES: dict[str, tuple[str, str, list[str]]] = {
     "get_temperature_window": ("GET", "/v1/freezers/{freezer_id}/window", ["freezer_id"]),
     "get_recent_door_events": ("GET", "/v1/freezers/{freezer_id}/door-events", ["freezer_id"]),
     "get_equipment_history": ("GET", "/v1/freezers/{freezer_id}/equipment-history", ["freezer_id"]),
-    "get_incident_telemetry_summary": ("GET", "/v1/incidents/{incident_id}/summary", ["incident_id"]),
+    "get_incident_telemetry_summary": (
+        "GET",
+        "/v1/incidents/{incident_id}/summary",
+        ["incident_id"],
+    ),
     "get_backup_freezer_state": ("GET", "/v1/backups", []),
-    "get_destination_temperature": ("GET", "/v1/destination-temperature/{freezer_id}", ["freezer_id"]),
+    "get_destination_temperature": (
+        "GET",
+        "/v1/destination-temperature/{freezer_id}",
+        ["freezer_id"],
+    ),
     # inventory
     "get_container_summary": ("GET", "/v1/containers/{container_id}", ["container_id"]),
     "list_impacted_containers": ("GET", "/v1/freezers/{freezer_id}/impacted", ["freezer_id"]),
     "get_placement_requirements": (
-        "GET", "/v1/incidents/{incident_id}/placement-requirements", ["incident_id"]),
+        "GET",
+        "/v1/incidents/{incident_id}/placement-requirements",
+        ["incident_id"],
+    ),
     "get_incident_container_ids": (
-        "GET", "/v1/incidents/{incident_id}/container-ids", ["incident_id"]),
+        "GET",
+        "/v1/incidents/{incident_id}/container-ids",
+        ["incident_id"],
+    ),
     "get_hold_state": ("GET", "/v1/holds/{freezer_id}", ["freezer_id"]),
     "get_study_notes": ("GET", "/v1/study-notes/{container_id}", ["container_id"]),
     "apply_containment_hold": ("POST", "/v1/holds", []),
@@ -45,7 +59,11 @@ ROUTES: dict[str, tuple[str, str, list[str]]] = {
     "get_capacity": ("GET", "/v1/capacity/{freezer_id}", ["freezer_id"]),
     "get_reservation": ("GET", "/v1/reservations/{reservation_id}", ["reservation_id"]),
     "reserve_capacity": ("POST", "/v1/reservations", []),
-    "release_reservation": ("POST", "/v1/reservations/{reservation_id}/release", ["reservation_id"]),
+    "release_reservation": (
+        "POST",
+        "/v1/reservations/{reservation_id}/release",
+        ["reservation_id"],
+    ),
     # facilities
     "get_responder_roster": ("GET", "/v1/responders", []),
     "get_work_order": ("GET", "/v1/work-orders/{work_order_id}", ["work_order_id"]),
@@ -66,7 +84,10 @@ ROUTES: dict[str, tuple[str, str, list[str]]] = {
     "get_incident": ("GET", "/v1/incidents/{incident_id}", ["incident_id"]),
     "get_incident_timeline": ("GET", "/v1/incidents/{incident_id}/timeline", ["incident_id"]),
     "request_incident_transition": (
-        "POST", "/v1/incidents/{incident_id}/transitions", ["incident_id"]),
+        "POST",
+        "/v1/incidents/{incident_id}/transitions",
+        ["incident_id"],
+    ),
     "request_incident_close": ("POST", "/v1/incidents/{incident_id}/close", ["incident_id"]),
 }
 
@@ -126,7 +147,9 @@ class InProcessTransport:
             clients[name] = TestClient(app, raise_server_exceptions=False)
         return cls(clients=clients)
 
-    def invoke(self, tool_name: str, principal_token: str, payload: dict[str, Any]) -> dict[str, Any]:
+    def invoke(
+        self, tool_name: str, principal_token: str, payload: dict[str, Any]
+    ) -> dict[str, Any]:
         spec = TOOL_REGISTRY[tool_name]
         client = self.clients.get(spec.service)
         if client is None:
@@ -165,7 +188,9 @@ class HttpTransport:
                 return {}
         return {"Authorization": f"Bearer {token}"}
 
-    def invoke(self, tool_name: str, principal_token: str, payload: dict[str, Any]) -> dict[str, Any]:
+    def invoke(
+        self, tool_name: str, principal_token: str, payload: dict[str, Any]
+    ) -> dict[str, Any]:
         spec = TOOL_REGISTRY[tool_name]
         base = self.base_urls.get(spec.service)
         if not base:
@@ -209,10 +234,9 @@ def _decode(tool_name: str, status: int, data: dict[str, Any]) -> dict[str, Any]
     if status == 403:
         from nightshift.safety_kernel.decision import Decision, Verdict
         from nightshift.schemas.enums import DenialReason, FailureClass
+        from services.gateway.broker import BrokerDeniedError
 
-        from services.gateway.broker import BrokerDenied
-
-        raise BrokerDenied(
+        raise BrokerDeniedError(
             Decision(
                 verdict=Verdict.REFUSE,
                 reason=str(data.get("reason", "authorization denied")),

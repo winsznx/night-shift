@@ -207,8 +207,13 @@ A partial rescue is never a success. If material cannot be accounted for, escala
 }
 
 
-def build_prompt(agent: AgentName, incident_id: str, *, skill_refs: dict[str, str] | None = None,
-                 memory_context: list[str] | None = None) -> str:
+def build_prompt(
+    agent: AgentName,
+    incident_id: str,
+    *,
+    skill_refs: dict[str, str] | None = None,
+    memory_context: list[str] | None = None,
+) -> str:
     """Assemble the full prompt for one agent on one incident."""
     role = ROLES[agent]
     granted = sorted(d.value for d in domains_for(agent))
@@ -240,7 +245,7 @@ def build_prompt(agent: AgentName, incident_id: str, *, skill_refs: dict[str, st
         SHARED_CONTRACT.strip(),
         "",
         f"Your structured output must validate as `{role['output']}`.",
-        f"Every action request must carry incident_id = \"{incident_id}\".",
+        f'Every action request must carry incident_id = "{incident_id}".',
     ]
 
     if skill_refs:

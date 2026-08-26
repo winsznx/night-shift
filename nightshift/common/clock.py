@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 
-__all__ = ["FrozenClock", "now_iso", "parse_iso", "to_iso", "age_seconds", "shift_iso"]
+__all__ = ["FrozenClock", "age_seconds", "now_iso", "parse_iso", "shift_iso", "to_iso"]
 
 _FMT = "%Y-%m-%dT%H:%M:%S.%f"
 

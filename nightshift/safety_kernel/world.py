@@ -120,9 +120,7 @@ class KernelState:
             return list(self.impact.container_ids)
         if self.incident is None:
             return []
-        return sorted(
-            c.id for c in self.containers.values() if c.incident_id == self.incident.id
-        )
+        return sorted(c.id for c in self.containers.values() if c.incident_id == self.incident.id)
 
     def unresolved_container_ids(self) -> list[str]:
         """Containers that have not reached a terminal custody state (N5)."""

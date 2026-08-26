@@ -25,7 +25,7 @@ def load(path: Path) -> dict[str, Any]:
         return {}
     try:
         return json.loads(path.read_text(encoding="utf-8"))
-    except Exception:  # noqa: BLE001
+    except Exception:
         return {}
 
 
@@ -100,9 +100,7 @@ def main() -> int:
         denials=scripted.get("authorization_denials_total", 0),
         reconciled=scripted.get("runs_fully_reconciled", 0),
         median=scripted.get("wall_clock_median_s", "—"),
-        api_line=(
-            f"\nLive public API: <{api_url}/api/meta>\n" if api_url else ""
-        ),
+        api_line=(f"\nLive public API: <{api_url}/api/meta>\n" if api_url else ""),
     )
     (ROOT / "README.md").write_text(readme, encoding="utf-8")
     print(f"Wrote README.md ({len(readme.splitlines())} lines)")

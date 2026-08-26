@@ -17,24 +17,26 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from nightshift.common.clock import now_iso  # noqa: E402
-from nightshift.common.config import get_settings  # noqa: E402
-from nightshift.common.skills import load_skills  # noqa: E402
-from nightshift.evidence.store import record_manifest_in_store, write_evidence  # noqa: E402
-from nightshift.incident_runner import ScenarioConfig, run_incident  # noqa: E402
-from nightshift.runtime import build_runtime  # noqa: E402
-from nightshift.safety_kernel.authority import AGENT_TOOL_DOMAINS  # noqa: E402
-from nightshift.safety_kernel.world import reconciliation_snapshot  # noqa: E402
-from nightshift.schemas.enums import AgentName  # noqa: E402
+from nightshift.common.clock import now_iso
+from nightshift.common.config import get_settings
+from nightshift.common.skills import load_skills
+from nightshift.evidence.store import record_manifest_in_store, write_evidence
+from nightshift.incident_runner import ScenarioConfig, run_incident
+from nightshift.runtime import build_runtime
+from nightshift.safety_kernel.authority import AGENT_TOOL_DOMAINS
+from nightshift.safety_kernel.world import reconciliation_snapshot
+from nightshift.schemas.enums import AgentName
 
 
 def source_commit() -> str:
     try:
         return subprocess.run(
             ["git", "rev-parse", "--short", "HEAD"],
-            capture_output=True, text=True, check=True,
+            capture_output=True,
+            text=True,
+            check=True,
         ).stdout.strip()
-    except Exception:  # noqa: BLE001
+    except Exception:
         return get_settings().source_commit
 
 
@@ -85,9 +87,7 @@ async def main() -> int:
         upload=not args.no_upload,
         evaluated_at=now_iso(),
         estate_fixture_hash=run.estate_hash,
-        opening_evidence=[
-            {"event_id": eid, "kind": "sensor"} for eid in run.delivered_event_ids
-        ],
+        opening_evidence=[{"event_id": eid, "kind": "sensor"} for eid in run.delivered_event_ids],
         agents=[
             {
                 "agent": a.value,
@@ -95,9 +95,12 @@ async def main() -> int:
                 "authority_domains": sorted(d.value for d in AGENT_TOOL_DOMAINS[a]),
             }
             for a in [
-                AgentName.COMMANDER, AgentName.SIGNAL_INVESTIGATOR,
-                AgentName.IMPACT_ANALYST, AgentName.CAPACITY_BROKER,
-                AgentName.DISPATCH_AGENT, AgentName.CUSTODY_AGENT,
+                AgentName.COMMANDER,
+                AgentName.SIGNAL_INVESTIGATOR,
+                AgentName.IMPACT_ANALYST,
+                AgentName.CAPACITY_BROKER,
+                AgentName.DISPATCH_AGENT,
+                AgentName.CUSTODY_AGENT,
             ]
         ],
         skill_revisions={n: s.revision for n, s in load_skills().items()},

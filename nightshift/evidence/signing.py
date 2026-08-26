@@ -166,9 +166,7 @@ class KmsSigner(Signer):
 
     def public_key_pem(self) -> str:
         if self._public_pem is None:
-            self._public_pem = self._client.get_public_key(
-                request={"name": self._key_version}
-            ).pem
+            self._public_pem = self._client.get_public_key(request={"name": self._key_version}).pem
         return self._public_pem
 
     def sign(self, payload: bytes) -> Signature:
@@ -203,7 +201,7 @@ def get_signer(settings: Settings | None = None) -> Signer:
             signer = KmsSigner(settings.kms_key)
             signer.public_key_pem()  # prove the key is reachable before committing to it
             return signer
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             import logging
 
             logging.getLogger(__name__).warning(
@@ -233,7 +231,7 @@ def verify_signature(payload: bytes, signature: Signature) -> tuple[bool, str]:
 
     try:
         public_key = serialization.load_pem_public_key(signature.public_key_pem.encode("ascii"))
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         return False, f"public key could not be parsed: {exc}"
     if not isinstance(public_key, ec.EllipticCurvePublicKey):
         return False, "public key is not an EC key"
@@ -246,6 +244,6 @@ def verify_signature(payload: bytes, signature: Signature) -> tuple[bool, str]:
         )
     except InvalidSignature:
         return False, "signature does not verify against the public key"
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         return False, f"signature verification error: {exc}"
     return True, ""

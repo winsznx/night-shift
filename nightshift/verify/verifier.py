@@ -31,7 +31,7 @@ from nightshift.safety_kernel.world import reconciliation_snapshot
 
 
 class VerificationStatus(StrEnum):
-    PASS = "PASS"
+    PASS = "PASS"  # noqa: S105 - a verification result, not a credential
     MISMATCH = "MISMATCH"
     PARTIAL = "PARTIAL"
     """Everything checkable checked out, but something could not be checked — most often
@@ -62,8 +62,9 @@ class VerificationResult:
         return {
             "status": self.status.value,
             "incident_id": self.incident_id,
-            "checks": [{"name": c.name, "result": c.symbol, "detail": c.detail}
-                       for c in self.checks],
+            "checks": [
+                {"name": c.name, "result": c.symbol, "detail": c.detail} for c in self.checks
+            ],
             "recomputed_invariants": self.recomputed,
             "stored_invariants": self.stored,
             "divergences": self.divergences,
@@ -86,16 +87,15 @@ class VerificationResult:
         return "\n".join(lines)
 
 
-def verify_manifest(manifest: dict[str, Any], *, signature: dict[str, Any] | None = None
-                    ) -> VerificationResult:
+def verify_manifest(
+    manifest: dict[str, Any], *, signature: dict[str, Any] | None = None
+) -> VerificationResult:
     incident_id = str(manifest.get("incident_id", ""))
     checks: list[Check] = []
 
     # --- structural -----------------------------------------------------------------
     version = manifest.get("manifest_version")
-    checks.append(
-        Check("manifest version", version == 1, f"version={version}")
-    )
+    checks.append(Check("manifest version", version == 1, f"version={version}"))
 
     snapshot = manifest.get("state_snapshot")
     if not isinstance(snapshot, dict):
@@ -160,7 +160,7 @@ def verify_manifest(manifest: dict[str, Any], *, signature: dict[str, Any] | Non
     # --- recomputation ---------------------------------------------------------------
     try:
         state = restore_state(snapshot)
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         checks.append(Check("state snapshot parses", False, f"{type(exc).__name__}: {exc}"))
         return VerificationResult(
             status=VerificationStatus.MISMATCH, incident_id=incident_id, checks=checks

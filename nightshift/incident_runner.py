@@ -20,8 +20,13 @@ from nightshift.runtime import Runtime, build_runtime
 from nightshift.safety_kernel.world import reconciliation_snapshot
 from nightshift.schemas.enums import AgentName, CustodyState, IncidentState, ReservationState
 from services.common.effects import record_event
-from services.gateway.broker import BrokerDenied
-from services.simulator.ingest import FailureProfile, FieldSimulator, ingest_sensor_event, inject_failure
+from services.gateway.broker import BrokerDeniedError
+from services.simulator.ingest import (
+    FailureProfile,
+    FieldSimulator,
+    ingest_sensor_event,
+    inject_failure,
+)
 
 log = logging.getLogger(__name__)
 
@@ -124,13 +129,18 @@ async def run_incident(
         delivered.append("evt-sensor-primary-redelivered")
         assert again["incident_id"] == incident_id, "duplicate delivery opened a second incident"
         record_event(
-            runtime.repo, incident_id, kind="sensor", source="incident-ingestor",
+            runtime.repo,
+            incident_id,
+            kind="sensor",
+            source="incident-ingestor",
             summary="Duplicate sensor delivery absorbed into the existing incident",
             detail={"joined_existing": again["joined_existing"], "dedupe_key": again["dedupe_key"]},
         )
 
     run = IncidentRun(
-        incident_id=incident_id, estate=estate, estate_hash=fixture_hash,
+        incident_id=incident_id,
+        estate=estate,
+        estate_hash=fixture_hash,
         delivered_event_ids=delivered,
     )
 
@@ -171,9 +181,7 @@ async def run_incident(
         skill_refs=skill_refs(),
         memory_context=runtime.memory_context(incident_id),
         max_rounds=scenario.max_rounds,
-        field_hook=lambda round_index: _field_round(
-            runtime, run, simulator, scenario, round_index
-        ),
+        field_hook=lambda round_index: _field_round(runtime, run, simulator, scenario, round_index),
     )
     run.outcome = await orchestrator.run()
     _disposition_remainder(runtime, run, scenario)
@@ -196,6 +204,8 @@ def _field_round(
     container with nowhere safe to go stays where it is, which is what makes the partial
     and contention drills produce honest outcomes rather than a stuck loop.
     """
+    _emit_sensor_tick(runtime)
+
     state = runtime.repo.load_kernel_state(run.incident_id)
     if state.incident is None or state.impact is None:
         return
@@ -242,19 +252,71 @@ def _field_round(
                 continue
             run.containers_moved.add(container_id)
             slot = f"{reservation.destination_freezer_id}-SLOT-{container_id[-4:]}"
-            _emit(runtime, run, "record_pickup", simulator.pickup_payload(
-                container_id, container.freezer_id, reservation.destination_freezer_id,
-                slot, reservation.id,
-            ))
+            _emit(
+                runtime,
+                run,
+                "record_pickup",
+                simulator.pickup_payload(
+                    container_id,
+                    container.freezer_id,
+                    reservation.destination_freezer_id,
+                    slot,
+                    reservation.id,
+                ),
+            )
             if scenario.warm_destination_after_reservation == reservation.destination_freezer_id:
                 _warm_destination(runtime, reservation.destination_freezer_id)
                 scenario.warm_destination_after_reservation = None
-                run.notes.append(
-                    f"{reservation.destination_freezer_id} warmed after reservation"
-                )
-            _emit(runtime, run, "record_destination_scan", simulator.destination_payload(
-                container_id, reservation.destination_freezer_id, slot,
-            ))
+                run.notes.append(f"{reservation.destination_freezer_id} warmed after reservation")
+            _emit(
+                runtime,
+                run,
+                "record_destination_scan",
+                simulator.destination_payload(
+                    container_id,
+                    reservation.destination_freezer_id,
+                    slot,
+                ),
+            )
+
+
+def _emit_sensor_tick(runtime: Runtime) -> None:
+    """Emit a current reading for every healthy freezer, as a real sensor fabric would.
+
+    Without this, the estate's telemetry is written once at seed time and then ages. A
+    long run — and a run against real Firestore is long — pushes every destination past
+    the N4 freshness window, and the kernel correctly refuses every custody commit with
+    "destination reading is 1175s old, limit 900s".
+
+    That refusal was right; the *world* was wrong. A working ULT freezer reports every
+    few minutes, so modelling it as reporting once is the bug. This does not fabricate a
+    safe temperature: it reports each freezer's current authoritative value with the
+    small jitter a real probe has, and a freezer that is failing keeps reporting that it
+    is failing.
+    """
+    from nightshift.schemas.core import TemperatureReading
+    from nightshift.schemas.enums import FreezerState
+
+    now = now_iso()
+    for freezer in runtime.repo.list_freezers():
+        if freezer.state is FreezerState.FAILED:
+            # The failed unit's curve is driven by the injected profile, not by this tick.
+            continue
+        jitter = ((hash((freezer.id, now)) % 21) - 10) / 50.0
+        celsius = round(freezer.current_temp_c + jitter, 2)
+        reading = TemperatureReading(
+            id=f"R-{freezer.id}-TICK-{now.replace(':', '').replace('.', '').replace('-', '')}",
+            freezer_id=freezer.id,
+            celsius=celsius,
+            recorded_at=now,
+            source="sensor",
+        )
+        runtime.repo.store.set("readings", reading.id, reading.model_dump(mode="json"))
+        runtime.repo.put(
+            "freezers",
+            freezer.id,
+            freezer.model_copy(update={"current_temp_c": celsius, "last_reading_at": now}),
+        )
 
 
 def simulate_repair_recovery(runtime: Runtime, run: IncidentRun, freezer_id: str) -> int:
@@ -298,7 +360,10 @@ def simulate_repair_recovery(runtime: Runtime, run: IncidentRun, freezer_id: str
         ),
     )
     record_event(
-        runtime.repo, run.incident_id, kind="field", source="field-simulator",
+        runtime.repo,
+        run.incident_id,
+        kind="field",
+        source="field-simulator",
         summary=(
             f"SIMULATED FIELD EVENT — {freezer_id} repaired; {written} post-repair readings "
             "written. Whether this constitutes a validated recovery is decided by the "
@@ -318,9 +383,9 @@ def _emit(runtime: Runtime, run: IncidentRun, tool: str, payload: dict[str, Any]
     """
     try:
         result = runtime.broker.call(AgentName.RESPONDER_APP, tool, payload)
-    except BrokerDenied as denied:
+    except BrokerDeniedError as denied:
         result = {"denied": True, "reason": denied.decision.reason}
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         result = {"error": f"{type(exc).__name__}: {exc}"}
     run.field_events.append({"tool": tool, "payload": payload, "result": result})
 
@@ -345,16 +410,22 @@ def _warm_destination(runtime: Runtime, freezer_id: str) -> None:
 
 
 def _open_competing_incident(
-    runtime: Runtime, estate: EstateFixture, scenario: ScenarioConfig,
-    namespace: str, run: IncidentRun,
+    runtime: Runtime,
+    estate: EstateFixture,
+    scenario: ScenarioConfig,
+    namespace: str,
+    run: IncidentRun,
 ) -> None:
     """D4: a second freezer fails and competes for the same backup capacity."""
     other = scenario.competing_incident_freezer
     assert other is not None
     inject_failure(runtime.repo, FailureProfile(freezer_id=other), seed=scenario.seed + 1)
     opened = ingest_sensor_event(
-        runtime.repo, site_id=estate.site.id, freezer_id=other,
-        source_event_id="evt-sensor-competing", namespace=namespace,
+        runtime.repo,
+        site_id=estate.site.id,
+        freezer_id=other,
+        source_event_id="evt-sensor-competing",
+        namespace=namespace,
     )
     run.notes.append(f"competing incident {opened['incident_id']} opened on {other}")
 
@@ -413,18 +484,26 @@ def _disposition_remainder(runtime: Runtime, run: IncidentRun, scenario: Scenari
         return
 
     at_source = [
-        c.id for c in state.containers.values()
+        c.id
+        for c in state.containers.values()
         if c.incident_id == run.incident_id and c.custody_state is CustodyState.AT_SOURCE
     ]
     note = (
         f"{len(at_source)} container(s) were not moved in this run "
         f"(transfer cap {scenario.max_transfers}"
-        + (f", {len(scenario.skip_containers)} deliberately skipped" if scenario.skip_containers else "")
+        + (
+            f", {len(scenario.skip_containers)} deliberately skipped"
+            if scenario.skip_containers
+            else ""
+        )
         + "). The incident correctly remains open."
     )
     run.notes.append(note)
     record_event(
-        runtime.repo, run.incident_id, kind="note", source="incident-runner",
+        runtime.repo,
+        run.incident_id,
+        kind="note",
+        source="incident-runner",
         summary=note,
         detail={
             "transfer_cap": scenario.max_transfers,

@@ -47,8 +47,9 @@ class PrincipalError(ValueError):
     """The principal assertion is absent, malformed, expired, or forged."""
 
 
-def issue_principal_token(agent: AgentName, revision: str, secret: str,
-                          issued_at: int | None = None) -> str:
+def issue_principal_token(
+    agent: AgentName, revision: str, secret: str, issued_at: int | None = None
+) -> str:
     issued_at = issued_at if issued_at is not None else int(time.time())
     body = f"{agent.value}:{revision}:{issued_at}"
     mac = hmac.new(secret.encode("utf-8"), body.encode("utf-8"), hashlib.sha256).hexdigest()

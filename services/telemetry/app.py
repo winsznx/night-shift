@@ -123,8 +123,7 @@ async def get_recent_door_events(
     now = now_iso()
     cutoff = parse_iso(now).timestamp() - hours * 3600
     events = [
-        e for e in repo.list_door_events(freezer_id)
-        if parse_iso(e.opened_at).timestamp() >= cutoff
+        e for e in repo.list_door_events(freezer_id) if parse_iso(e.opened_at).timestamp() >= cutoff
     ]
     return {
         "freezer_id": freezer_id,

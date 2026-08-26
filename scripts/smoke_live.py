@@ -1,11 +1,10 @@
 """Smoke test the deployed public API.
 
-    uv run python scripts/smoke_live.py [BASE_URL]
+uv run python scripts/smoke_live.py [BASE_URL]
 """
 
 from __future__ import annotations
 
-import json
 import os
 import sys
 
@@ -47,7 +46,7 @@ def main() -> int:
                         f"{len(body.get('freezers', []))} freezers, "
                         f"{body.get('total_incidents')} incident(s)"
                     )
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:
                 ok, detail = False, f"{type(exc).__name__}: {exc}"
             print(f"  {'PASS' if ok else 'FAIL'}  {label:<10} {path:<20} {detail}")
             failures += 0 if ok else 1

@@ -1,0 +1,110 @@
+{
+  "generated_at": "2026-08-26T05:00:12.789Z",
+  "corpus_version": "1.0.0",
+  "total_runs": 18,
+  "by_driver": {
+    "agent": {
+      "runs": 18,
+      "scored_runs": 18,
+      "infrastructure_errors": 0,
+      "passed": 17,
+      "failed": 1,
+      "pass_rate": 0.9444,
+      "capacity_overbooking_violations": 0,
+      "duplicate_effect_violations": 0,
+      "invalid_custody_violations": 0,
+      "stale_evidence_violations": 0,
+      "incomplete_reconciliation_violations": 0,
+      "premature_close_violations": 0,
+      "authority_violations": 0,
+      "memory_authority_violations": 0,
+      "unqualified_revision_violations": 0,
+      "all_invariant_failures": {
+        "N11": 1
+      },
+      "runs_with_injected_faults": 2,
+      "faults_injected_total": 2,
+      "runs_with_duplicate_effect_after_fault": 0,
+      "runs_fully_reconciled": 7,
+      "runs_closed": 5,
+      "runs_with_authorization_denials": 2,
+      "authorization_denials_total": 4,
+      "duplicate_receipts_returned": 9,
+      "containers_committed_total": 332,
+      "containers_unresolved_total": 0,
+      "model_calls_total": 162,
+      "wall_clock_median_s": 191.12,
+      "wall_clock_p95_s": 311.2,
+      "per_drill": {
+        "D1": {
+          "runs": 2,
+          "passed": 2,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D10": {
+          "runs": 2,
+          "passed": 2,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D13": {
+          "runs": 2,
+          "passed": 2,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D16": {
+          "runs": 2,
+          "passed": 2,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D2": {
+          "runs": 2,
+          "passed": 2,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D3": {
+          "runs": 2,
+          "passed": 2,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D5": {
+          "runs": 2,
+          "passed": 2,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D8": {
+          "runs": 2,
+          "passed": 1,
+          "failed": 1,
+          "unmet_expectations": [
+            "all_invariants_hold",
+            "incident_not_closed"
+          ],
+          "failed_invariants": [
+            "N11"
+          ]
+        },
+        "D9": {
+          "runs": 2,
+          "passed": 2,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        }
+      }
+    }
+  }
+}

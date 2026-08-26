@@ -140,8 +140,7 @@ async def request_incident_transition(
             collection="incidents",
             summary=f"Incident {incident.state.value} -> {body.to_state.value}",
             evidence_sources=["incident_control:get_incident"],
-            detail={"from": incident.state.value, "to": body.to_state.value,
-                    "reason": body.reason},
+            detail={"from": incident.state.value, "to": body.to_state.value, "reason": body.reason},
         )
 
     return commit_effect(repo, request, build, trace_id=body.trace_id).as_dict()
@@ -198,8 +197,7 @@ async def request_incident_close(
                 f"({len(snap.committed)} committed, {len(snap.quarantined)} quarantined)"
             ),
             evidence_sources=["custody:reconcile_incident", "incident_control:get_incident"],
-            detail={"reconciliation": snap.as_dict(),
-                    "reconciliation_hash": snap.snapshot_hash},
+            detail={"reconciliation": snap.as_dict(), "reconciliation_hash": snap.snapshot_hash},
         )
 
     return commit_effect(repo, request, build, trace_id=body.trace_id).as_dict()
@@ -263,8 +261,11 @@ async def open_incident(
         kind="sensor",
         source="incident-ingestor",
         summary=f"Incident opened on {body.freezer_id} from sensor evidence",
-        detail={"dedupe_key": key, "source_event_id": body.source_event_id,
-                "window_key": body.window_key},
+        detail={
+            "dedupe_key": key,
+            "source_event_id": body.source_event_id,
+            "window_key": body.window_key,
+        },
         trace_id=body.trace_id,
         occurred_at=now,
     )

@@ -1,4 +1,4 @@
-"""Reference model cases for N1–N13 (PRD §15.2).
+"""Reference model cases for N1-N13 (PRD §15.2).
 
 Every case in the PRD's list appears here. Assertions run against the kernel's own
 functions — there is no second implementation of "what should happen".
@@ -20,7 +20,6 @@ from nightshift.safety_kernel.invariants import (
     failed_invariants,
     n1_capacity_conservation,
     n2_exactly_once_effects,
-    n3_valid_custody_prerequisite,
     n4_fresh_destination_evidence,
     n5_complete_reconciliation,
     n6_no_premature_close,
@@ -115,11 +114,14 @@ def test_n1_concurrent_reservations_exceeding_capacity_refuse_the_second():
 
 
 def test_n1_released_reservations_free_their_slots():
-    released = b.reservation(destination="F-03", group_id="PG-X", slots=10,
-                             state=ReservationState.RELEASED)
+    released = b.reservation(
+        destination="F-03", group_id="PG-X", slots=10, state=ReservationState.RELEASED
+    )
     state = b.base_state(
-        freezers={"F-17": b.freezer("F-17"),
-                  "F-03": b.freezer("F-03", total=60, occupied=50, backup=True)},
+        freezers={
+            "F-17": b.freezer("F-17"),
+            "F-03": b.freezer("F-03", total=60, occupied=50, backup=True),
+        },
         reservations={released.id: released},
     )
     assert state.reserved_slots("F-03") == 0
@@ -167,10 +169,12 @@ def test_n2_mismatched_action_id_is_refused():
 def test_n2_duplicate_effect_records_are_detected():
     r1 = b.reservation()
     r2 = r1.model_copy(update={"id": "RES-DUPE"})
-    state = b.base_state(reservations={r1.id: r1, r2.id: r2},
-                         receipts={r1.action_id: b.receipt(r1.action_id,
-                                                           ActionType.CAPACITY_RESERVE,
-                                                           effect_ref=r1.id)})
+    state = b.base_state(
+        reservations={r1.id: r1, r2.id: r2},
+        receipts={
+            r1.action_id: b.receipt(r1.action_id, ActionType.CAPACITY_RESERVE, effect_ref=r1.id)
+        },
+    )
     res = n2_exactly_once_effects(state)
     assert not res.holds and res.evidence["duplicate_effects"]
 
@@ -180,8 +184,9 @@ def test_n2_effect_committed_but_response_lost_returns_one_effect():
     r = b.reservation()
     state = b.base_state(
         reservations={r.id: r},
-        receipts={r.action_id: b.receipt(r.action_id, ActionType.CAPACITY_RESERVE,
-                                         effect_ref=r.id)},
+        receipts={
+            r.action_id: b.receipt(r.action_id, ActionType.CAPACITY_RESERVE, effect_ref=r.id)
+        },
     )
     assert state.committed_receipt_for(r.action_id) is not None
     assert n2_exactly_once_effects(state).holds
@@ -216,8 +221,15 @@ def test_n2_duplicate_committed_transfer_is_detected():
 # --------------------------------------------------------------------------------------
 
 
-def _commit(container_id="C-001", *, dest="F-03", reservation_id=None, temp=-79.0,
-            temp_at=NOW, authorized=True):
+def _commit(
+    container_id="C-001",
+    *,
+    dest="F-03",
+    reservation_id=None,
+    temp=-79.0,
+    temp_at=NOW,
+    authorized=True,
+):
     from nightshift.common.ids import transfer_action_id
 
     return ActionRequest(
@@ -241,13 +253,20 @@ def _commit(container_id="C-001", *, dest="F-03", reservation_id=None, temp=-79.
 
 def _ready_state(**over):
     res = b.reservation()
-    t = b.transfer("C-001", reservation_id=res.id, state=CustodyState.RECEIVED,
-                   with_pickup=True, with_destination=True)
+    t = b.transfer(
+        "C-001",
+        reservation_id=res.id,
+        state=CustodyState.RECEIVED,
+        with_pickup=True,
+        with_destination=True,
+    )
     kw = {
         "reservations": {res.id: res},
         "transfers": {t.transfer_id: t},
-        "containers": {"C-001": b.container("C-001", custody=CustodyState.RECEIVED),
-                       "C-002": b.container("C-002")},
+        "containers": {
+            "C-001": b.container("C-001", custody=CustodyState.RECEIVED),
+            "C-002": b.container("C-002"),
+        },
     }
     kw.update(over)
     return b.base_state(**kw), res
@@ -278,13 +297,20 @@ def test_n3_commit_without_responder_credential_refused():
 
 def test_n3_commit_without_pickup_evidence_refused():
     res = b.reservation()
-    t = b.transfer("C-001", reservation_id=res.id, state=CustodyState.RECEIVED,
-                   with_pickup=False, with_destination=True)
+    t = b.transfer(
+        "C-001",
+        reservation_id=res.id,
+        state=CustodyState.RECEIVED,
+        with_pickup=False,
+        with_destination=True,
+    )
     state = b.base_state(
         reservations={res.id: res},
         transfers={t.transfer_id: t},
-        containers={"C-001": b.container("C-001", custody=CustodyState.RECEIVED),
-                    "C-002": b.container("C-002")},
+        containers={
+            "C-001": b.container("C-001", custody=CustodyState.RECEIVED),
+            "C-002": b.container("C-002"),
+        },
     )
     d = evaluate_action(state, _commit(reservation_id=res.id))
     assert not d.allowed and d.invariant == "N3"
@@ -293,12 +319,20 @@ def test_n3_commit_without_pickup_evidence_refused():
 
 def test_n3_invalidated_reservation_cannot_back_a_commit():
     res = b.reservation(state=ReservationState.INVALIDATED)
-    t = b.transfer("C-001", reservation_id=res.id, state=CustodyState.RECEIVED,
-                   with_pickup=True, with_destination=True)
+    t = b.transfer(
+        "C-001",
+        reservation_id=res.id,
+        state=CustodyState.RECEIVED,
+        with_pickup=True,
+        with_destination=True,
+    )
     state = b.base_state(
-        reservations={res.id: res}, transfers={t.transfer_id: t},
-        containers={"C-001": b.container("C-001", custody=CustodyState.RECEIVED),
-                    "C-002": b.container("C-002")},
+        reservations={res.id: res},
+        transfers={t.transfer_id: t},
+        containers={
+            "C-001": b.container("C-001", custody=CustodyState.RECEIVED),
+            "C-002": b.container("C-002"),
+        },
     )
     d = evaluate_action(state, _commit(reservation_id=res.id))
     assert not d.allowed and d.invariant == "N3"
@@ -342,8 +376,13 @@ def test_n4_boundary_age_exactly_at_limit_is_allowed():
 
 
 def test_n4_snapshot_check_flags_a_committed_transfer_with_stale_evidence():
-    t = b.transfer("C-001", state=CustodyState.COMMITTED, with_pickup=True,
-                   with_destination=True, dest_temp_at="2026-08-26T00:00:00.000Z")
+    t = b.transfer(
+        "C-001",
+        state=CustodyState.COMMITTED,
+        with_pickup=True,
+        with_destination=True,
+        dest_temp_at="2026-08-26T00:00:00.000Z",
+    )
     state = b.base_state(transfers={t.transfer_id: t})
     assert not n4_fresh_destination_evidence(state, NOW).holds
 
@@ -351,11 +390,21 @@ def test_n4_snapshot_check_flags_a_committed_transfer_with_stale_evidence():
 def test_contradictory_scan_forces_unresolved():
     """D14: container scanned at an unexpected destination."""
     res = b.reservation()
-    t = b.transfer("C-001", reservation_id=res.id, destination="F-03",
-                   state=CustodyState.PICKED_UP, with_pickup=True)
-    state = b.base_state(reservations={res.id: res}, transfers={t.transfer_id: t},
-                         containers={"C-001": b.container("C-001", custody=CustodyState.PICKED_UP),
-                                     "C-002": b.container("C-002")})
+    t = b.transfer(
+        "C-001",
+        reservation_id=res.id,
+        destination="F-03",
+        state=CustodyState.PICKED_UP,
+        with_pickup=True,
+    )
+    state = b.base_state(
+        reservations={res.id: res},
+        transfers={t.transfer_id: t},
+        containers={
+            "C-001": b.container("C-001", custody=CustodyState.PICKED_UP),
+            "C-002": b.container("C-002"),
+        },
+    )
     req = ActionRequest(
         action_id="a" * 64,
         action_type=ActionType.CUSTODY_DESTINATION_SCAN,
@@ -363,8 +412,11 @@ def test_contradictory_scan_forces_unresolved():
         actor_identity="custody-agent",
         requested_by_agent=AgentName.CUSTODY_AGENT,
         requested_by_agent_revision="rev-1",
-        payload={"container_id": "C-001", "destination_freezer_id": "F-09",
-                 "responder_authorized": True},
+        payload={
+            "container_id": "C-001",
+            "destination_freezer_id": "F-09",
+            "responder_authorized": True,
+        },
         now=NOW,
     )
     d = evaluate_action(state, req)
@@ -375,11 +427,21 @@ def test_contradictory_scan_forces_unresolved():
 def test_duplicate_scan_is_rejected_by_the_custody_state_machine():
     """D12: the second identical scan cannot re-drive the same transition."""
     res = b.reservation()
-    t = b.transfer("C-001", reservation_id=res.id, state=CustodyState.RECEIVED,
-                   with_pickup=True, with_destination=True)
-    state = b.base_state(reservations={res.id: res}, transfers={t.transfer_id: t},
-                         containers={"C-001": b.container("C-001", custody=CustodyState.RECEIVED),
-                                     "C-002": b.container("C-002")})
+    t = b.transfer(
+        "C-001",
+        reservation_id=res.id,
+        state=CustodyState.RECEIVED,
+        with_pickup=True,
+        with_destination=True,
+    )
+    state = b.base_state(
+        reservations={res.id: res},
+        transfers={t.transfer_id: t},
+        containers={
+            "C-001": b.container("C-001", custody=CustodyState.RECEIVED),
+            "C-002": b.container("C-002"),
+        },
+    )
     req = ActionRequest(
         action_id="a" * 64,
         action_type=ActionType.CUSTODY_PICKUP,
@@ -471,7 +533,8 @@ def test_n6_close_without_impact_snapshot_refused():
     containers = {c: b.container(c, custody=CustodyState.COMMITTED) for c in ("C-001", "C-002")}
     state = b.base_state(
         incident=b.incident(state=IncidentState.RECONCILING),
-        containers=containers, impact=None,
+        containers=containers,
+        impact=None,
         holds={"F-17": b.hold(active=False, evidence="VAL-1")},
     )
     d = evaluate_action(state, _close_request(state))
@@ -479,7 +542,12 @@ def test_n6_close_without_impact_snapshot_refused():
 
 
 def test_n6_full_reconciliation_permits_closure():
-    containers = {c: b.container(c, custody=CustodyState.COMMITTED) for c in ("C-001", "C-002")}
+    # Committed containers have physically moved to the destination. Leaving them in
+    # F-17 would be resolved-on-paper only, which closure now refuses.
+    containers = {
+        c: b.container(c, custody=CustodyState.COMMITTED, freezer_id="F-03")
+        for c in ("C-001", "C-002")
+    }
     state = b.base_state(
         incident=b.incident(state=IncidentState.RECONCILING),
         containers=containers,
@@ -503,7 +571,8 @@ def test_n6_stale_close_action_id_refused():
         actor_identity="incident-commander",
         requested_by_agent=AgentName.COMMANDER,
         requested_by_agent_revision="rev-1",
-        payload={}, now=NOW,
+        payload={},
+        now=NOW,
     )
     d = evaluate_action(state, stale)
     assert not d.allowed and "reconciliation snapshot" in d.reason
@@ -519,8 +588,10 @@ def test_n5_quarantined_counts_as_resolved():
 
 
 def test_n5_flags_closed_incident_with_open_containers():
-    containers = {"C-001": b.container("C-001", custody=CustodyState.IN_TRANSIT),
-                  "C-002": b.container("C-002", custody=CustodyState.COMMITTED)}
+    containers = {
+        "C-001": b.container("C-001", custody=CustodyState.IN_TRANSIT),
+        "C-002": b.container("C-002", custody=CustodyState.COMMITTED),
+    }
     state = b.base_state(incident=b.incident(state=IncidentState.CLOSED), containers=containers)
     assert not n5_complete_reconciliation(state).holds
     assert not n6_no_premature_close(state).holds
@@ -541,9 +612,14 @@ def test_n7_wrong_identity_cannot_reserve_capacity():
     state = b.base_state()
     req = _reserve(2)
     bad = ActionRequest(
-        action_id=req.action_id, action_type=req.action_type, incident_id=req.incident_id,
-        actor_identity="dispatch-agent", requested_by_agent=AgentName.DISPATCH_AGENT,
-        requested_by_agent_revision="rev-1", payload=req.payload, now=NOW,
+        action_id=req.action_id,
+        action_type=req.action_type,
+        incident_id=req.incident_id,
+        actor_identity="dispatch-agent",
+        requested_by_agent=AgentName.DISPATCH_AGENT,
+        requested_by_agent_revision="rev-1",
+        payload=req.payload,
+        now=NOW,
     )
     d = evaluate_action(state, bad)
     assert not d.allowed and d.invariant == "N7"
@@ -553,9 +629,14 @@ def test_n7_commander_cannot_commit_custody():
     state, res = _ready_state()
     req = _commit(reservation_id=res.id)
     bad = ActionRequest(
-        action_id=req.action_id, action_type=req.action_type, incident_id=req.incident_id,
-        actor_identity="incident-commander", requested_by_agent=AgentName.COMMANDER,
-        requested_by_agent_revision="rev-1", payload=req.payload, now=NOW,
+        action_id=req.action_id,
+        action_type=req.action_type,
+        incident_id=req.incident_id,
+        actor_identity="incident-commander",
+        requested_by_agent=AgentName.COMMANDER,
+        requested_by_agent_revision="rev-1",
+        payload=req.payload,
+        now=NOW,
     )
     d = evaluate_action(state, bad)
     assert not d.allowed and d.invariant == "N7"
@@ -565,8 +646,11 @@ def test_n7_snapshot_check_flags_wrong_actor():
     r = b.reservation()
     state = b.base_state(
         reservations={r.id: r},
-        receipts={r.action_id: b.receipt(r.action_id, ActionType.CAPACITY_RESERVE,
-                                         actor="dispatch-agent", effect_ref=r.id)},
+        receipts={
+            r.action_id: b.receipt(
+                r.action_id, ActionType.CAPACITY_RESERVE, actor="dispatch-agent", effect_ref=r.id
+            )
+        },
     )
     assert not n7_least_privilege_effect_authority(state).holds
 
@@ -576,8 +660,11 @@ def test_n8_memory_only_evidence_is_refused():
     state = b.base_state()
     req = _reserve(2)
     memory_only = ActionRequest(
-        action_id=req.action_id, action_type=req.action_type, incident_id=req.incident_id,
-        actor_identity="capacity-broker", requested_by_agent=AgentName.CAPACITY_BROKER,
+        action_id=req.action_id,
+        action_type=req.action_type,
+        incident_id=req.incident_id,
+        actor_identity="capacity-broker",
+        requested_by_agent=AgentName.CAPACITY_BROKER,
         requested_by_agent_revision="rev-1",
         payload={**req.payload, "evidence_sources": ["memory:F-03 usually has room"]},
         now=NOW,
@@ -590,11 +677,16 @@ def test_n8_memory_plus_authoritative_source_is_fine():
     state = b.base_state()
     req = _reserve(2)
     mixed = ActionRequest(
-        action_id=req.action_id, action_type=req.action_type, incident_id=req.incident_id,
-        actor_identity="capacity-broker", requested_by_agent=AgentName.CAPACITY_BROKER,
+        action_id=req.action_id,
+        action_type=req.action_type,
+        incident_id=req.incident_id,
+        actor_identity="capacity-broker",
+        requested_by_agent=AgentName.CAPACITY_BROKER,
         requested_by_agent_revision="rev-1",
-        payload={**req.payload,
-                 "evidence_sources": ["memory:F-03 usually has room", "capacity:get_capacity"]},
+        payload={
+            **req.payload,
+            "evidence_sources": ["memory:F-03 usually has room", "capacity:get_capacity"],
+        },
         now=NOW,
     )
     assert evaluate_action(state, mixed).allowed
@@ -604,17 +696,23 @@ def test_n8_snapshot_check_flags_memory_only_receipt():
     r = b.reservation()
     state = b.base_state(
         reservations={r.id: r},
-        receipts={r.action_id: b.receipt(r.action_id, ActionType.CAPACITY_RESERVE,
-                                         effect_ref=r.id,
-                                         evidence_sources=["memory:remembered capacity"])},
+        receipts={
+            r.action_id: b.receipt(
+                r.action_id,
+                ActionType.CAPACITY_RESERVE,
+                effect_ref=r.id,
+                evidence_sources=["memory:remembered capacity"],
+            )
+        },
     )
     assert not n8_memory_non_authority(state).holds
 
 
 def test_n10_blocked_revision_cannot_act():
     """D16: a blocked revision attempts an action."""
-    state = b.base_state(revision_states={**b.qualified_revisions(),
-                                          "capacity-broker@rev-1": "BLOCKED"})
+    state = b.base_state(
+        revision_states={**b.qualified_revisions(), "capacity-broker@rev-1": "BLOCKED"}
+    )
     d = evaluate_action(state, _reserve(2))
     assert not d.allowed and d.invariant == "N10"
 
@@ -627,17 +725,20 @@ def test_n10_unknown_revision_is_treated_as_unqualified():
 
 
 def test_n10_deprecated_revision_cannot_act():
-    state = b.base_state(revision_states={**b.qualified_revisions(),
-                                          "capacity-broker@rev-1": "DEPRECATED"})
+    state = b.base_state(
+        revision_states={**b.qualified_revisions(), "capacity-broker@rev-1": "DEPRECATED"}
+    )
     assert not evaluate_action(state, _reserve(2)).allowed
 
 
 def test_n10_snapshot_check_flags_unqualified_effect():
     r = b.reservation()
     state = b.base_state(
-        reservations={r.id: r}, revision_states={},
-        receipts={r.action_id: b.receipt(r.action_id, ActionType.CAPACITY_RESERVE,
-                                         effect_ref=r.id)},
+        reservations={r.id: r},
+        revision_states={},
+        receipts={
+            r.action_id: b.receipt(r.action_id, ActionType.CAPACITY_RESERVE, effect_ref=r.id)
+        },
     )
     assert not n10_revision_qualification(state).holds
 
@@ -651,8 +752,9 @@ def test_n9_duplicate_delivery_without_duplicate_effect_holds():
     r = b.reservation()
     state = b.base_state(
         reservations={r.id: r},
-        receipts={r.action_id: b.receipt(r.action_id, ActionType.CAPACITY_RESERVE,
-                                         effect_ref=r.id)},
+        receipts={
+            r.action_id: b.receipt(r.action_id, ActionType.CAPACITY_RESERVE, effect_ref=r.id)
+        },
     )
     res = n9_duplicate_event_safety(state, ["evt-1", "evt-1", "evt-2"])
     assert res.holds and res.evidence["duplicate_deliveries"] == 1
@@ -663,8 +765,9 @@ def test_n9_duplicate_delivery_with_duplicate_effect_fails():
     r2 = r1.model_copy(update={"id": "RES-DUPE"})
     state = b.base_state(
         reservations={r1.id: r1, r2.id: r2},
-        receipts={r1.action_id: b.receipt(r1.action_id, ActionType.CAPACITY_RESERVE,
-                                          effect_ref=r1.id)},
+        receipts={
+            r1.action_id: b.receipt(r1.action_id, ActionType.CAPACITY_RESERVE, effect_ref=r1.id)
+        },
     )
     assert not n9_duplicate_event_safety(state, ["evt-1", "evt-1"]).holds
 
@@ -689,9 +792,11 @@ def test_n11_unavailable_adapter_while_open_is_acceptable():
 def test_n11_impact_snapshot_refused_when_inventory_incomplete():
     state = b.base_state(impact=None)
     req = ActionRequest(
-        action_id="c" * 64, action_type=ActionType.IMPACT_SNAPSHOT, incident_id="INC-1",
-        actor_identity="incident-ingestor", payload={"inventory_complete": False,
-                                                     "container_ids": ["C-001"]},
+        action_id="c" * 64,
+        action_type=ActionType.IMPACT_SNAPSHOT,
+        incident_id="INC-1",
+        actor_identity="incident-ingestor",
+        payload={"inventory_complete": False, "container_ids": ["C-001"]},
         now=NOW,
     )
     d = evaluate_action(state, req)

@@ -27,7 +27,9 @@ class SignalAssessment(AgentOut):
     """Signal Investigator verdict. Read-only domain: telemetry + equipment history."""
 
     incident_id: str
-    classification: Literal["TRANSIENT_EXCURSION", "DOOR_EVENT", "EQUIPMENT_FAILURE", "INCONCLUSIVE"]
+    classification: Literal[
+        "TRANSIENT_EXCURSION", "DOOR_EVENT", "EQUIPMENT_FAILURE", "INCONCLUSIVE"
+    ]
     recommended_severity: Severity
     suspected_fault_class: FaultClass
     confidence: float = Field(ge=0.0, le=1.0)

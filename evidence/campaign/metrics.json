@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-26T03:54:34.986Z",
+  "generated_at": "2026-08-26T05:05:02.690Z",
   "corpus_version": "1.0.0",
   "total_runs": 126,
   "by_driver": {
@@ -27,12 +27,12 @@
       "runs_closed": 60,
       "runs_with_authorization_denials": 12,
       "authorization_denials_total": 24,
-      "duplicate_receipts_returned": 67,
+      "duplicate_receipts_returned": 6,
       "containers_committed_total": 3252,
       "containers_unresolved_total": 252,
       "model_calls_total": 0,
-      "wall_clock_median_s": 0.51,
-      "wall_clock_p95_s": 0.78,
+      "wall_clock_median_s": 0.48,
+      "wall_clock_p95_s": 0.77,
       "per_drill": {
         "D1": {
           "runs": 6,

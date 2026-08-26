@@ -56,11 +56,8 @@ def inject_failure(
     for i in range(points + 1):
         offset = -(points - i) * profile.interval_s
         progress = i / points
-        if profile.recovers:
-            # Rise then fall — a door excursion that closes and recovers.
-            shape = 1 - abs(2 * progress - 1)
-        else:
-            shape = progress**1.4
+        # A recovering profile rises then falls: a door excursion that closes.
+        shape = 1 - abs(2 * progress - 1) if profile.recovers else progress**1.4
         celsius = profile.start_c + (profile.peak_c - profile.start_c) * shape
         celsius += rng.uniform(-0.3, 0.3)
         reading = TemperatureReading(
@@ -135,9 +132,7 @@ def ingest_sensor_event(
 
     incident_app.state.repository = repo
     client = TestClient(incident_app, raise_server_exceptions=False)
-    token = issue_principal_token(
-        AgentName.INGESTOR, "rev-1", get_settings().agent_shared_secret
-    )
+    token = issue_principal_token(AgentName.INGESTOR, "rev-1", get_settings().agent_shared_secret)
 
     freezer = repo.get_freezer(freezer_id)
     severity = "SEV2"
@@ -196,8 +191,14 @@ class FieldSimulator:
     def scan_signature(self, container_id: str, phase: str) -> str:
         return deterministic_token(self.seed, self.incident_id, container_id, phase)
 
-    def pickup_payload(self, container_id: str, source: str, destination: str,
-                       slot: str, reservation_id: str | None) -> dict[str, Any]:
+    def pickup_payload(
+        self,
+        container_id: str,
+        source: str,
+        destination: str,
+        slot: str,
+        reservation_id: str | None,
+    ) -> dict[str, Any]:
         return {
             "incident_id": self.incident_id,
             "container_id": container_id,
@@ -210,8 +211,7 @@ class FieldSimulator:
             "simulated": True,
         }
 
-    def destination_payload(self, container_id: str, destination: str,
-                            slot: str) -> dict[str, Any]:
+    def destination_payload(self, container_id: str, destination: str, slot: str) -> dict[str, Any]:
         actual = destination
         if self.contradict_container == container_id:
             actual = self._wrong_destination(destination)

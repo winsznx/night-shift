@@ -17,7 +17,7 @@ from typing import Any
 from services.gateway.transport import TransportError
 
 
-class InjectedCommitLoss(TransportError):
+class InjectedCommitLossError(TransportError):
     """The effect committed; the response never came back.
 
     Subclasses ``TransportError`` on purpose: the agent must experience this exactly as
@@ -26,7 +26,7 @@ class InjectedCommitLoss(TransportError):
     """
 
 
-class InjectedToolFailure(TransportError):
+class InjectedToolFailureError(TransportError):
     """The tool never ran. A plain infrastructure error."""
 
 
@@ -75,15 +75,13 @@ class FaultInjector:
                 "spec_index": index,
             }
             self.injected.append(record)
-            message = spec.message or (
-                f"injected {spec.kind} on call {call_number} of {tool}"
-            )
+            message = spec.message or (f"injected {spec.kind} on call {call_number} of {tool}")
             if spec.kind == "commit_loss":
                 # The distinguishing detail: the tool is allowed to run first, and only
                 # its *response* is lost. That is what makes the retry meet an existing
                 # receipt rather than an empty store.
-                raise InjectedCommitLoss(message)
-            raise InjectedToolFailure(message)
+                raise InjectedCommitLossError(message)
+            raise InjectedToolFailureError(message)
 
     @property
     def fault_log(self) -> list[dict[str, Any]]:
@@ -107,10 +105,14 @@ class CommitThenLoseTransport:
         self._injector = injector
         self._counts: dict[tuple[str, str], int] = {}
 
-    def invoke(self, tool_name: str, principal_token: str, payload: dict[str, Any]) -> dict[str, Any]:
+    def invoke(
+        self, tool_name: str, principal_token: str, payload: dict[str, Any]
+    ) -> dict[str, Any]:
         action_key = str(
-            payload.get("action_id") or payload.get("placement_group_id")
-            or payload.get("container_id") or ""
+            payload.get("action_id")
+            or payload.get("placement_group_id")
+            or payload.get("container_id")
+            or ""
         )
         key = (tool_name, action_key)
         self._counts[key] = self._counts.get(key, 0) + 1
@@ -122,16 +124,13 @@ class CommitThenLoseTransport:
 
         if spec.kind == "tool_failure":
             self._record(spec, tool_name, action_key, call_number)
-            raise InjectedToolFailure(
-                spec.message or f"injected tool failure on {tool_name}"
-            )
+            raise InjectedToolFailureError(spec.message or f"injected tool failure on {tool_name}")
 
         # commit_loss: let the effect land, then lose the response.
         self._inner.invoke(tool_name, principal_token, payload)
         self._record(spec, tool_name, action_key, call_number)
-        raise InjectedCommitLoss(
-            spec.message
-            or f"{tool_name} committed but the response was lost (call {call_number})"
+        raise InjectedCommitLossError(
+            spec.message or f"{tool_name} committed but the response was lost (call {call_number})"
         )
 
     def _matching_spec(self, tool: str, action_id: str, call_number: int) -> FaultSpec | None:

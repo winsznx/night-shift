@@ -29,16 +29,16 @@ from typing import Any
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from google.adk.agents import LlmAgent  # noqa: E402
-from google.adk.apps import App  # noqa: E402
-from google.adk.apps.app import ResumabilityConfig  # noqa: E402
-from google.adk.plugins.base_plugin import BasePlugin  # noqa: E402
-from google.adk.runners import Runner  # noqa: E402
-from google.adk.sessions import InMemorySessionService  # noqa: E402
-from google.genai import types  # noqa: E402
+from google.adk.agents import LlmAgent
+from google.adk.apps import App
+from google.adk.apps.app import ResumabilityConfig
+from google.adk.plugins.base_plugin import BasePlugin
+from google.adk.runners import Runner
+from google.adk.sessions import InMemorySessionService
+from google.genai import types
 
-from nightshift.common.canonical import sha256_hex  # noqa: E402
-from nightshift.common.config import get_settings  # noqa: E402
+from nightshift.common.canonical import sha256_hex
+from nightshift.common.config import get_settings
 
 INSTRUCTION = (
     "You reserve backup freezer capacity. Call reserve_capacity exactly once with "
@@ -89,7 +89,9 @@ class CrashAfterToolPlugin(BasePlugin):
         return None
 
 
-def build(store: EffectStore, plugins: list[BasePlugin], tool) -> tuple[Runner, InMemorySessionService]:
+def build(
+    store: EffectStore, plugins: list[BasePlugin], tool
+) -> tuple[Runner, InMemorySessionService]:
     settings = get_settings()
     agent = LlmAgent(
         name="spike_broker", model=settings.model_id, instruction=INSTRUCTION, tools=[tool]
@@ -107,15 +109,16 @@ def build(store: EffectStore, plugins: list[BasePlugin], tool) -> tuple[Runner, 
     )
 
 
-async def _drain(runner: Runner, *, user_id: str, session_id: str, invocation_id: str,
-                 text: str | None) -> str | None:
+async def _drain(
+    runner: Runner, *, user_id: str, session_id: str, invocation_id: str, text: str | None
+) -> str | None:
     msg = types.Content(role="user", parts=[types.Part(text=text)]) if text else None
     try:
         async for _ in runner.run_async(
             user_id=user_id, session_id=session_id, invocation_id=invocation_id, new_message=msg
         ):
             pass
-    except Exception as exc:  # noqa: BLE001 - observing the failure is the point
+    except Exception as exc:
         return f"{type(exc).__name__}: {exc}"
     return None
 
@@ -132,8 +135,9 @@ async def variant_a() -> dict[str, Any]:
     await sessions.create_session(app_name="nightshift_spike", user_id="u", session_id="s")
 
     inv = "e-variant-a"
-    err1 = await _drain(runner, user_id="u", session_id="s", invocation_id=inv,
-                        text="Reserve the capacity now.")
+    err1 = await _drain(
+        runner, user_id="u", session_id="s", invocation_id=inv, text="Reserve the capacity now."
+    )
     calls_after_crash, commits_after_crash = len(store.calls), store.commits
     err2 = await _drain(runner, user_id="u", session_id="s", invocation_id=inv, text=None)
 
@@ -168,8 +172,9 @@ async def variant_b() -> dict[str, Any]:
     await sessions.create_session(app_name="nightshift_spike", user_id="u", session_id="s")
 
     inv = "e-variant-b"
-    err1 = await _drain(runner, user_id="u", session_id="s", invocation_id=inv,
-                        text="Reserve the capacity now.")
+    err1 = await _drain(
+        runner, user_id="u", session_id="s", invocation_id=inv, text="Reserve the capacity now."
+    )
     calls_after_crash, commits_after_crash = len(store.calls), store.commits
     err2 = await _drain(runner, user_id="u", session_id="s", invocation_id=inv, text=None)
 
@@ -204,7 +209,9 @@ async def variant_c() -> dict[str, Any]:
 
     async def run_until_cancelled() -> None:
         async for _ in runner.run_async(
-            user_id="u", session_id="s", invocation_id=inv,
+            user_id="u",
+            session_id="s",
+            invocation_id=inv,
             new_message=types.Content(
                 role="user", parts=[types.Part(text="Reserve the capacity now.")]
             ),
@@ -224,7 +231,7 @@ async def variant_c() -> dict[str, Any]:
         await task
     except asyncio.CancelledError:
         cancel_error = "CancelledError"
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         cancel_error = f"{type(exc).__name__}: {exc}"
 
     calls_after_crash, commits_after_crash = len(store.calls), store.commits
@@ -256,8 +263,10 @@ async def main() -> int:
     for fn in (variant_a, variant_b, variant_c):
         try:
             variants.append(await fn())
-        except Exception as exc:  # noqa: BLE001
-            variants.append({"variant": fn.__name__, "harness_error": f"{type(exc).__name__}: {exc}"})
+        except Exception as exc:
+            variants.append(
+                {"variant": fn.__name__, "harness_error": f"{type(exc).__name__}: {exc}"}
+            )
 
     reinvoked = [v for v in variants if v.get("tool_reinvoked_on_resume")]
     duplicates = [v for v in variants if v.get("duplicate_effect")]

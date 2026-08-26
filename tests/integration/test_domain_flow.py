@@ -86,11 +86,15 @@ def _contain(clients, incident_id: str):
 
 
 def _snapshot_impact(clients, repo, incident_id: str):
-    listing = clients["inventory"].get(
-        "/v1/freezers/F-17/impacted",
-        params={"incident_id": incident_id},
-        headers=principal_headers(AgentName.IMPACT_ANALYST),
-    ).json()
+    listing = (
+        clients["inventory"]
+        .get(
+            "/v1/freezers/F-17/impacted",
+            params={"incident_id": incident_id},
+            headers=principal_headers(AgentName.IMPACT_ANALYST),
+        )
+        .json()
+    )
     return clients["inventory"].post(
         "/v1/impact",
         json={
@@ -110,11 +114,16 @@ def test_duplicate_sensor_delivery_yields_one_incident(world):
     _repo, clients = world
     first = _open_incident(clients)
     body = {
-        "site_id": "SITE-1", "freezer_id": "F-17", "window_key": "2026-08-26T02",
-        "severity": "SEV1", "source_event_id": "evt-sensor-1-redelivered", "namespace": "test",
+        "site_id": "SITE-1",
+        "freezer_id": "F-17",
+        "window_key": "2026-08-26T02",
+        "severity": "SEV1",
+        "source_event_id": "evt-sensor-1-redelivered",
+        "namespace": "test",
     }
-    r = clients["incident"].post("/v1/incidents", json=body,
-                                 headers=principal_headers(AgentName.INGESTOR))
+    r = clients["incident"].post(
+        "/v1/incidents", json=body, headers=principal_headers(AgentName.INGESTOR)
+    )
     assert r.json()["joined_existing"] is True
     assert r.json()["incident_id"] == first
 
@@ -125,9 +134,11 @@ def test_containment_hold_blocks_normal_operations(world):
     incident_id = _open_incident(clients)
     assert _contain(clients, incident_id).json()["receipt"]["status"] == "COMMITTED"
 
-    hold = clients["inventory"].get(
-        "/v1/holds/F-17", headers=principal_headers(AgentName.IMPACT_ANALYST)
-    ).json()
+    hold = (
+        clients["inventory"]
+        .get("/v1/holds/F-17", headers=principal_headers(AgentName.IMPACT_ANALYST))
+        .json()
+    )
     assert hold["hold_active"] is True
     assert hold["normal_operations_permitted"] is False
     assert repo.get_freezer("F-17").state.value == "FAILED"
@@ -165,12 +176,19 @@ def test_impact_snapshot_refused_when_inventory_incomplete(world):
     _repo, clients = world
     incident_id = _open_incident(clients)
     _contain(clients, incident_id)
-    r = clients["inventory"].post(
-        "/v1/impact",
-        json={"incident_id": incident_id, "container_ids": ["C-0001"],
-              "inventory_complete": False},
-        headers=principal_headers(AgentName.INGESTOR),
-    ).json()
+    r = (
+        clients["inventory"]
+        .post(
+            "/v1/impact",
+            json={
+                "incident_id": incident_id,
+                "container_ids": ["C-0001"],
+                "inventory_complete": False,
+            },
+            headers=principal_headers(AgentName.INGESTOR),
+        )
+        .json()
+    )
     assert r["receipt"]["status"] == "REFUSED"
     assert r["decision"]["invariant"] == "N11"
 
@@ -184,8 +202,10 @@ def test_reservation_is_idempotent_across_retries(world):
     group = repo.get_impact(incident_id).placement_groups[0]
 
     body = {
-        "incident_id": incident_id, "destination_freezer_id": "F-31",
-        "placement_group_id": group.id, "slots": group.slot_count,
+        "incident_id": incident_id,
+        "destination_freezer_id": "F-31",
+        "placement_group_id": group.id,
+        "slots": group.slot_count,
     }
     hdr = principal_headers(AgentName.CAPACITY_BROKER)
     first = clients["capacity"].post("/v1/reservations", json=body, headers=hdr).json()
@@ -216,14 +236,20 @@ def test_concurrent_reservations_cannot_overbook(world):
     lock = threading.Lock()
 
     def attempt(group_suffix: str) -> None:
-        r = clients["capacity"].post(
-            "/v1/reservations",
-            json={
-                "incident_id": incident_id, "destination_freezer_id": "F-22",
-                "placement_group_id": f"PG-RACE-{group_suffix}", "slots": 4,
-            },
-            headers=hdr,
-        ).json()
+        r = (
+            clients["capacity"]
+            .post(
+                "/v1/reservations",
+                json={
+                    "incident_id": incident_id,
+                    "destination_freezer_id": "F-22",
+                    "placement_group_id": f"PG-RACE-{group_suffix}",
+                    "slots": 4,
+                },
+                headers=hdr,
+            )
+            .json()
+        )
         with lock:
             results.append(r)
 
@@ -239,9 +265,7 @@ def test_concurrent_reservations_cannot_overbook(world):
     assert len(refused) == 1
     assert refused[0]["decision"]["invariant"] == "N1"
 
-    total_reserved = sum(
-        r.slots for r in repo.list_reservations(destination_freezer_id="F-22")
-    )
+    total_reserved = sum(r.slots for r in repo.list_reservations(destination_freezer_id="F-22"))
     assert total_reserved <= free
 
 
@@ -253,7 +277,8 @@ def test_work_order_and_dispatch_are_idempotent(world):
     hdr = principal_headers(AgentName.DISPATCH_AGENT)
 
     wo_body = {
-        "incident_id": incident_id, "freezer_id": "F-17",
+        "incident_id": incident_id,
+        "freezer_id": "F-17",
         "fault_class": FaultClass.COMPRESSOR_FAILURE.value,
         "summary": "Sustained warming; compressor suspected",
     }
@@ -263,8 +288,10 @@ def test_work_order_and_dispatch_are_idempotent(world):
     assert len(repo.list_work_orders(incident_id)) == 1
 
     d_body = {
-        "incident_id": incident_id, "responder_role": ResponderRole.LAB_TECH.value,
-        "response_phase": ResponsePhase.TRANSFER.value, "container_ids": ["C-0001"],
+        "incident_id": incident_id,
+        "responder_role": ResponderRole.LAB_TECH.value,
+        "response_phase": ResponsePhase.TRANSFER.value,
+        "container_ids": ["C-0001"],
     }
     c = clients["facilities"].post("/v1/dispatches", json=d_body, headers=hdr).json()
     d = clients["facilities"].post("/v1/dispatches", json=d_body, headers=hdr).json()
@@ -293,12 +320,14 @@ def test_sensitive_study_notes_are_unreachable_by_every_operational_agent(world)
     """The route exists and returns something real, and no agent can call it."""
     _repo, clients = world
     for agent in [
-        AgentName.COMMANDER, AgentName.SIGNAL_INVESTIGATOR, AgentName.IMPACT_ANALYST,
-        AgentName.CAPACITY_BROKER, AgentName.DISPATCH_AGENT, AgentName.CUSTODY_AGENT,
+        AgentName.COMMANDER,
+        AgentName.SIGNAL_INVESTIGATOR,
+        AgentName.IMPACT_ANALYST,
+        AgentName.CAPACITY_BROKER,
+        AgentName.DISPATCH_AGENT,
+        AgentName.CUSTODY_AGENT,
     ]:
-        r = clients["inventory"].get(
-            "/v1/study-notes/C-0001", headers=principal_headers(agent)
-        )
+        r = clients["inventory"].get("/v1/study-notes/C-0001", headers=principal_headers(agent))
         assert r.status_code == 403, f"{agent.value} unexpectedly reached study notes"
 
 
@@ -306,8 +335,12 @@ def test_unauthenticated_calls_hold_no_authority(world):
     _repo, clients = world
     r = clients["capacity"].post(
         "/v1/reservations",
-        json={"incident_id": "INC-X", "destination_freezer_id": "F-03",
-              "placement_group_id": "PG-1", "slots": 1},
+        json={
+            "incident_id": "INC-X",
+            "destination_freezer_id": "F-03",
+            "placement_group_id": "PG-1",
+            "slots": 1,
+        },
     )
     assert r.status_code == 403
     assert r.json()["invariant"] == "N7"
@@ -326,14 +359,19 @@ def test_vendor_message_carrying_specimen_metadata_is_blocked(world):
     """The deterministic egress filter, independent of Model Armor."""
     _repo, clients = world
     incident_id = _open_incident(clients)
-    r = clients["facilities"].post(
-        "/v1/vendor-messages",
-        json={
-            "incident_id": incident_id, "work_order_id": "WO-1",
-            "message": "Please retrieve container C-0001 from STUDY-ATLAS for analysis.",
-        },
-        headers=principal_headers(AgentName.DISPATCH_AGENT),
-    ).json()
+    r = (
+        clients["facilities"]
+        .post(
+            "/v1/vendor-messages",
+            json={
+                "incident_id": incident_id,
+                "work_order_id": "WO-1",
+                "message": "Please retrieve container C-0001 from STUDY-ATLAS for analysis.",
+            },
+            headers=principal_headers(AgentName.DISPATCH_AGENT),
+        )
+        .json()
+    )
     assert r["blocked"] is True
     assert "container identifier" in r["findings"]
     assert "study identifier" in r["findings"]
@@ -342,15 +380,20 @@ def test_vendor_message_carrying_specimen_metadata_is_blocked(world):
 def test_clean_vendor_message_is_sent(world):
     _repo, clients = world
     incident_id = _open_incident(clients)
-    r = clients["facilities"].post(
-        "/v1/vendor-messages",
-        json={
-            "incident_id": incident_id, "work_order_id": "WO-1",
-            "message": "ULT F-17, model Synthetic ULT-700, zone B2, not holding setpoint. "
-                       "Requesting compressor service.",
-        },
-        headers=principal_headers(AgentName.DISPATCH_AGENT),
-    ).json()
+    r = (
+        clients["facilities"]
+        .post(
+            "/v1/vendor-messages",
+            json={
+                "incident_id": incident_id,
+                "work_order_id": "WO-1",
+                "message": "ULT F-17, model Synthetic ULT-700, zone B2, not holding setpoint. "
+                "Requesting compressor service.",
+            },
+            headers=principal_headers(AgentName.DISPATCH_AGENT),
+        )
+        .json()
+    )
     assert r["sent"] is True and r["blocked"] is False
 
 
@@ -362,10 +405,15 @@ def test_premature_close_is_refused_and_full_reconciliation_permits_it(world):
     _snapshot_impact(clients, repo, incident_id)
 
     cmd = principal_headers(AgentName.COMMANDER)
-    early = clients["incident"].post(
-        f"/v1/incidents/{incident_id}/close",
-        json={"incident_id": incident_id, "reason": "looks done"}, headers=cmd,
-    ).json()
+    early = (
+        clients["incident"]
+        .post(
+            f"/v1/incidents/{incident_id}/close",
+            json={"incident_id": incident_id, "reason": "looks done"},
+            headers=cmd,
+        )
+        .json()
+    )
     assert early["receipt"]["status"] == "REFUSED"
     assert early["decision"]["invariant"] == "N6"
 
@@ -375,8 +423,12 @@ def test_premature_close_is_refused_and_full_reconciliation_permits_it(world):
     for cid in impact.container_ids:
         clients["custody"].post(
             "/v1/exceptions",
-            json={"incident_id": incident_id, "container_id": cid,
-                  "reason": "test disposition", "disposition": "QUARANTINED"},
+            json={
+                "incident_id": incident_id,
+                "container_id": cid,
+                "reason": "test disposition",
+                "disposition": "QUARANTINED",
+            },
             headers=custody_hdr,
         )
 
@@ -384,11 +436,15 @@ def test_premature_close_is_refused_and_full_reconciliation_permits_it(world):
     # Everything was dispositioned by hand rather than transferred, so the incident
     # escalates and then reconciles: a real route through the graph, not a shortcut.
     for target in ["CONFIRMED", "CONTAINED", "ESCALATED"]:
-        step = clients["incident"].post(
-            f"/v1/incidents/{incident_id}/transitions",
-            json={"incident_id": incident_id, "to_state": target, "reason": "test walk"},
-            headers=cmd,
-        ).json()
+        step = (
+            clients["incident"]
+            .post(
+                f"/v1/incidents/{incident_id}/transitions",
+                json={"incident_id": incident_id, "to_state": target, "reason": "test walk"},
+                headers=cmd,
+            )
+            .json()
+        )
         assert step["receipt"]["status"] == "COMMITTED", (target, step["decision"])
 
     # Only now can the hold release, and only with a demonstrated recovery window.
@@ -399,25 +455,67 @@ def test_premature_close_is_refused_and_full_reconciliation_permits_it(world):
         {"recorded_at": shift_iso(now, -2400), "celsius": -80.0},
         {"recorded_at": shift_iso(now, -60), "celsius": -80.2},
     ]
-    release = clients["inventory"].post(
-        "/v1/holds/F-17/release",
-        json={"incident_id": incident_id, "freezer_id": "F-17",
-              "validation_readings": readings},
-        headers=principal_headers(AgentName.INGESTOR),
-    ).json()
+    release = (
+        clients["inventory"]
+        .post(
+            "/v1/holds/F-17/release",
+            json={
+                "incident_id": incident_id,
+                "freezer_id": "F-17",
+                "validation_readings": readings,
+            },
+            headers=principal_headers(AgentName.INGESTOR),
+        )
+        .json()
+    )
     assert release["receipt"]["status"] == "COMMITTED", release["decision"]
 
-    step = clients["incident"].post(
-        f"/v1/incidents/{incident_id}/transitions",
-        json={"incident_id": incident_id, "to_state": "RECONCILING", "reason": "test walk"},
-        headers=cmd,
-    ).json()
+    step = (
+        clients["incident"]
+        .post(
+            f"/v1/incidents/{incident_id}/transitions",
+            json={"incident_id": incident_id, "to_state": "RECONCILING", "reason": "test walk"},
+            headers=cmd,
+        )
+        .json()
+    )
     assert step["receipt"]["status"] == "COMMITTED", step["decision"]
 
-    final = clients["incident"].post(
-        f"/v1/incidents/{incident_id}/close",
-        json={"incident_id": incident_id, "reason": "all containers reconciled"}, headers=cmd,
-    ).json()
+    # Every container is quarantined, so reconciliation reports complete — and closure
+    # is still refused, because quarantining material in place does not move it out of
+    # the failing freezer. A live drill run closed an incident this way with all 42
+    # specimens still inside F-17; "resolved on paper" is not "rescued".
+    from nightshift.safety_kernel.world import reconciliation_snapshot
+
+    assert reconciliation_snapshot(repo.load_kernel_state(incident_id)).complete
+
+    stranded = (
+        clients["incident"]
+        .post(
+            f"/v1/incidents/{incident_id}/close",
+            json={"incident_id": incident_id, "reason": "all containers reconciled"},
+            headers=cmd,
+        )
+        .json()
+    )
+    assert stranded["receipt"]["status"] == "REFUSED", stranded["decision"]
+    assert "still located in F-17" in stranded["decision"]["reason"]
+
+    # Relocate the material — which is what a real quarantine-and-remove looks like —
+    # and the same close request now succeeds.
+    for cid in impact.container_ids:
+        container = repo.get_container(cid)
+        repo.put("containers", cid, container.model_copy(update={"freezer_id": "F-11"}))
+
+    final = (
+        clients["incident"]
+        .post(
+            f"/v1/incidents/{incident_id}/close",
+            json={"incident_id": incident_id, "reason": "all containers reconciled"},
+            headers=cmd,
+        )
+        .json()
+    )
     assert final["receipt"]["status"] == "COMMITTED", final["decision"]
     assert repo.get_incident(incident_id).state.value == "CLOSED"
     assert repo.get_incident(incident_id).unresolved_count == 0
@@ -427,11 +525,15 @@ def test_transition_guards_refuse_unsupported_states(world):
     _repo, clients = world
     incident_id = _open_incident(clients)
     cmd = principal_headers(AgentName.COMMANDER)
-    r = clients["incident"].post(
-        f"/v1/incidents/{incident_id}/transitions",
-        json={"incident_id": incident_id, "to_state": "CLOSED", "reason": "skip ahead"},
-        headers=cmd,
-    ).json()
+    r = (
+        clients["incident"]
+        .post(
+            f"/v1/incidents/{incident_id}/transitions",
+            json={"incident_id": incident_id, "to_state": "CLOSED", "reason": "skip ahead"},
+            headers=cmd,
+        )
+        .json()
+    )
     assert r["receipt"]["status"] == "REFUSED"
 
 
@@ -439,8 +541,12 @@ def test_commander_cannot_reserve_capacity(world):
     _repo, clients = world
     r = clients["capacity"].post(
         "/v1/reservations",
-        json={"incident_id": "INC-X", "destination_freezer_id": "F-03",
-              "placement_group_id": "PG-1", "slots": 1},
+        json={
+            "incident_id": "INC-X",
+            "destination_freezer_id": "F-03",
+            "placement_group_id": "PG-1",
+            "slots": 1,
+        },
         headers=principal_headers(AgentName.COMMANDER),
     )
     assert r.status_code == 403

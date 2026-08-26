@@ -23,7 +23,7 @@ from typing import Any, TypeVar
 T = TypeVar("T")
 
 
-class ConcurrentModification(RuntimeError):
+class ConcurrentModificationError(RuntimeError):
     """A transaction's read set changed underneath it. The caller should retry."""
 
 
@@ -54,7 +54,9 @@ class TxnContext:
             self._reads[(collection, doc_id)] = version
         return [doc for _id, doc, _v in results]
 
-    def set(self, collection: str, doc_id: str, data: dict[str, Any], *, merge: bool = False) -> None:
+    def set(
+        self, collection: str, doc_id: str, data: dict[str, Any], *, merge: bool = False
+    ) -> None:
         self._writes.append(Write(collection, doc_id, data, merge))
 
     @property
@@ -75,7 +77,9 @@ class Store(ABC):
     def get(self, collection: str, doc_id: str) -> dict[str, Any] | None: ...
 
     @abstractmethod
-    def set(self, collection: str, doc_id: str, data: dict[str, Any], *, merge: bool = False) -> None: ...
+    def set(
+        self, collection: str, doc_id: str, data: dict[str, Any], *, merge: bool = False
+    ) -> None: ...
 
     @abstractmethod
     def query(self, collection: str, **equals: Any) -> list[dict[str, Any]]: ...
@@ -87,7 +91,9 @@ class Store(ABC):
     def run_transaction(self, body: Callable[[TxnContext], T], *, max_attempts: int = 5) -> T: ...
 
     @abstractmethod
-    def _read_versioned(self, collection: str, doc_id: str) -> tuple[dict[str, Any] | None, int]: ...
+    def _read_versioned(
+        self, collection: str, doc_id: str
+    ) -> tuple[dict[str, Any] | None, int]: ...
 
     @abstractmethod
     def _query_versioned(
@@ -121,7 +127,9 @@ class MemoryStore(Store):
             doc = self._data.get(collection, {}).get(doc_id)
             return dict(doc) if doc is not None else None
 
-    def set(self, collection: str, doc_id: str, data: dict[str, Any], *, merge: bool = False) -> None:
+    def set(
+        self, collection: str, doc_id: str, data: dict[str, Any], *, merge: bool = False
+    ) -> None:
         with self._lock:
             self._apply(Write(collection, doc_id, data, merge))
 
@@ -179,12 +187,12 @@ class MemoryStore(Store):
                     if self._versions.get(key[0], {}).get(key[1], 0) != seen
                 ]
                 if stale:
-                    last = ConcurrentModification(f"read set changed: {stale}")
+                    last = ConcurrentModificationError(f"read set changed: {stale}")
                     continue
                 for w in ctx.writes:
                     self._apply(w)
                 return result
-        raise last or ConcurrentModification("transaction could not commit")
+        raise last or ConcurrentModificationError("transaction could not commit")
 
     def collections(self) -> Iterable[str]:
         return sorted(self._data)
@@ -224,7 +232,9 @@ class FirestoreStore(Store):
         snap = self._client.collection(self._col(collection)).document(doc_id).get()
         return snap.to_dict() if snap.exists else None
 
-    def set(self, collection: str, doc_id: str, data: dict[str, Any], *, merge: bool = False) -> None:
+    def set(
+        self, collection: str, doc_id: str, data: dict[str, Any], *, merge: bool = False
+    ) -> None:
         self._client.collection(self._col(collection)).document(doc_id).set(data, merge=merge)
 
     def delete(self, collection: str, doc_id: str) -> None:
@@ -288,8 +298,9 @@ class _FirestoreTxnContext(TxnContext):
         return [d.to_dict() for d in ref.stream(transaction=self._transaction)]
 
 
-def build_store(backend: str, *, project: str = "", database: str = "(default)",
-                prefix: str = "") -> Store:
+def build_store(
+    backend: str, *, project: str = "", database: str = "(default)", prefix: str = ""
+) -> Store:
     if backend == "firestore":
         if not project:
             raise ValueError("firestore backend requires GOOGLE_CLOUD_PROJECT")

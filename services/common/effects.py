@@ -74,15 +74,26 @@ def commit_effect(
     """Run the seven-step sequence for one action request."""
 
     def txn(ctx: TxnContext) -> EffectOutcome:
-        # 3 / 4 — an existing receipt short-circuits everything, including a refusal.
+        # 3 / 4 — a *committed* receipt short-circuits everything. That is the whole
+        # exactly-once guarantee: the effect exists, so return the original receipt.
+        #
+        # A refusal is deliberately NOT replayed. A refusal is a statement about the
+        # world at one moment, and the world legitimately changes — a close refused
+        # because material was stranded in the failed freezer must succeed once that
+        # material moves. Replaying refusals made a refusal permanent and could wedge an
+        # incident that had since become closeable. The refusal is still evidence; it
+        # stays on the incident timeline, and the receipt is re-evaluated on retry.
         existing_doc = ctx.get("receipts", request.action_id)
         if existing_doc is not None:
             existing = ActionReceipt(**existing_doc)
-            return EffectOutcome(
-                receipt=existing.model_copy(update={"duplicate_returned": True}),
-                decision=Decision(verdict=Verdict.ALLOW, reason="existing receipt replayed"),
-                duplicate=True,
-            )
+            if existing.status is ActionStatus.COMMITTED:
+                return EffectOutcome(
+                    receipt=existing.model_copy(update={"duplicate_returned": True}),
+                    decision=Decision(
+                        verdict=Verdict.ALLOW, reason="existing receipt replayed"
+                    ),
+                    duplicate=True,
+                )
 
         state = repo.load_kernel_state_txn(ctx, request.incident_id)
 

@@ -38,7 +38,7 @@ from nightshift.schemas.enums import (
 )
 from services.common.effects import record_event
 from services.common.repository import Repository
-from services.gateway.broker import BrokerDenied, ToolBroker
+from services.gateway.broker import BrokerDeniedError, ToolBroker
 
 log = logging.getLogger(__name__)
 
@@ -105,25 +105,23 @@ class ScriptedOrchestrator:
         for round_index in range(self.max_rounds):
             need = self._next_role()
             if need is not None:
+                self._tick_world(round_index)
                 self._play(need)
                 self._ran.append(need.value)
             self._advance()
 
-            if self.field_hook is not None:
-                try:
-                    self.field_hook(round_index)
-                except Exception as exc:  # noqa: BLE001
-                    log.warning("field hook failed: %s", exc)
+            self._tick_world(round_index)
             self._advance()
 
             state = self.repo.load_kernel_state(self.incident_id)
             recon = reconciliation_snapshot(state)
-            if recon.total and recon.complete and self._containment_settled(state):
-                if self._close():
-                    stopped = "incident closed"
-                    break
+            ready_to_close = recon.total and recon.complete and self._containment_settled(state)
+            if ready_to_close and self._close():
+                stopped = "incident closed"
+                break
             if state.incident and state.incident.state in {
-                IncidentState.CLOSED, IncidentState.ABORTED_SAFE
+                IncidentState.CLOSED,
+                IncidentState.ABORTED_SAFE,
             }:
                 stopped = f"incident reached {state.incident.state.value}"
                 break
@@ -138,6 +136,14 @@ class ScriptedOrchestrator:
             escalations=self._escalations,
             wall_clock_s=time.perf_counter() - started,
         )
+
+    def _tick_world(self, round_index: int) -> None:
+        if self.field_hook is None:
+            return
+        try:
+            self.field_hook(round_index)
+        except Exception as exc:
+            log.warning("field hook failed: %s", exc)
 
     # -- policy ----------------------------------------------------------------------
 
@@ -185,12 +191,19 @@ class ScriptedOrchestrator:
             return
         freezer_id = incident.failed_freezer_id
 
-        window = self._call(AgentName.SIGNAL_INVESTIGATOR, "get_temperature_window",
-                            {"freezer_id": freezer_id, "minutes": 180})
-        doors = self._call(AgentName.SIGNAL_INVESTIGATOR, "get_recent_door_events",
-                           {"freezer_id": freezer_id, "hours": 6})
-        self._call(AgentName.SIGNAL_INVESTIGATOR, "get_equipment_history",
-                   {"freezer_id": freezer_id})
+        window = self._call(
+            AgentName.SIGNAL_INVESTIGATOR,
+            "get_temperature_window",
+            {"freezer_id": freezer_id, "minutes": 180},
+        )
+        doors = self._call(
+            AgentName.SIGNAL_INVESTIGATOR,
+            "get_recent_door_events",
+            {"freezer_id": freezer_id, "hours": 6},
+        )
+        self._call(
+            AgentName.SIGNAL_INVESTIGATOR, "get_equipment_history", {"freezer_id": freezer_id}
+        )
 
         sustained = bool(window.get("sustained_warming_confirmed"))
         latest = window.get("latest_celsius")
@@ -202,13 +215,18 @@ class ScriptedOrchestrator:
         door_explains = bool(doors.get("events")) and recovering
 
         classification = (
-            "EQUIPMENT_FAILURE" if sustained and not door_explains
-            else "DOOR_EVENT" if door_explains
-            else "TRANSIENT_EXCURSION" if not sustained
+            "EQUIPMENT_FAILURE"
+            if sustained and not door_explains
+            else "DOOR_EVENT"
+            if door_explains
+            else "TRANSIENT_EXCURSION"
+            if not sustained
             else "INCONCLUSIVE"
         )
         record_event(
-            self.repo, self.incident_id, kind="agent_decision",
+            self.repo,
+            self.incident_id,
+            kind="agent_decision",
             source=AgentName.SIGNAL_INVESTIGATOR.value,
             summary=f"{classification} (scripted driver)",
             detail={
@@ -225,8 +243,11 @@ class ScriptedOrchestrator:
         self._advance()
         self._ingestor(
             "apply_containment_hold",
-            {"incident_id": self.incident_id, "freezer_id": freezer_id,
-             "reason": "sustained warming with no door explanation (scripted driver)"},
+            {
+                "incident_id": self.incident_id,
+                "freezer_id": freezer_id,
+                "reason": "sustained warming with no door explanation (scripted driver)",
+            },
         )
 
     def _play_impact(self) -> None:
@@ -234,13 +255,16 @@ class ScriptedOrchestrator:
         if incident is None:
             return
         listing = self._call(
-            AgentName.IMPACT_ANALYST, "list_impacted_containers",
+            AgentName.IMPACT_ANALYST,
+            "list_impacted_containers",
             {"freezer_id": incident.failed_freezer_id, "incident_id": self.incident_id},
         )
         if listing.get("denied") or listing.get("unavailable"):
             self._escalations.append("inventory enumeration unavailable")
             record_event(
-                self.repo, self.incident_id, kind="agent_decision",
+                self.repo,
+                self.incident_id,
+                kind="agent_decision",
                 source=AgentName.IMPACT_ANALYST.value,
                 summary="Inventory enumeration unavailable; no impact snapshot recorded",
                 detail={"driver": "scripted", "reason": listing.get("reason")},
@@ -250,26 +274,36 @@ class ScriptedOrchestrator:
 
         container_ids = [c["container_id"] for c in listing.get("containers", [])]
         record_event(
-            self.repo, self.incident_id, kind="agent_decision",
+            self.repo,
+            self.incident_id,
+            kind="agent_decision",
             source=AgentName.IMPACT_ANALYST.value,
             summary=f"Impact: {len(container_ids)} container(s) (scripted driver)",
-            detail={"container_ids": container_ids[:20],
-                    "inventory_complete": bool(listing.get("enumeration_complete")),
-                    "driver": "scripted"},
+            detail={
+                "container_ids": container_ids[:20],
+                "inventory_complete": bool(listing.get("enumeration_complete")),
+                "driver": "scripted",
+            },
             agent=AgentName.IMPACT_ANALYST,
         )
         self._ingestor(
             "record_impact_snapshot",
-            {"incident_id": self.incident_id, "container_ids": container_ids,
-             "inventory_complete": bool(listing.get("enumeration_complete"))},
+            {
+                "incident_id": self.incident_id,
+                "container_ids": container_ids,
+                "inventory_complete": bool(listing.get("enumeration_complete")),
+            },
         )
 
     def _play_capacity(self) -> None:
         state = self.repo.load_kernel_state(self.incident_id)
         if state.impact is None:
             return
-        listing = self._call(AgentName.CAPACITY_BROKER, "list_qualified_destinations",
-                             {"incident_id": self.incident_id, "required_temp_c": -80.0})
+        listing = self._call(
+            AgentName.CAPACITY_BROKER,
+            "list_qualified_destinations",
+            {"incident_id": self.incident_id, "required_temp_c": -80.0},
+        )
         if listing.get("denied") or listing.get("unavailable"):
             self._escalations.append("destination listing unavailable")
             return
@@ -284,12 +318,18 @@ class ScriptedOrchestrator:
                 if free < group.slot_count:
                     continue
                 result = self._call(
-                    AgentName.CAPACITY_BROKER, "reserve_capacity",
-                    {"incident_id": self.incident_id,
-                     "destination_freezer_id": destination["freezer_id"],
-                     "placement_group_id": group.id, "slots": group.slot_count,
-                     "evidence_sources": ["capacity:get_capacity",
-                                          "capacity:list_qualified_destinations"]},
+                    AgentName.CAPACITY_BROKER,
+                    "reserve_capacity",
+                    {
+                        "incident_id": self.incident_id,
+                        "destination_freezer_id": destination["freezer_id"],
+                        "placement_group_id": group.id,
+                        "slots": group.slot_count,
+                        "evidence_sources": [
+                            "capacity:get_capacity",
+                            "capacity:list_qualified_destinations",
+                        ],
+                    },
                 )
                 if result.get("receipt", {}).get("status") == "COMMITTED":
                     destination["unreserved_free_slots"] = free - group.slot_count
@@ -298,11 +338,16 @@ class ScriptedOrchestrator:
                 # A refusal carries the real numbers. Re-plan against the next candidate
                 # rather than retrying the same request.
         record_event(
-            self.repo, self.incident_id, kind="agent_decision",
+            self.repo,
+            self.incident_id,
+            kind="agent_decision",
             source=AgentName.CAPACITY_BROKER.value,
             summary=f"Capacity plan: {placed} group(s) placed (scripted driver)",
-            detail={"placed": placed, "eligible_destinations": [d["freezer_id"] for d in eligible],
-                    "driver": "scripted"},
+            detail={
+                "placed": placed,
+                "eligible_destinations": [d["freezer_id"] for d in eligible],
+                "driver": "scripted",
+            },
             agent=AgentName.CAPACITY_BROKER,
         )
 
@@ -310,24 +355,37 @@ class ScriptedOrchestrator:
         incident = self.repo.get_incident(self.incident_id)
         if incident is None:
             return
-        self._call(AgentName.DISPATCH_AGENT, "get_equipment_history",
-                   {"freezer_id": incident.failed_freezer_id})
         self._call(
-            AgentName.DISPATCH_AGENT, "create_work_order",
-            {"incident_id": self.incident_id, "freezer_id": incident.failed_freezer_id,
-             "fault_class": FaultClass.COMPRESSOR_FAILURE.value,
-             "summary": "Sustained warming; compressor suspected (scripted driver)"},
+            AgentName.DISPATCH_AGENT,
+            "get_equipment_history",
+            {"freezer_id": incident.failed_freezer_id},
+        )
+        self._call(
+            AgentName.DISPATCH_AGENT,
+            "create_work_order",
+            {
+                "incident_id": self.incident_id,
+                "freezer_id": incident.failed_freezer_id,
+                "fault_class": FaultClass.COMPRESSOR_FAILURE.value,
+                "summary": "Sustained warming; compressor suspected (scripted driver)",
+            },
         )
         state = self.repo.load_kernel_state(self.incident_id)
         containers = state.incident_container_ids()
         self._call(
-            AgentName.DISPATCH_AGENT, "dispatch_responder",
-            {"incident_id": self.incident_id, "responder_role": ResponderRole.LAB_TECH.value,
-             "response_phase": ResponsePhase.TRANSFER.value,
-             "container_ids": containers[:50]},
+            AgentName.DISPATCH_AGENT,
+            "dispatch_responder",
+            {
+                "incident_id": self.incident_id,
+                "responder_role": ResponderRole.LAB_TECH.value,
+                "response_phase": ResponsePhase.TRANSFER.value,
+                "container_ids": containers[:50],
+            },
         )
         record_event(
-            self.repo, self.incident_id, kind="agent_decision",
+            self.repo,
+            self.incident_id,
+            kind="agent_decision",
             source=AgentName.DISPATCH_AGENT.value,
             summary="Work order opened and lab tech dispatched (scripted driver)",
             detail={"driver": "scripted"},
@@ -335,19 +393,29 @@ class ScriptedOrchestrator:
         )
 
     def _play_custody(self) -> None:
-        result = self._call(AgentName.CUSTODY_AGENT, "commit_ready_transfers",
-                            {"incident_id": self.incident_id, "limit": 60})
+        result = self._call(
+            AgentName.CUSTODY_AGENT,
+            "commit_ready_transfers",
+            {"incident_id": self.incident_id, "limit": 60},
+        )
         record_event(
-            self.repo, self.incident_id, kind="agent_decision",
+            self.repo,
+            self.incident_id,
+            kind="agent_decision",
             source=AgentName.CUSTODY_AGENT.value,
             summary=(
                 f"Committed {result.get('committed_count', 0)} of "
                 f"{result.get('ready_count', 0)} ready container(s), "
                 f"{result.get('refused_count', 0)} refused (scripted driver)"
             ),
-            detail={"driver": "scripted", **{k: v for k, v in result.items()
-                                             if k in {"committed_count", "refused_count",
-                                                      "ready_count", "refused"}}},
+            detail={
+                "driver": "scripted",
+                **{
+                    k: v
+                    for k, v in result.items()
+                    if k in {"committed_count", "refused_count", "ready_count", "refused"}
+                },
+            },
             agent=AgentName.CUSTODY_AGENT,
         )
         # Anything refused for an unfixable reason gets an honest disposition rather
@@ -355,11 +423,14 @@ class ScriptedOrchestrator:
         for refusal in result.get("refused", []):
             if refusal.get("invariant") in {"N4", "N3"}:
                 self._call(
-                    AgentName.CUSTODY_AGENT, "flag_custody_exception",
-                    {"incident_id": self.incident_id,
-                     "container_id": refusal["container_id"],
-                     "reason": f"commit refused: {refusal.get('reason', '')[:200]}",
-                     "disposition": "UNRESOLVED"},
+                    AgentName.CUSTODY_AGENT,
+                    "flag_custody_exception",
+                    {
+                        "incident_id": self.incident_id,
+                        "container_id": refusal["container_id"],
+                        "reason": f"commit refused: {refusal.get('reason', '')[:200]}",
+                        "disposition": "UNRESOLVED",
+                    },
                 )
 
     # -- helpers ----------------------------------------------------------------------
@@ -369,7 +440,8 @@ class ScriptedOrchestrator:
         return {
             r.placement_group_id
             for r in state.reservations.values()
-            if state.incident is not None and r.incident_id == state.incident.id
+            if state.incident is not None
+            and r.incident_id == state.incident.id
             and r.state.value in {"ACTIVE", "CONSUMED"}
         }
 
@@ -388,10 +460,13 @@ class ScriptedOrchestrator:
     def _call(self, agent: AgentName, tool: str, payload: dict[str, Any]) -> dict[str, Any]:
         try:
             return self.broker.call(agent, tool, payload)
-        except BrokerDenied as denied:
-            return {"denied": True, "reason": denied.decision.reason,
-                    "invariant": denied.decision.invariant}
-        except Exception as exc:  # noqa: BLE001
+        except BrokerDeniedError as denied:
+            return {
+                "denied": True,
+                "reason": denied.decision.reason,
+                "invariant": denied.decision.invariant,
+            }
+        except Exception as exc:
             return {"unavailable": True, "reason": f"{type(exc).__name__}: {exc}"}
 
     def _ingestor(self, operation: str, payload: dict[str, Any]) -> dict[str, Any]:
@@ -425,9 +500,13 @@ class ScriptedOrchestrator:
             if target is None or target is IncidentState.CLOSED:
                 return
             result = self._call(
-                AgentName.COMMANDER, "request_incident_transition",
-                {"incident_id": self.incident_id, "to_state": target.value,
-                 "reason": "evidence supports this transition"},
+                AgentName.COMMANDER,
+                "request_incident_transition",
+                {
+                    "incident_id": self.incident_id,
+                    "to_state": target.value,
+                    "reason": "evidence supports this transition",
+                },
             )
             if result.get("receipt", {}).get("status") != "COMMITTED":
                 return
@@ -449,8 +528,11 @@ class ScriptedOrchestrator:
             return
         self._ingestor(
             "release_containment_hold",
-            {"incident_id": self.incident_id, "freezer_id": freezer_id,
-             "validation_readings": window},
+            {
+                "incident_id": self.incident_id,
+                "freezer_id": freezer_id,
+                "validation_readings": window,
+            },
         )
 
     def _close(self) -> bool:
@@ -458,13 +540,17 @@ class ScriptedOrchestrator:
         incident = self.repo.get_incident(self.incident_id)
         if incident is not None and incident.state is not IncidentState.RECONCILING:
             self._call(
-                AgentName.COMMANDER, "request_incident_transition",
-                {"incident_id": self.incident_id, "to_state": IncidentState.RECONCILING.value,
-                 "reason": "all containers accounted for"},
+                AgentName.COMMANDER,
+                "request_incident_transition",
+                {
+                    "incident_id": self.incident_id,
+                    "to_state": IncidentState.RECONCILING.value,
+                    "reason": "all containers accounted for",
+                },
             )
         result = self._call(
-            AgentName.COMMANDER, "request_incident_close",
-            {"incident_id": self.incident_id,
-             "reason": "all impacted containers reconciled"},
+            AgentName.COMMANDER,
+            "request_incident_close",
+            {"incident_id": self.incident_id, "reason": "all impacted containers reconciled"},
         )
         return bool(result.get("receipt", {}).get("status") == "COMMITTED")

@@ -27,7 +27,6 @@ from google.genai import types
 from pydantic import ValidationError
 
 from agents.fleet import OUTPUT_SCHEMAS, AgentBuild, build_fleet
-from nightshift.common.clock import now_iso
 from nightshift.common.ids import correlation_id
 from nightshift.safety_kernel.config import DEFAULT_CONFIG, KernelConfig
 from nightshift.safety_kernel.transitions import can_transition_incident, next_natural_state
@@ -36,7 +35,7 @@ from nightshift.schemas.agent_io import CommanderPlan
 from nightshift.schemas.enums import AgentName, IncidentState
 from services.common.effects import record_event
 from services.common.repository import Repository
-from services.gateway.broker import BrokerDenied, ToolBroker
+from services.gateway.broker import BrokerDeniedError, ToolBroker
 
 log = logging.getLogger(__name__)
 
@@ -121,8 +120,12 @@ class IncidentOrchestrator:
         """
         self.correlation = correlation_id("inc")
         self.fleet: dict[AgentName, AgentBuild] = build_fleet(
-            broker, incident_id, model=model, revisions=revisions,
-            skill_refs=skill_refs, memory_context=memory_context,
+            broker,
+            incident_id,
+            model=model,
+            revisions=revisions,
+            skill_refs=skill_refs,
+            memory_context=memory_context,
         )
         self._session_service = InMemorySessionService()
         self._runners: dict[AgentName, Runner] = {}
@@ -150,12 +153,18 @@ class IncidentOrchestrator:
 
             if plan.escalate:
                 outcome.escalations.append(plan.escalation_reason or "commander escalated")
-                self._request_transition(IncidentState.ESCALATED,
-                                         plan.escalation_reason or "commander escalated")
+                self._request_transition(
+                    IncidentState.ESCALATED, plan.escalation_reason or "commander escalated"
+                )
 
             for step in plan.next_steps:
                 if step.specialist not in self.fleet:
                     continue
+                # Let the world advance before each specialist, not only between rounds.
+                # A round against real Firestore takes minutes, and telemetry that was
+                # fresh when the round started can age past the N4 freshness window
+                # before the custody agent reaches it.
+                self._tick_world(round_index)
                 result = await self._run_specialist(step.specialist, step.objective)
                 outcome.specialist_results.append(result)
                 if result.output and result.output.get("escalate"):
@@ -164,11 +173,7 @@ class IncidentOrchestrator:
                     )
                 self._advance_deterministically()
 
-            if self.field_hook is not None:
-                try:
-                    self.field_hook(round_index)
-                except Exception as exc:  # noqa: BLE001
-                    log.warning("field hook failed on round %s: %s", round_index, exc)
+            self._tick_world(round_index)
 
             self._advance_deterministically()
 
@@ -198,6 +203,9 @@ class IncidentOrchestrator:
         recon = reconciliation_snapshot(state)
         incident = state.incident
 
+        live_reservations = len(
+            [r for r in state.reservations.values() if r.incident_id == self.incident_id]
+        )
         briefing = (
             f"Round {round_index + 1}. Incident {self.incident_id} is currently "
             f"{incident.state.value if incident else 'UNKNOWN'}.\n"
@@ -205,7 +213,7 @@ class IncidentOrchestrator:
             f"{len(recon.committed)} committed, {len(recon.quarantined)} quarantined, "
             f"{len(recon.in_flight)} in flight, {len(recon.unresolved)} unresolved.\n"
             f"Impact snapshot recorded: {state.impact is not None}. "
-            f"Active reservations: {len([r for r in state.reservations.values() if r.incident_id == self.incident_id])}. "
+            f"Active reservations: {live_reservations}. "
             f"Work orders: {len(state.work_orders)}. Dispatches: {len(state.dispatches)}.\n\n"
             f"{self._blockers_text()}\n\n"
             "Read the incident with your tools before deciding. Choose the specialists "
@@ -215,7 +223,9 @@ class IncidentOrchestrator:
         result = await self._invoke(AgentName.COMMANDER, briefing)
         if not result.ok or result.output is None:
             record_event(
-                self.repo, self.incident_id, kind="agent_decision",
+                self.repo,
+                self.incident_id,
+                kind="agent_decision",
                 source=AgentName.COMMANDER.value,
                 summary="Commander produced no usable plan",
                 detail={"error": result.error, "raw": result.raw_text[:500]},
@@ -226,7 +236,9 @@ class IncidentOrchestrator:
             plan = CommanderPlan(**result.output)
         except ValidationError as exc:
             record_event(
-                self.repo, self.incident_id, kind="agent_decision",
+                self.repo,
+                self.incident_id,
+                kind="agent_decision",
                 source=AgentName.COMMANDER.value,
                 summary="Commander output failed schema validation",
                 detail={"error": str(exc)[:800]},
@@ -235,7 +247,9 @@ class IncidentOrchestrator:
             return None
 
         record_event(
-            self.repo, self.incident_id, kind="agent_decision",
+            self.repo,
+            self.incident_id,
+            kind="agent_decision",
             source=AgentName.COMMANDER.value,
             summary=plan.assessment[:300],
             detail={
@@ -250,7 +264,9 @@ class IncidentOrchestrator:
         )
         for step in plan.next_steps:
             record_event(
-                self.repo, self.incident_id, kind="agent_delegation",
+                self.repo,
+                self.incident_id,
+                kind="agent_delegation",
                 source=AgentName.COMMANDER.value,
                 summary=f"Commander delegated to {step.specialist.value}: {step.objective[:160]}",
                 detail={"specialist": step.specialist.value, "objective": step.objective},
@@ -272,7 +288,9 @@ class IncidentOrchestrator:
 
         if result.ok and result.output is not None:
             record_event(
-                self.repo, self.incident_id, kind="agent_decision",
+                self.repo,
+                self.incident_id,
+                kind="agent_decision",
                 source=name.value,
                 summary=_summarize(name, result.output),
                 detail=result.output,
@@ -281,7 +299,9 @@ class IncidentOrchestrator:
             self._apply_consequences(name, result.output)
         else:
             record_event(
-                self.repo, self.incident_id, kind="agent_decision",
+                self.repo,
+                self.incident_id,
+                kind="agent_decision",
                 source=name.value,
                 summary=f"{name.value} did not return a usable decision",
                 detail={"error": result.error, "raw": result.raw_text[:500]},
@@ -290,7 +310,6 @@ class IncidentOrchestrator:
         return result
 
     async def _invoke(self, name: AgentName, message: str) -> SpecialistResult:
-        build = self.fleet[name]
         runner = self._runner_for(name)
         session_id = f"{self.incident_id}-{name.value}"
         await self._ensure_session(name, session_id)
@@ -309,9 +328,9 @@ class IncidentOrchestrator:
                     for part in content.parts:
                         if getattr(part, "text", None):
                             chunks.append(part.text)
-        except BrokerDenied as denied:
+        except BrokerDeniedError as denied:
             error = f"tool authorization denied: {denied.decision.reason}"
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             error = f"{type(exc).__name__}: {exc}"
 
         raw = "\n".join(chunks).strip()
@@ -321,7 +340,10 @@ class IncidentOrchestrator:
         parsed = _extract_json(raw)
         if parsed is None:
             return SpecialistResult(
-                agent=name, ok=False, output=None, raw_text=raw,
+                agent=name,
+                ok=False,
+                output=None,
+                raw_text=raw,
                 error="no JSON object found in the final message",
             )
         schema = OUTPUT_SCHEMAS[name]
@@ -329,7 +351,10 @@ class IncidentOrchestrator:
             validated = schema(**parsed).model_dump(mode="json")
         except ValidationError as exc:
             return SpecialistResult(
-                agent=name, ok=False, output=parsed, raw_text=raw,
+                agent=name,
+                ok=False,
+                output=parsed,
+                raw_text=raw,
                 error=f"schema validation failed: {exc.error_count()} error(s)",
             )
         return SpecialistResult(agent=name, ok=True, output=validated, raw_text=raw)
@@ -356,6 +381,19 @@ class IncidentOrchestrator:
             await self._session_service.create_session(
                 app_name=app_name, user_id="nightshift", session_id=session_id
             )
+
+    def _tick_world(self, round_index: int) -> None:
+        """Advance the simulated physical world one step.
+
+        In a real deployment this hook is absent and these events arrive over Pub/Sub
+        from sensor integrations and responder devices.
+        """
+        if self.field_hook is None:
+            return
+        try:
+            self.field_hook(round_index)
+        except Exception as exc:
+            log.warning("field hook failed on round %s: %s", round_index, exc)
 
     # -- what is actually blocking progress -------------------------------------------
 
@@ -456,7 +494,8 @@ class IncidentOrchestrator:
 
     def _signal_verdict_recorded(self) -> bool:
         return any(
-            e.kind == "agent_decision" and e.agent is AgentName.SIGNAL_INVESTIGATOR
+            e.kind == "agent_decision"
+            and e.agent is AgentName.SIGNAL_INVESTIGATOR
             and "classification" in (e.detail or {})
             for e in self.repo.list_events(self.incident_id)
         )
@@ -621,9 +660,9 @@ class IncidentOrchestrator:
                 {"incident_id": self.incident_id, "to_state": to_state.value, "reason": reason},
                 system=True,
             )
-        except BrokerDenied:
+        except BrokerDeniedError:
             return False
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             log.warning("transition to %s failed: %s", to_state.value, exc)
             return False
         return bool(result.get("receipt", {}).get("status") == "COMMITTED")
@@ -651,7 +690,10 @@ class IncidentOrchestrator:
         ]
         if not window:
             record_event(
-                self.repo, self.incident_id, kind="refusal", source="incident-ingestor",
+                self.repo,
+                self.incident_id,
+                kind="refusal",
+                source="incident-ingestor",
                 summary=(
                     f"Containment hold on {freezer_id} not released: no post-repair "
                     "validation readings exist yet"
@@ -662,8 +704,11 @@ class IncidentOrchestrator:
 
         result = self._ingestor_call(
             "release_containment_hold",
-            {"incident_id": self.incident_id, "freezer_id": freezer_id,
-             "validation_readings": window},
+            {
+                "incident_id": self.incident_id,
+                "freezer_id": freezer_id,
+                "validation_readings": window,
+            },
         )
         return bool(result.get("receipt", {}).get("status") == "COMMITTED")
 
@@ -672,7 +717,9 @@ class IncidentOrchestrator:
         recon = reconciliation_snapshot(state)
         if not recon.complete:
             record_event(
-                self.repo, self.incident_id, kind="refusal",
+                self.repo,
+                self.incident_id,
+                kind="refusal",
                 source=AgentName.COMMANDER.value,
                 summary=(
                     f"Closure not requested: {len(recon.unresolved)} unresolved and "
@@ -694,7 +741,7 @@ class IncidentOrchestrator:
                 {"incident_id": self.incident_id, "reason": "all impacted containers reconciled"},
                 system=True,
             )
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             log.warning("close request failed: %s", exc)
             return False
         return bool(result.get("receipt", {}).get("status") == "COMMITTED")

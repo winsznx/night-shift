@@ -7,7 +7,9 @@ to happen next: work out whether it is real, find out what is inside, locate spa
 actually safe, get someone on site, track every box that moves, and know — provably — that
 nothing was left behind.
 
-Across **126 disclosed disaster-drill runs**, it passed 126, produced **0 capacity-overbooking violations**, and produced **0 duplicate effects** under 54 injected faults — replaying an existing receipt 67 times instead.
+Across **126 disclosed disaster-drill runs**, it passed 126, produced **0 capacity-overbooking violations**, and produced **0 duplicate effects** under 54 injected faults — replaying an existing receipt 6 times instead.
+
+A separate live-agent tier ran 18 of the same drills against the real Gemini 3.5 Flash fleet, passing 17 with 0 N1 and 0 N2 violations. The two tiers are reported separately and never pooled.
 
 [Live API](https://nightshift-api-xk6xxtobta-uc.a.run.app/api/meta) · [Architecture](ARCHITECTURE.md) · [Proof](docs/PROOF.md) · [Claims](docs/CLAIMS.json)
 
@@ -113,8 +115,8 @@ Live Google Cloud deployment is in [SETUP.md](SETUP.md).
 |---|---|
 | Drill runs scored | 60 fully reconciled |
 | Authorization denials recorded | 24 |
-| Published manifests | 0 (0 CLOSED, 0 containers reconciled) |
-| Median drill wall clock | 0.51s |
+| Published manifests | 1 (0 CLOSED, 42 containers reconciled) |
+| Median drill wall clock | 0.48s |
 
 Every number above is read from `evidence/campaign/results.json` by
 `scripts/generate_readme.py`. None of them is typed. Raw rows, methodology, and the claim

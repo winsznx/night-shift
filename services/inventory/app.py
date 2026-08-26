@@ -149,9 +149,11 @@ async def get_incident_container_ids(
 ) -> dict[str, Any]:
     """Identifiers only — the Custody Agent's inventory view."""
     impact = repo.get_impact(incident_id)
-    ids = impact.container_ids if impact else [
-        c.id for c in repo.list_containers(incident_id=incident_id)
-    ]
+    ids = (
+        impact.container_ids
+        if impact
+        else [c.id for c in repo.list_containers(incident_id=incident_id)]
+    )
     return {"incident_id": incident_id, "container_ids": sorted(ids), "count": len(ids)}
 
 
@@ -291,15 +293,19 @@ async def release_containment_hold(
             ctx.set(
                 "freezers",
                 freezer_id,
-                freezer.model_copy(update={"state": FreezerState.VALIDATED}).model_dump(mode="json"),
+                freezer.model_copy(update={"state": FreezerState.VALIDATED}).model_dump(
+                    mode="json"
+                ),
             )
         return EffectResult(
             effect_ref=released.id,
             collection="holds",
             summary=f"Containment hold released on {freezer_id} after validated recovery",
             evidence_sources=["telemetry:get_temperature_window"],
-            detail={"validation_reading_count": len(body.validation_readings),
-                    "release_evidence_ref": evidence_ref},
+            detail={
+                "validation_reading_count": len(body.validation_readings),
+                "release_evidence_ref": evidence_ref,
+            },
         )
 
     return commit_effect(repo, request, build, trace_id=body.trace_id).as_dict()

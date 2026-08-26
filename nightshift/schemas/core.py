@@ -62,7 +62,9 @@ class DoorEvent(Strict):
     opened_at: Timestamp
     closed_at: Timestamp | None = None
     duration_s: int | None = None
-    badge_ref: str | None = Field(default=None, description="Synthetic badge id, never a real person")
+    badge_ref: str | None = Field(
+        default=None, description="Synthetic badge id, never a real person"
+    )
 
 
 class MaintenanceRecord(Strict):

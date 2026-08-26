@@ -63,10 +63,13 @@ async def run_drill(
 
     try:
         runtime, run = await run_incident(
-            runtime=runtime, scenario=scenario, namespace=namespace, model=model,
+            runtime=runtime,
+            scenario=scenario,
+            namespace=namespace,
+            model=model,
             driver=driver,
         )
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         error = f"{type(exc).__name__}: {exc}"
         infrastructure_error = _is_infrastructure(exc)
         log.warning("drill %s raised: %s", spec.id, error)
@@ -80,8 +83,7 @@ async def run_drill(
         _replay_duplicate_scan(runtime, run)
 
     evidence = _collect(runtime, run, injector, spec)
-    outcome = score_drill(spec, evidence, error=error,
-                          infrastructure_error=infrastructure_error)
+    outcome = score_drill(spec, evidence, error=error, infrastructure_error=infrastructure_error)
     outcome.tool_calls = len(runtime.broker.records)
     outcome.tool_denials = sum(1 for r in runtime.broker.records if r.denial)
     outcome.duplicate_receipts = sum(1 for r in runtime.broker.records if r.duplicate)
@@ -106,8 +108,17 @@ def _is_infrastructure(exc: BaseException) -> bool:
     return any(
         marker in text
         for marker in (
-            "deadline", "unavailable", "connection", "timeout", "resource exhausted",
-            "503", "502", "500", "quota", "rate limit", "remotedisconnected",
+            "deadline",
+            "unavailable",
+            "connection",
+            "timeout",
+            "resource exhausted",
+            "503",
+            "502",
+            "500",
+            "quota",
+            "rate limit",
+            "remotedisconnected",
         )
     )
 
@@ -119,9 +130,7 @@ def _collect(
     state = runtime.repo.load_kernel_state(incident_id)
 
     dedupe_key = state.incident.dedupe_key if state.incident else None
-    same_key = (
-        len(runtime.repo.list_incidents(dedupe_key=dedupe_key)) if dedupe_key else 1
-    )
+    same_key = len(runtime.repo.list_incidents(dedupe_key=dedupe_key)) if dedupe_key else 1
 
     blocked_vendor = sum(
         1
@@ -173,7 +182,10 @@ def _stage_poisoned_vendor_content(runtime: Runtime, run: IncidentRun | None) ->
     from services.common.effects import record_event
 
     record_event(
-        runtime.repo, run.incident_id, kind="security", source="vendor-simulation",
+        runtime.repo,
+        run.incident_id,
+        kind="security",
+        source="vendor-simulation",
         summary=(
             "Poisoned vendor response screened: "
             + ("blocked" if blocked else "not flagged by content screening")
@@ -196,7 +208,7 @@ def _attempt_forbidden_tool(runtime: Runtime, run: IncidentRun | None) -> None:
     """D11: the Dispatch Agent's identity reaches for a restricted inventory tool."""
     if run is None:
         return
-    from services.gateway.broker import BrokerDenied
+    from services.gateway.broker import BrokerDeniedError
 
     for tool, payload in (
         ("list_impacted_containers", {"freezer_id": "F-17", "incident_id": run.incident_id}),
@@ -204,10 +216,12 @@ def _attempt_forbidden_tool(runtime: Runtime, run: IncidentRun | None) -> None:
     ):
         try:
             runtime.broker.call(AgentName.DISPATCH_AGENT, tool, payload)
-        except BrokerDenied:
-            pass  # The denial is the evidence; the record is already written.
-        except Exception:  # noqa: BLE001
-            pass
+        except BrokerDeniedError as denied:
+            # The denial *is* the evidence and the broker already recorded it. Logging
+            # keeps a silent pass from reading like a swallowed bug.
+            log.info("D11 probe on %s denied: %s", tool, denied.decision.reason)
+        except Exception as exc:
+            log.info("D11 probe on %s ended with %s", tool, type(exc).__name__)
 
 
 def _replay_duplicate_scan(runtime: Runtime, run: IncidentRun | None) -> None:
@@ -220,5 +234,5 @@ def _replay_duplicate_scan(runtime: Runtime, run: IncidentRun | None) -> None:
     first = pickups[0]
     try:
         runtime.broker.call(AgentName.RESPONDER_APP, "record_pickup", dict(first["payload"]))
-    except Exception:  # noqa: BLE001
-        pass
+    except Exception as exc:
+        log.info("D12 duplicate scan replay ended with %s", type(exc).__name__)

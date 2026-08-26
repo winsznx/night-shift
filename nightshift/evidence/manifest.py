@@ -128,7 +128,9 @@ def build_manifest(
         "failed_freezer_id": incident.failed_freezer_id if incident else "",
         "estate_fixture_hash": estate_fixture_hash,
         "opening_evidence": opening_evidence or [],
-        "state_transitions": [t.model_dump(mode="json") for t in (incident.transitions if incident else [])],
+        "state_transitions": [
+            t.model_dump(mode="json") for t in (incident.transitions if incident else [])
+        ],
         "agents": agents or [],
         "skill_revisions": skill_revisions or {},
         "policy_refs": policy_refs or {},

@@ -18,7 +18,7 @@ from typing import Any
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from nightshift.common.clock import now_iso  # noqa: E402
+from nightshift.common.clock import now_iso
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -27,9 +27,11 @@ def commit() -> str:
     try:
         return subprocess.run(
             ["git", "rev-parse", "--short", "HEAD"],
-            capture_output=True, text=True, check=True,
+            capture_output=True,
+            text=True,
+            check=True,
         ).stdout.strip()
-    except Exception:  # noqa: BLE001
+    except Exception:
         return "unknown"
 
 
@@ -38,7 +40,7 @@ def load(path: Path) -> dict[str, Any]:
         return {}
     try:
         return json.loads(path.read_text(encoding="utf-8"))
-    except Exception:  # noqa: BLE001
+    except Exception:
         return {}
 
 
@@ -118,7 +120,9 @@ def main() -> int:
                 status="local",
                 evidence="evidence/campaign/results.json",
                 reproduce="make evidence",
-                limitation="Counted at the broker; the underlying services enforce it independently.",
+                limitation=(
+                    "Counted at the broker; the underlying services enforce it independently."
+                ),
             ),
             claim(
                 "C-04",
@@ -183,9 +187,7 @@ def main() -> int:
             "confidence via the live sanitizeUserPrompt API.",
             status="live",
             evidence="docs/SPIKE_RESULTS.md",
-            reproduce=(
-                "curl -X POST .../templates/nightshift-vendor-content:sanitizeUserPrompt"
-            ),
+            reproduce=("curl -X POST .../templates/nightshift-vendor-content:sanitizeUserPrompt"),
             limitation=(
                 "One payload family, not a detection rate. Night Shift never relies on "
                 "Model Armor alone: the Dispatch Agent holds no inventory authority "
@@ -212,7 +214,9 @@ def main() -> int:
             "(EC_SIGN_P256_SHA256) and verify against the exported public key.",
             status="live",
             evidence="evidence/incidents/*.manifest.json",
-            reproduce="python -m nightshift.verify --manifest evidence/incidents/<id>.manifest.json",
+            reproduce=(
+                "python -m nightshift.verify --manifest evidence/incidents/<id>.manifest.json"
+            ),
             limitation=(
                 "A local EC key is used as a documented fallback when KMS is unreachable; "
                 "the backend that actually signed is recorded in the manifest."
@@ -224,7 +228,10 @@ def main() -> int:
             "and no real patient or research data exists anywhere in the fixture.",
             status="synthetic",
             evidence="fixtures/estate.py, services/simulator/ingest.py",
-            reproduce="uv run python -c \"from fixtures.estate import build_estate; print(build_estate().site)\"",
+            reproduce=(
+                "uv run python -c 'from fixtures.estate import build_estate; "
+                "print(build_estate().site)'"
+            ),
             limitation=(
                 "This is a statement of scope, not a measurement. The field simulator "
                 "refuses to run outside demo, drill, and test namespaces."

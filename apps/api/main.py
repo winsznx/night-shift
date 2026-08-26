@@ -12,8 +12,8 @@ shape it:
 from __future__ import annotations
 
 import json
+import logging
 import time
-from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
@@ -31,10 +31,11 @@ from nightshift.safety_kernel.authority import (
 )
 from nightshift.safety_kernel.invariants import check_all_invariants
 from nightshift.safety_kernel.world import reconciliation_snapshot
-from nightshift.schemas.enums import AgentName, CustodyState
+from nightshift.schemas.enums import AgentName
 from nightshift.verify.verifier import verify_manifest
 from services.common.repository import Repository
 
+log = logging.getLogger(__name__)
 settings = get_settings()
 
 app = FastAPI(
@@ -200,8 +201,9 @@ async def overview(namespace: str | None = None) -> dict[str, Any]:
             "reserved_slots": held,
             "backup_free_slots": sum(f.free_slots for f in freezers if f.is_backup_qualified),
         },
-        "incidents": [_incident_card(r, i) for i in sorted(incidents, key=lambda x: x.opened_at,
-                                                           reverse=True)],
+        "incidents": [
+            _incident_card(r, i) for i in sorted(incidents, key=lambda x: x.opened_at, reverse=True)
+        ],
     }
 
 
@@ -309,7 +311,7 @@ async def get_proof(incident_id: str, namespace: str | None = None) -> dict[str,
         "manifest_hash": (record or {}).get("manifest_hash"),
         "gcs_uri": (record or {}).get("gcs_uri"),
         "verification": result.as_dict(),
-        "verify_command": f"python -m nightshift.verify --manifest <path-or-url>",
+        "verify_command": "python -m nightshift.verify --manifest <path-or-url>",
     }
 
 
@@ -333,8 +335,12 @@ async def fleet(namespace: str | None = None) -> dict[str, Any]:
     matrix = permission_matrix()
 
     operational = [
-        AgentName.COMMANDER, AgentName.SIGNAL_INVESTIGATOR, AgentName.IMPACT_ANALYST,
-        AgentName.CAPACITY_BROKER, AgentName.DISPATCH_AGENT, AgentName.CUSTODY_AGENT,
+        AgentName.COMMANDER,
+        AgentName.SIGNAL_INVESTIGATOR,
+        AgentName.IMPACT_ANALYST,
+        AgentName.CAPACITY_BROKER,
+        AgentName.DISPATCH_AGENT,
+        AgentName.CUSTODY_AGENT,
     ]
     return {
         "evaluated_at": now_iso(),
@@ -343,8 +349,9 @@ async def fleet(namespace: str | None = None) -> dict[str, Any]:
                 "agent": a.value,
                 "revision": revisions.get(a.value, {}).get("revision_id", "rev-1"),
                 "qualification": revisions.get(a.value, {}).get("state", "UNQUALIFIED"),
-                "traffic_percent": 100 if revisions.get(a.value, {}).get("state") in
-                {"ACTIVE", "QUALIFIED"} else 0,
+                "traffic_percent": 100
+                if revisions.get(a.value, {}).get("state") in {"ACTIVE", "QUALIFIED"}
+                else 0,
                 "identity": registry.get(a.value, {}).get("identity"),
                 "runtime_resource": registry.get(a.value, {}).get("runtime_resource"),
                 "registry_resource": registry.get(a.value, {}).get("registry_resource"),
@@ -358,8 +365,13 @@ async def fleet(namespace: str | None = None) -> dict[str, Any]:
         "permission_matrix": matrix,
         "skills": [s.as_dict() for s in load_skills().values()],
         "tool_registry": [
-            {"name": t.name, "service": t.service, "domain": t.domain.value,
-             "mutating": t.mutating, "description": t.description}
+            {
+                "name": t.name,
+                "service": t.service,
+                "domain": t.domain.value,
+                "mutating": t.mutating,
+                "description": t.description,
+            }
             for t in sorted(TOOL_REGISTRY.values(), key=lambda x: x.name)
         ],
     }
@@ -372,7 +384,7 @@ def _load_registry_snapshot() -> dict[str, dict[str, Any]]:
         return {}
     try:
         return json.loads(path.read_text(encoding="utf-8")).get("agents", {})
-    except Exception:  # noqa: BLE001
+    except Exception:
         return {}
 
 
@@ -415,7 +427,8 @@ async def evidence() -> dict[str, Any]:
         for path in sorted(directory.glob("*.manifest.json")):
             try:
                 body = json.loads(path.read_text(encoding="utf-8"))
-            except Exception:  # noqa: BLE001
+            except (OSError, ValueError) as exc:
+                log.warning("skipping unreadable manifest %s: %s", path.name, exc)
                 continue
             result = verify_manifest(body)
             manifests.append(
@@ -445,7 +458,8 @@ def _load_campaign() -> dict[str, Any]:
         if path.exists():
             try:
                 return json.loads(path.read_text(encoding="utf-8"))
-            except Exception:  # noqa: BLE001
+            except (OSError, ValueError) as exc:
+                log.warning("skipping unreadable campaign results %s: %s", path, exc)
                 continue
     return {}
 
@@ -456,7 +470,7 @@ def _load_claims() -> list[dict[str, Any]]:
         return []
     try:
         return json.loads(path.read_text(encoding="utf-8")).get("claims", [])
-    except Exception:  # noqa: BLE001
+    except Exception:
         return []
 
 
@@ -521,9 +535,9 @@ async def responder_task(token: str, namespace: str | None = None) -> dict[str, 
                 "destination_freezer": destination,
                 "destination_slot": transfer.destination_slot if transfer else None,
                 "custody_state": container.custody_state.value,
-                "destination_temp_c": latest.celsius if latest else (
-                    dest_freezer.current_temp_c if dest_freezer else None
-                ),
+                "destination_temp_c": latest.celsius
+                if latest
+                else (dest_freezer.current_temp_c if dest_freezer else None),
                 "destination_reading_age_s": (
                     round(age_seconds(latest.recorded_at, now), 1) if latest else None
                 ),
@@ -544,12 +558,12 @@ async def responder_task(token: str, namespace: str | None = None) -> dict[str, 
         "summary": {
             "total": len(tasks),
             "at_source": sum(1 for t in tasks if t["custody_state"] == "AT_SOURCE"),
-            "picked_up": sum(1 for t in tasks if t["custody_state"] in
-                             {"PICKED_UP", "IN_TRANSIT"}),
+            "picked_up": sum(1 for t in tasks if t["custody_state"] in {"PICKED_UP", "IN_TRANSIT"}),
             "received": sum(1 for t in tasks if t["custody_state"] == "RECEIVED"),
             "committed": sum(1 for t in tasks if t["custody_state"] == "COMMITTED"),
-            "exceptions": sum(1 for t in tasks if t["custody_state"] in
-                              {"UNRESOLVED", "QUARANTINED"}),
+            "exceptions": sum(
+                1 for t in tasks if t["custody_state"] in {"UNRESOLVED", "QUARANTINED"}
+            ),
         },
     }
 
@@ -568,21 +582,22 @@ def _responder_broker(r: Repository) -> Any:
 
 
 @app.post("/api/respond/{token}/pickup")
-async def responder_pickup(token: str, body: ScanRequest,
-                           namespace: str | None = None) -> dict[str, Any]:
+async def responder_pickup(
+    token: str, body: ScanRequest, namespace: str | None = None
+) -> dict[str, Any]:
     r, dispatch = _dispatch_for(token, namespace)
     state = r.load_kernel_state(dispatch.incident_id)
     container = state.containers.get(body.container_id)
     if container is None:
         raise HTTPException(status_code=404, detail={"error": "unknown container"})
     transfer = next(
-        (t for t in r.list_transfers(dispatch.incident_id)
-         if t.container_id == body.container_id),
+        (t for t in r.list_transfers(dispatch.incident_id) if t.container_id == body.container_id),
         None,
     )
     reservation = _reservation_for(state, dispatch.incident_id)
     destination = (
-        transfer.destination_freezer if transfer
+        transfer.destination_freezer
+        if transfer
         else (reservation.destination_freezer_id if reservation else "")
     )
     if not destination:
@@ -593,7 +608,8 @@ async def responder_pickup(token: str, body: ScanRequest,
     slot = transfer.destination_slot if transfer else f"{destination}-SLOT-{body.container_id[-4:]}"
 
     return _broker_call(
-        r, "record_pickup",
+        r,
+        "record_pickup",
         {
             "incident_id": dispatch.incident_id,
             "container_id": body.container_id,
@@ -609,12 +625,12 @@ async def responder_pickup(token: str, body: ScanRequest,
 
 
 @app.post("/api/respond/{token}/receive")
-async def responder_receive(token: str, body: ScanRequest,
-                            namespace: str | None = None) -> dict[str, Any]:
+async def responder_receive(
+    token: str, body: ScanRequest, namespace: str | None = None
+) -> dict[str, Any]:
     r, dispatch = _dispatch_for(token, namespace)
     transfer = next(
-        (t for t in r.list_transfers(dispatch.incident_id)
-         if t.container_id == body.container_id),
+        (t for t in r.list_transfers(dispatch.incident_id) if t.container_id == body.container_id),
         None,
     )
     if transfer is None:
@@ -622,7 +638,8 @@ async def responder_receive(token: str, body: ScanRequest,
 
     scanned = body.location_ref or transfer.destination_freezer
     result = _broker_call(
-        r, "record_destination_scan",
+        r,
+        "record_destination_scan",
         {
             "incident_id": dispatch.incident_id,
             "container_id": body.container_id,
@@ -637,7 +654,8 @@ async def responder_receive(token: str, body: ScanRequest,
         # Attempt the authoritative commit immediately. It will be refused if the
         # destination reading is stale or out of bounds, and the responder sees why.
         result["commit"] = _broker_call(
-            r, "commit_transfer",
+            r,
+            "commit_transfer",
             {"incident_id": dispatch.incident_id, "container_id": body.container_id},
             agent=AgentName.CUSTODY_AGENT,
         )
@@ -645,11 +663,13 @@ async def responder_receive(token: str, body: ScanRequest,
 
 
 @app.post("/api/respond/{token}/exception")
-async def responder_exception(token: str, body: ExceptionRequest,
-                              namespace: str | None = None) -> dict[str, Any]:
+async def responder_exception(
+    token: str, body: ExceptionRequest, namespace: str | None = None
+) -> dict[str, Any]:
     r, dispatch = _dispatch_for(token, namespace)
     return _broker_call(
-        r, "flag_custody_exception",
+        r,
+        "flag_custody_exception",
         {
             "incident_id": dispatch.incident_id,
             "container_id": body.container_id,
@@ -661,8 +681,10 @@ async def responder_exception(token: str, body: ExceptionRequest,
 
 def _reservation_for(state: Any, incident_id: str) -> Any:
     live = [
-        r for r in state.reservations.values()
-        if r.incident_id == incident_id and r.state.value in {"ACTIVE", "CONSUMED"}
+        r
+        for r in state.reservations.values()
+        if r.incident_id == incident_id
+        and r.state.value in {"ACTIVE", "CONSUMED"}
         and r.held_slots > 0
     ]
     return live[0] if live else None
@@ -674,16 +696,17 @@ def _signature(token: str, container_id: str, phase: str) -> str:
     return responder_task_signature(token, {"container_id": container_id, "phase": phase})
 
 
-def _broker_call(r: Repository, tool: str, payload: dict[str, Any],
-                 agent: AgentName = AgentName.RESPONDER_APP) -> dict[str, Any]:
-    from services.gateway.broker import BrokerDenied
+def _broker_call(
+    r: Repository, tool: str, payload: dict[str, Any], agent: AgentName = AgentName.RESPONDER_APP
+) -> dict[str, Any]:
+    from services.gateway.broker import BrokerDeniedError
 
     broker = _responder_broker(r)
     try:
         return broker.call(agent, tool, payload)
-    except BrokerDenied as denied:
+    except BrokerDeniedError as denied:
         raise HTTPException(status_code=403, detail=denied.decision.as_dict()) from denied
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         raise HTTPException(status_code=503, detail={"error": str(exc)}) from exc
 
 
