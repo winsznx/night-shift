@@ -63,9 +63,23 @@ check: lint typecheck test secret-scan ## Everything a PR should pass
 
 .PHONY: run-local
 run-local: ## Run the BFF and the web app locally against the in-memory store
+	@# A port already in use is the normal case when a previous run is still alive, and
+	@# the raw failure for that is a uvicorn traceback plus a Node EADDRINUSE stack --
+	@# neither of which says "you already have this running".
+	@busy=""; \
+	 lsof -ti:$(API_PORT) >/dev/null 2>&1 && busy="$$busy $(API_PORT)"; \
+	 lsof -ti:3000 >/dev/null 2>&1 && busy="$$busy 3000"; \
+	 if [ -n "$$busy" ]; then \
+	   echo "Port(s) already in use:$$busy"; \
+	   echo; \
+	   echo "  Night Shift may already be running: http://127.0.0.1:3000"; \
+	   echo "  To take them over:  kill $$(lsof -ti:$(API_PORT) -ti:3000 | tr '\n' ' ')&& make run-local"; \
+	   exit 1; \
+	 fi
 	@echo "API  http://127.0.0.1:$(API_PORT)"
 	@echo "Web  http://127.0.0.1:3000"
-	@NIGHTSHIFT_STORE=memory $(PY) python -m uvicorn apps.api.main:app --port $(API_PORT) & \
+	@trap 'kill 0' EXIT INT TERM; \
+	 NIGHTSHIFT_STORE=memory $(PY) python -m uvicorn apps.api.main:app --port $(API_PORT) & \
 	 cd apps/web && NIGHTSHIFT_API_URL=http://127.0.0.1:$(API_PORT) pnpm dev
 
 .PHONY: api
