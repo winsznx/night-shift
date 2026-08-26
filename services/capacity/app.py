@@ -72,7 +72,7 @@ async def list_qualified_destinations(
         if f.id == failed:
             continue
         reserved = sum(
-            r.slots
+            r.held_slots
             for r in repo.list_reservations(destination_freezer_id=f.id)
             if r.state in {ReservationState.PROPOSED, ReservationState.ACTIVE,
                            ReservationState.CONSUMED}
@@ -125,7 +125,7 @@ async def get_capacity(
     if freezer is None:
         return {"freezer_id": freezer_id, "known": False}
     reserved = sum(
-        r.slots
+        r.held_slots
         for r in repo.list_reservations(destination_freezer_id=freezer_id)
         if r.state in {ReservationState.PROPOSED, ReservationState.ACTIVE,
                        ReservationState.CONSUMED}
@@ -194,6 +194,7 @@ def reserve_capacity_op(
             destination_freezer_id=body.destination_freezer_id,
             placement_group_id=body.placement_group_id,
             slots=body.slots,
+            slots_remaining=body.slots,
             slot_ids=body.slot_ids,
             state=ReservationState.ACTIVE,
             created_at=req.now,

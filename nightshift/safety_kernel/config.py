@@ -32,8 +32,13 @@ class KernelConfig:
     recovery_validation_ceiling_c: float = -70.0
     """Temperature a recovering freezer must stay below throughout validation."""
 
-    max_tool_calls_per_incident: int = 240
-    """Agent loop guard (threat model §31)."""
+    max_tool_calls_per_incident: int = 400
+    """Agent loop guard (threat model §31).
+
+    Counts agent-initiated calls only. A 42-container rescue legitimately makes a few
+    hundred; the guard is here to stop a loop, not to cap real work, so it sits well
+    above what an honest incident needs and well below an unbounded one.
+    """
 
     max_wall_clock_seconds: int = 900
     """Agent loop guard (threat model §31)."""

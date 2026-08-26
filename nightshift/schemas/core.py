@@ -185,12 +185,25 @@ class Reservation(Strict):
     incident_id: str
     destination_freezer_id: str
     placement_group_id: str
-    slots: int = Field(gt=0)
+    slots: int = Field(gt=0, description="Slots originally reserved. Never changes.")
+    slots_remaining: int | None = Field(
+        default=None,
+        ge=0,
+        description="Slots still held but not yet filled. Defaults to `slots`. Each "
+        "committed transfer decrements it: that capacity has become real occupancy, so "
+        "continuing to count it as reserved would double-book the destination against "
+        "itself (N1).",
+    )
     slot_ids: list[str] = Field(default_factory=list)
     state: ReservationState = ReservationState.ACTIVE
     created_at: Timestamp
     updated_at: Timestamp
     invalidation_reason: str | None = None
+
+    @property
+    def held_slots(self) -> int:
+        """Capacity this reservation is currently withholding from other incidents."""
+        return self.slots if self.slots_remaining is None else self.slots_remaining
 
 
 class WorkOrder(Strict):

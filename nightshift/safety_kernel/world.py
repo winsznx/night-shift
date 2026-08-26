@@ -103,7 +103,13 @@ class KernelState:
         ]
 
     def reserved_slots(self, freezer_id: str) -> int:
-        return sum(r.slots for r in self.active_reservations_for(freezer_id))
+        """Slots currently withheld from other incidents.
+
+        Counts ``held_slots``, not ``slots``: once a transfer commits, that slot is
+        occupied rather than reserved, and counting it as both would make a destination
+        appear overbooked against its own completed work.
+        """
+        return sum(r.held_slots for r in self.active_reservations_for(freezer_id))
 
     def verified_available_slots(self, freezer_id: str) -> int:
         f = self.freezers.get(freezer_id)

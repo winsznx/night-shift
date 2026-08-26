@@ -376,14 +376,33 @@ def n6_no_premature_close(state: KernelState) -> InvariantResult:
     )
     if uncertain:
         blockers.append(f"{len(uncertain)} effect(s) in an uncertain state")
-    hold = state.active_hold(state.incident.failed_freezer_id)
-    if hold is not None:
-        blockers.append("containment hold still active on the failed freezer")
+    blockers.extend(_containment_blockers(state))
 
     if blockers:
         return _bad("N6", N6_TITLE, "; ".join(blockers), uncertain_actions=uncertain,
                     **snap.as_dict())
     return _ok("N6", N6_TITLE, "closure preconditions were satisfied")
+
+
+def _containment_blockers(state: KernelState) -> list[str]:
+    """Containment must have happened, and must have ended properly.
+
+    Checking only "no hold is currently active" is not enough: an incident where a hold
+    was never placed at all also has no active hold, and would close looking exactly
+    like one that was contained and validated. An early live run reached CLOSED by that
+    route. Closure now requires a hold that exists, is released, and carries recovery
+    evidence.
+    """
+    assert state.incident is not None
+    freezer_id = state.incident.failed_freezer_id
+    hold = state.holds.get(freezer_id)
+    if hold is None:
+        return [f"no containment hold was ever placed on {freezer_id}"]
+    if hold.active:
+        return ["containment hold still active on the failed freezer"]
+    if hold.release_evidence_ref is None:
+        return ["containment hold was released without recovery evidence"]
+    return []
 
 
 def n6_would_hold(state: KernelState) -> tuple[bool, str]:
@@ -405,8 +424,9 @@ def n6_would_hold(state: KernelState) -> tuple[bool, str]:
     ]
     if uncertain:
         return False, f"{len(uncertain)} effect(s) in an uncertain state"
-    if state.active_hold(state.incident.failed_freezer_id) is not None:
-        return False, "containment hold is still active on the failed freezer"
+    containment = _containment_blockers(state)
+    if containment:
+        return False, containment[0]
     return True, ""
 
 

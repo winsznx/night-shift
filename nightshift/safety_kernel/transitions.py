@@ -104,6 +104,33 @@ def can_transition_incident(
     return allow({"from": frm.value, "to": to_state.value})
 
 
+def _guard_confirmed(state: KernelState, config: KernelConfig) -> Decision:
+    """CONFIRMED needs telemetry that actually supports it.
+
+    Without this, an incident walks from OBSERVING to CONFIRMED on nothing but the
+    absence of a reason not to — which is how a transient door excursion turns into a
+    full rescue. The freezer must be at or above its alarm threshold, or already
+    recorded as failing.
+    """
+    assert state.incident is not None
+    freezer = state.freezers.get(state.incident.failed_freezer_id)
+    if freezer is None:
+        return refuse("SM-INCIDENT", "CONFIRMED requires authoritative freezer telemetry")
+    if freezer.state is FreezerState.FAILED:
+        return allow({"basis": "freezer already recorded FAILED"})
+    if freezer.current_temp_c > freezer.alarm_high_c:
+        return allow(
+            {"basis": "current temperature above alarm threshold",
+             "current_temp_c": freezer.current_temp_c, "alarm_high_c": freezer.alarm_high_c}
+        )
+    return refuse(
+        "SM-INCIDENT",
+        f"{freezer.id} is at {freezer.current_temp_c}C, within its "
+        f"{freezer.alarm_high_c}C alarm threshold; nothing yet confirms a failure",
+        detail={"current_temp_c": freezer.current_temp_c, "alarm_high_c": freezer.alarm_high_c},
+    )
+
+
 def _guard_contained(state: KernelState, _c: KernelConfig) -> Decision:
     assert state.incident is not None
     if state.active_hold(state.incident.failed_freezer_id) is None:
@@ -112,6 +139,22 @@ def _guard_contained(state: KernelState, _c: KernelConfig) -> Decision:
 
 
 def _guard_rescue_planning(state: KernelState, _c: KernelConfig) -> Decision:
+    """Rescue planning requires both containment and a known impact set.
+
+    Containment is checked here as well as on entry to CONTAINED because the graph
+    allows CONFIRMED -> ESCALATED -> RESCUE_PLANNING, and an early run took exactly that
+    route and planned a rescue on a freezer whose normal inventory traffic was never
+    frozen. Guarding the destination state, not just the path to it, closes that.
+    """
+    assert state.incident is not None
+    if state.holds.get(state.incident.failed_freezer_id) is None:
+        return refuse(
+            "N13",
+            "RESCUE_PLANNING requires a containment hold on the failed freezer; "
+            "planning a rescue while normal placement and withdrawal continue would "
+            "let material move in behind the rescue",
+            detail={"failed_freezer_id": state.incident.failed_freezer_id},
+        )
     if state.impact is None:
         return refuse(
             "SM-INCIDENT",
@@ -186,6 +229,7 @@ def _guard_partial(state: KernelState, _c: KernelConfig) -> Decision:
 
 
 _INCIDENT_ENTRY_GUARDS = {
+    _S.CONFIRMED: _guard_confirmed,
     _S.CONTAINED: _guard_contained,
     _S.RESCUE_PLANNING: _guard_rescue_planning,
     _S.CAPACITY_RESERVED: _guard_capacity_reserved,

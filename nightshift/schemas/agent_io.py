@@ -92,11 +92,21 @@ class DispatchDecision(AgentOut):
 
 
 class CustodyDecision(AgentOut):
-    """Custody Agent output. Requests a commit; the Custody Service validates N3/N4."""
+    """Custody Agent output. Requests a commit; the Custody Service validates N3/N4.
+
+    ``COMMIT_ALL_READY`` covers the normal case where many containers are scanned in at
+    once. It is not a bulk override: the service still evaluates N3 and N4 per container
+    and refuses individually, so a batch of forty with one bad destination reading
+    commits thirty-nine and refuses one, with a receipt for each.
+    """
 
     incident_id: str
-    container_id: str
-    action: Literal["REQUEST_COMMIT", "FLAG_EXCEPTION", "WAIT_FOR_EVIDENCE", "QUARANTINE"]
+    container_id: str | None = Field(
+        default=None, description="Required for every action except COMMIT_ALL_READY."
+    )
+    action: Literal[
+        "REQUEST_COMMIT", "COMMIT_ALL_READY", "FLAG_EXCEPTION", "WAIT_FOR_EVIDENCE", "QUARANTINE"
+    ]
     destination_freezer_id: str | None = None
     destination_slot: str | None = None
     reason: str = Field(max_length=600)

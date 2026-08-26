@@ -104,6 +104,9 @@ TOOL_REGISTRY: dict[str, ToolSpec] = {
            "Record a destination scan"),
         _t("commit_transfer", "custody", ToolDomain.CUSTODY_WRITE, True,
            "Commit the authoritative location change"),
+        _t("commit_ready_transfers", "custody", ToolDomain.CUSTODY_WRITE, True,
+           "Commit every container whose evidence is complete; each is validated "
+           "individually and refused individually"),
         _t("get_custody_state", "custody", ToolDomain.CUSTODY_READ, False,
            "Custody state for incident containers"),
         _t("reconcile_incident", "custody", ToolDomain.CUSTODY_READ, False,

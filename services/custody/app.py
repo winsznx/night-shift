@@ -67,6 +67,12 @@ class CommitRequest(BaseModel):
     trace_id: str | None = None
 
 
+class CommitBatchRequest(BaseModel):
+    incident_id: str
+    limit: int = Field(default=60, ge=1, le=500)
+    trace_id: str | None = None
+
+
 class ExceptionRequest(BaseModel):
     incident_id: str
     container_id: str
@@ -317,12 +323,13 @@ async def commit_transfer(
         # capacity arithmetic keeps matching physical reality.
         reservation = kstate.reservations.get(reservation_id or "")
         if reservation is not None:
-            remaining = max(0, reservation.slots - 1)
+            remaining = max(0, reservation.held_slots - 1)
             ctx.set(
                 "reservations",
                 reservation.id,
                 reservation.model_copy(
                     update={
+                        "slots_remaining": remaining,
                         "state": (
                             ReservationState.CONSUMED if remaining == 0 else reservation.state
                         ),
@@ -372,6 +379,63 @@ async def commit_transfer(
         )
 
     return commit_effect(repo, request, build, trace_id=body.trace_id).as_dict()
+
+
+@app.post("/v1/commits/batch")
+async def commit_ready_transfers(
+    body: CommitBatchRequest,
+    principal: AgentPrincipal = Depends(require_tool("commit_transfer")),
+    repo: Repository = Depends(get_repository),
+) -> dict[str, Any]:
+    """Commit every container whose evidence is complete.
+
+    Not a bulk override. Each container runs the full single-commit path — same action
+    ID, same N3/N4 evaluation, same receipt — so a batch where one destination has
+    warmed commits the rest and refuses that one, with the reason attached to it
+    specifically.
+    """
+    state = repo.load_kernel_state(body.incident_id)
+    ready = sorted(
+        t.container_id
+        for t in state.transfers.values()
+        if t.state is CustodyState.RECEIVED
+    )
+    committed: list[str] = []
+    refused: list[dict[str, Any]] = []
+    duplicates: list[str] = []
+
+    for container_id in ready[: body.limit]:
+        outcome = await commit_transfer(
+            CommitRequest(incident_id=body.incident_id, container_id=container_id,
+                          trace_id=body.trace_id),
+            principal=principal,
+            repo=repo,
+        )
+        receipt = outcome["receipt"]
+        if outcome.get("duplicate_returned"):
+            duplicates.append(container_id)
+        elif receipt["status"] == "COMMITTED":
+            committed.append(container_id)
+        else:
+            refused.append(
+                {
+                    "container_id": container_id,
+                    "status": receipt["status"],
+                    "invariant": outcome["decision"].get("invariant"),
+                    "reason": outcome["decision"].get("reason"),
+                }
+            )
+
+    return {
+        "incident_id": body.incident_id,
+        "ready_count": len(ready),
+        "attempted": len(ready[: body.limit]),
+        "committed": committed,
+        "committed_count": len(committed),
+        "duplicates": duplicates,
+        "refused": refused,
+        "refused_count": len(refused),
+    }
 
 
 @app.post("/v1/exceptions")
