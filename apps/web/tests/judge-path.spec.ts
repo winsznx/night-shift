@@ -112,14 +112,14 @@ test.describe("incident detail", () => {
     await expect(page.getByText(/unresolved/i).first()).toBeVisible();
 
     // The safety kernel panel lists all thirteen invariants.
-    await expect(page.getByText("Safety kernel")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Safety kernel" })).toBeVisible();
     for (const n of ["N1", "N5", "N6", "N13"]) {
       await expect(page.getByText(n, { exact: true }).first()).toBeVisible();
     }
 
     // Agent decisions and deterministic receipts are both present and distinguished.
-    await expect(page.getByText("Deterministic receipts")).toBeVisible();
-    await expect(page.getByText("Timeline")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Deterministic receipts" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Timeline" })).toBeVisible();
   });
 
   test("proof page verifies live and links the verifier command", async ({ page, request }) => {
@@ -129,7 +129,7 @@ test.describe("incident detail", () => {
 
     await page.goto(`/proof/${id}`);
     await expect(page.getByRole("heading", { name: id })).toBeVisible();
-    await expect(page.getByText("Verification checks")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Verification checks" })).toBeVisible();
     await expect(page.getByText(/python -m nightshift\.verify/).first()).toBeVisible();
 
     // Synthetic provenance is stated on the public proof surface.
