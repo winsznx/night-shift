@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+.hypothesis/
+
+# Node
+node_modules/
+.next/
+out/
+.turbo/
+*.tsbuildinfo
+playwright-report/
+test-results/
+blob-report/
+
+# Secrets and local state — never commit
+.env
+.env.local
+.env.*.local
+*-key.json
+service-account*.json
+secrets/
+.keys/
+*.pem
+!keys/*.pub.pem
+
+# Local build/run artifacts
+.DS_Store
+dist/
+build/
+.local/
+tmp/
+*.log
+
+# Evidence: generated campaign output is committed deliberately via `make evidence`,
+# but scratch runs are not.
+evidence/scratch/
+evidence/**/*.tmp
