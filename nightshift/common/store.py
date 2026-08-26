@@ -288,23 +288,24 @@ class FirestoreStore(Store):
         client = self._client
         store = self
 
-        @self._firestore.transactional  # type: ignore[misc]
+        @self._firestore.transactional
         def _run(transaction: Any) -> T:
             ctx = _FirestoreTxnContext(store, transaction, client)
-            result = body(ctx)  # type: ignore[arg-type]
+            result = body(ctx)
             for w in ctx.writes:
                 ref = client.collection(store._col(w.collection)).document(w.doc_id)
                 transaction.set(ref, w.data, merge=w.merge)
             return result
 
-        return _run(client.transaction(max_attempts=max_attempts))  # type: ignore[no-any-return]
+        outcome: T = _run(client.transaction(max_attempts=max_attempts))
+        return outcome
 
 
 class _FirestoreTxnContext(TxnContext):
     """Reads go through the Firestore transaction so the read set is tracked server-side."""
 
     def __init__(self, store: FirestoreStore, transaction: Any, client: Any) -> None:
-        super().__init__(_store=store)  # type: ignore[arg-type]
+        super().__init__(_store=store)
         self._transaction = transaction
         self._client = client
         self._fstore = store

@@ -151,7 +151,7 @@ def ingest_sensor_event(
     # hour bucket — not from the delivery id. Two deliveries of the same condition join.
     window = window_key or (freezer.last_reading_at[:13] if freezer else now_iso()[:13])
 
-    response = client.post(
+    response: Any = client.post(
         "/v1/incidents",
         json={
             "site_id": site_id,
@@ -163,7 +163,8 @@ def ingest_sensor_event(
         },
         headers={PRINCIPAL_HEADER: token},
     )
-    return response.json()
+    body: dict[str, Any] = response.json()
+    return body
 
 
 # --------------------------------------------------------------------------------------

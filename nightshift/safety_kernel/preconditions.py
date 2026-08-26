@@ -7,7 +7,7 @@ to re-derive whether a committed effect *should* have been allowed.
 
 from __future__ import annotations
 
-from typing import Any
+from collections.abc import Callable
 
 from nightshift.common.ids import close_action_id, reservation_action_id
 from nightshift.safety_kernel.config import DEFAULT_CONFIG, KernelConfig
@@ -345,7 +345,9 @@ def _pre_inventory_operation(
     return allow()
 
 
-_HANDLERS: dict[ActionType, Any] = {
+PreconditionHandler = Callable[[KernelState, ActionRequest, KernelConfig], Decision]
+
+_HANDLERS: dict[ActionType, PreconditionHandler] = {
     ActionType.CAPACITY_RESERVE: _pre_capacity_reserve,
     ActionType.CONTAINMENT_HOLD: _pre_containment_hold,
     ActionType.RELEASE_HOLD: _pre_release_hold,

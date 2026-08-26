@@ -120,7 +120,8 @@ class CommitThenLoseTransport:
 
         spec = self._matching_spec(tool_name, action_key, call_number)
         if spec is None:
-            return self._inner.invoke(tool_name, principal_token, payload)
+            passthrough: dict[str, Any] = self._inner.invoke(tool_name, principal_token, payload)
+            return passthrough
 
         if spec.kind == "tool_failure":
             self._record(spec, tool_name, action_key, call_number)

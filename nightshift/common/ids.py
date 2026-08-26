@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import secrets
 import uuid
+from collections.abc import Callable
 
 from nightshift.common.canonical import sha256_hex
 from nightshift.schemas.enums import ActionType, FaultClass, ResponderRole, ResponsePhase
@@ -81,7 +82,10 @@ def repair_status_action_id(incident_id: str, work_order_id: str, status: str) -
     return sha256_hex("repair_status", incident_id, work_order_id, status)
 
 
-_DERIVERS = {
+# Each deriver takes a different tuple of components, which is the point: adding an
+# effectful action without a semantic key must be a hard failure. Typed as a callable
+# over arbitrary args so the table can hold all of them.
+_DERIVERS: dict[ActionType, Callable[..., str]] = {
     ActionType.CAPACITY_RESERVE: reservation_action_id,
     ActionType.WORK_ORDER_CREATE: work_order_action_id,
     ActionType.DISPATCH_RESPONDER: dispatch_action_id,
@@ -106,7 +110,7 @@ def action_id_for(action_type: ActionType, *args: object) -> str:
         deriver = _DERIVERS[action_type]
     except KeyError:  # pragma: no cover - guarded by the ActionType enum
         raise KeyError(f"no semantic action id deriver registered for {action_type}") from None
-    return deriver(*args)  # type: ignore[arg-type]
+    return deriver(*args)
 
 
 def dedupe_key(site_id: str, freezer_id: str, window_key: str) -> str:

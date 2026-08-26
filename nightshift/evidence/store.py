@@ -107,7 +107,7 @@ def write_evidence(
 def _upload(settings: Settings, bundle: EvidenceBundle) -> str | None:
     """Best-effort upload to Cloud Storage. A failure downgrades, never fabricates."""
     try:
-        from google.cloud import storage
+        from google.cloud import storage  # type: ignore[attr-defined]
 
         client = storage.Client(project=settings.project_id)
         bucket = client.bucket(settings.evidence_bucket)

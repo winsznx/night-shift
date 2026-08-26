@@ -105,7 +105,7 @@ async def list_qualified_destinations(
                 "ineligible_reasons": reasons,
             }
         )
-    out.sort(key=lambda r: (not r["eligible"], -int(r["unreserved_free_slots"])))
+    out.sort(key=lambda r: (not bool(r["eligible"]), -int(str(r["unreserved_free_slots"]))))
     return {
         "incident_id": incident_id,
         "required_temp_c": required_temp_c,
@@ -161,7 +161,8 @@ async def reserve_capacity(
     repo: Repository = Depends(get_repository),
 ) -> dict[str, Any]:
     """Reserve slots. Idempotent on (incident, destination, placement group)."""
-    return reserve_capacity_op(repo, principal, body).as_dict()
+    outcome: dict[str, Any] = reserve_capacity_op(repo, principal, body).as_dict()
+    return outcome
 
 
 def reserve_capacity_op(repo: Repository, principal: AgentPrincipal, body: ReserveRequest) -> Any:
