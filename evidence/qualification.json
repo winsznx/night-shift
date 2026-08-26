@@ -1,18 +1,18 @@
 {
-  "run_id": "qual-a6c1241-2026-08-26T07:15:18.435Z",
+  "run_id": "qual-6bf7732-2026-08-26T07:17:29.459Z",
   "qualified": true,
   "agent_revisions": {
-    "incident-commander": "a6c1241",
-    "signal-investigator": "a6c1241",
-    "impact-analyst": "a6c1241",
-    "capacity-broker": "a6c1241",
-    "dispatch-agent": "a6c1241",
-    "custody-agent": "a6c1241",
-    "incident-ingestor": "a6c1241",
-    "responder-app": "a6c1241",
-    "drill-controller": "a6c1241"
+    "incident-commander": "6bf7732",
+    "signal-investigator": "6bf7732",
+    "impact-analyst": "6bf7732",
+    "capacity-broker": "6bf7732",
+    "dispatch-agent": "6bf7732",
+    "custody-agent": "6bf7732",
+    "incident-ingestor": "6bf7732",
+    "responder-app": "6bf7732",
+    "drill-controller": "6bf7732"
   },
-  "source_commit": "a6c1241",
+  "source_commit": "6bf7732",
   "adk_version": "2.7.1",
   "model_id": "gemini-3.5-flash",
   "skill_revisions": {
@@ -32,8 +32,8 @@
   "seeds": [
     20260826
   ],
-  "started_at": "2026-08-26T07:15:18.435Z",
-  "finished_at": "2026-08-26T07:15:18.435Z",
+  "started_at": "2026-08-26T07:17:29.459Z",
+  "finished_at": "2026-08-26T07:17:29.459Z",
   "totals": {
     "drills": 21,
     "scored": 21,
@@ -90,7 +90,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.03,
+      "wall_clock_s": 0.02,
       "notes": [],
       "error": null
     },
@@ -197,7 +197,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.41,
+      "wall_clock_s": 0.42,
       "notes": [
         "F-17 repair simulated; 9 validation readings written"
       ],
@@ -288,7 +288,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.05,
+      "wall_clock_s": 0.04,
       "notes": [
         "42 container(s) were not moved in this run (transfer cap 50). The incident correctly remains open."
       ],
@@ -480,7 +480,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.51,
+      "wall_clock_s": 0.44,
       "notes": [
         "F-17 repair simulated; 9 validation readings written"
       ],
@@ -585,7 +585,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.5,
+      "wall_clock_s": 0.48,
       "notes": [
         "F-17 repair simulated; 9 validation readings written"
       ],
@@ -781,7 +781,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.59,
+      "wall_clock_s": 0.53,
       "notes": [
         "F-31 warmed after reservation",
         "0 container(s) were not moved in this run (transfer cap 50). The incident correctly remains open."
@@ -873,7 +873,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.44,
+      "wall_clock_s": 0.43,
       "notes": [
         "stale memory note injected",
         "F-17 repair simulated; 9 validation readings written"
@@ -965,7 +965,7 @@
       "tool_denials": 2,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.32,
+      "wall_clock_s": 0.29,
       "notes": [
         "0 container(s) were not moved in this run (transfer cap 50). The incident correctly remains open."
       ],
@@ -1050,7 +1050,7 @@
       "tool_denials": 2,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.07,
+      "wall_clock_s": 0.06,
       "notes": [
         "42 container(s) were not moved in this run (transfer cap 50). The incident correctly remains open."
       ],
@@ -1141,7 +1141,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 1,
       "model_calls": 0,
-      "wall_clock_s": 0.45,
+      "wall_clock_s": 0.41,
       "notes": [
         "F-17 repair simulated; 9 validation readings written"
       ],
@@ -1233,7 +1233,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.44,
+      "wall_clock_s": 0.39,
       "notes": [
         "2 container(s) were not moved in this run (transfer cap 50, 2 deliberately skipped). The incident correctly remains open."
       ],
@@ -1325,7 +1325,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.48,
+      "wall_clock_s": 0.43,
       "notes": [
         "0 container(s) were not moved in this run (transfer cap 50). The incident correctly remains open."
       ],
@@ -1444,7 +1444,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.03,
+      "wall_clock_s": 0.04,
       "notes": [
         "42 container(s) were not moved in this run (transfer cap 50). The incident correctly remains open."
       ],
@@ -1727,7 +1727,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.49,
+      "wall_clock_s": 0.46,
       "notes": [
         "F-17 repair simulated; 9 validation readings written"
       ],
@@ -1820,7 +1820,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.43,
+      "wall_clock_s": 0.41,
       "notes": [
         "F-17 repair simulated; 9 validation readings written"
       ],
@@ -1911,7 +1911,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.51,
+      "wall_clock_s": 0.47,
       "notes": [
         "competing incident INC-6E829F01EE opened on F-35",
         "competing incident holds 45 slot(s) in F-31",
@@ -1999,7 +1999,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.51,
+      "wall_clock_s": 0.48,
       "notes": [
         "competing incident INC-6E829F01EE opened on F-35",
         "competing incident holds 45 slot(s) in F-31",
@@ -2009,7 +2009,7 @@
     }
   ],
   "decision": {
-    "run_id": "qual-a6c1241-2026-08-26T07:15:18.435Z",
+    "run_id": "qual-6bf7732-2026-08-26T07:17:29.459Z",
     "decision": "QUALIFIED",
     "failing_drills": [],
     "reason": "survived the full corpus"

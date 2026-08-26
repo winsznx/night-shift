@@ -14,7 +14,9 @@ query.
 
 from __future__ import annotations
 
+import random
 import threading
+import time
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
@@ -41,6 +43,15 @@ class TxnContext:
 
     _store: Store
     _reads: dict[tuple[str, str], int] = field(default_factory=dict)
+    _collection_reads: dict[str, int] = field(default_factory=dict)
+    """Collection versions observed by queries.
+
+    Recording only the documents a query *matched* leaves a phantom-read hole: a
+    competing transaction that inserts a brand-new document is invisible to this read
+    set, so both transactions commit. Under twelve-way contention that let four
+    reservations commit into three slots — a real N1 violation, caught by the
+    concurrency stress test. Tracking the collection's own version closes it.
+    """
     _writes: list[Write] = field(default_factory=list)
 
     def get(self, collection: str, doc_id: str) -> dict[str, Any] | None:
@@ -49,6 +60,7 @@ class TxnContext:
         return doc
 
     def query(self, collection: str, **equals: Any) -> list[dict[str, Any]]:
+        self._collection_reads[collection] = self._store._collection_version(collection)
         results = self._store._query_versioned(collection, **equals)
         for doc_id, _doc, version in results:
             self._reads[(collection, doc_id)] = version
@@ -66,6 +78,10 @@ class TxnContext:
     @property
     def reads(self) -> dict[tuple[str, str], int]:
         return self._reads
+
+    @property
+    def collection_reads(self) -> dict[str, int]:
+        return self._collection_reads
 
 
 class Store(ABC):
@@ -110,6 +126,14 @@ class Store(ABC):
         self, collection: str, **equals: Any
     ) -> list[tuple[str, dict[str, Any], int]]: ...
 
+    def _collection_version(self, collection: str) -> int:
+        """Version of a whole collection, bumped by any write into it.
+
+        Backends whose own transaction machinery tracks query read sets — Firestore —
+        return a constant, because they detect phantoms themselves.
+        """
+        return 0
+
     def collections(self) -> Iterable[str]:  # pragma: no cover - diagnostics only
         return []
 
@@ -127,6 +151,7 @@ class MemoryStore(Store):
     def __init__(self) -> None:
         self._data: dict[str, dict[str, dict[str, Any]]] = {}
         self._versions: dict[str, dict[str, int]] = {}
+        self._collection_versions: dict[str, int] = {}
         self._lock = threading.RLock()
         self._clock = 0
 
@@ -157,7 +182,12 @@ class MemoryStore(Store):
     def _bump(self, collection: str, doc_id: str) -> int:
         self._clock += 1
         self._versions.setdefault(collection, {})[doc_id] = self._clock
+        self._collection_versions[collection] = self._clock
         return self._clock
+
+    def _collection_version(self, collection: str) -> int:
+        with self._lock:
+            return self._collection_versions.get(collection, 0)
 
     def _apply(self, w: Write) -> None:
         bucket = self._data.setdefault(w.collection, {})
@@ -185,7 +215,16 @@ class MemoryStore(Store):
                     out.append((doc_id, dict(doc), versions.get(doc_id, 0)))
             return sorted(out, key=lambda r: r[0])
 
-    def run_transaction(self, body: Callable[[TxnContext], T], *, max_attempts: int = 5) -> T:
+    def run_transaction(self, body: Callable[[TxnContext], T], *, max_attempts: int = 40) -> T:
+        """Optimistic retry until the read set is stable.
+
+        The default attempt budget is deliberately generous. Under heavy contention on
+        one document — twenty threads racing for a single freezer slot — five attempts
+        exhausted and refused a request that should have won. That fails *closed*, so it
+        is a liveness problem rather than a safety one, but Firestore's own transaction
+        machinery retries far more persistently and the in-memory store should not be the
+        component that decides a rescue is impossible.
+        """
         last: Exception | None = None
         for _attempt in range(max_attempts):
             ctx = TxnContext(_store=self)
@@ -196,12 +235,22 @@ class MemoryStore(Store):
                     for key, seen in ctx.reads.items()
                     if self._versions.get(key[0], {}).get(key[1], 0) != seen
                 ]
-                if stale:
-                    last = ConcurrentModificationError(f"read set changed: {stale}")
-                    continue
-                for w in ctx.writes:
-                    self._apply(w)
-                return result
+                # Phantom check: a collection this transaction queried must not have
+                # gained, lost, or changed any document since it looked.
+                stale += [
+                    (collection, "<collection>")
+                    for collection, seen in ctx.collection_reads.items()
+                    if self._collection_versions.get(collection, 0) != seen
+                ]
+                if not stale:
+                    for w in ctx.writes:
+                        self._apply(w)
+                    return result
+                last = ConcurrentModificationError(f"read set changed: {stale}")
+            # Back off before retrying. Without jitter a thundering herd on one
+            # document can starve a single thread indefinitely — every retry collides
+            # with the same competitors at the same instant.
+            time.sleep(random.uniform(0.0002, 0.002))
         raise last or ConcurrentModificationError("transaction could not commit")
 
     def collections(self) -> Iterable[str]:
