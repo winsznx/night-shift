@@ -19,7 +19,7 @@ export function Card({
 }) {
   return (
     <div
-      className={`rounded-[12px] border border-[#e5e5e5] bg-white ${padded ? "p-4" : ""} ${className}`}
+      className={`ns-panel rounded-[12px] border border-[#e5e5e5] bg-white ${padded ? "p-4" : ""} ${className}`}
     >
       {children}
     </div>
@@ -130,7 +130,7 @@ export function Metric({
           ? "text-[#16a34a]"
           : "text-[#171717]";
   return (
-    <div className="min-w-0">
+    <div className="ns-route min-w-0 pl-3">
       <div className="text-[11px] font-medium tracking-wide text-[#737373] uppercase">
         {label}
       </div>
@@ -194,17 +194,17 @@ export function Table({
   minWidth?: number;
 }) {
   return (
-    <div className="scroll-x">
+    <div className="scroll-x relative">
       <table
         className="w-full border-collapse text-left"
         style={minWidth ? { minWidth: `${minWidth}px` } : undefined}
       >
         <thead>
-          <tr>
+          <tr className="bg-[#fafafa]">
             {headers.map((h) => (
               <th
                 key={h}
-                className="border-b border-[#e5e5e5] px-4 py-2.5 text-[11px] font-semibold tracking-wide text-[#737373] uppercase whitespace-nowrap"
+                className="border-b border-[#e5e5e5] px-4 py-2.5 text-[11px] font-semibold tracking-[0.08em] text-[#737373] uppercase whitespace-nowrap first:before:mr-2 first:before:inline-block first:before:h-1.5 first:before:w-1.5 first:before:rounded-full first:before:bg-[#2563eb] first:before:content-['']"
               >
                 {h}
               </th>

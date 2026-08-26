@@ -70,7 +70,9 @@ html {
 }
 
 body {
-  background: var(--color-canvas-white);
+  background:
+    linear-gradient(90deg, rgba(10, 10, 10, 0.035) 1px, transparent 1px) 0 0 / 100% 100%,
+    var(--color-canvas-white);
   color: var(--color-charcoal);
   font-family: var(--font-inter);
   font-size: var(--text-body-lg);
@@ -100,6 +102,78 @@ body {
   background-size: 22px 22px;
 }
 
+/* Night Shift's signature: a trace is evidence moving through a controlled system.
+   These are deliberately quiet; operational data, never the decoration, stays dominant. */
+.thermal-trace {
+  background-image:
+    linear-gradient(90deg, transparent 0 8%, rgba(37, 99, 235, 0.15) 8% 8.1%, transparent 8.1% 100%),
+    linear-gradient(180deg, transparent 0 50%, rgba(10, 10, 10, 0.07) 50% 50.2%, transparent 50.2% 100%);
+}
+
+.ns-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.ns-panel::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 28px;
+  height: 2px;
+  background: var(--color-electric-blue);
+  content: "";
+}
+
+.ns-panel:hover::before {
+  width: 52px;
+}
+
+.ns-panel::before,
+.ns-route-dot {
+  transition: width 180ms ease;
+}
+
+.ns-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-steel);
+  font-family: var(--font-geist-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ns-eyebrow::before {
+  width: 18px;
+  height: 1px;
+  background: var(--color-electric-blue);
+  content: "";
+}
+
+.ns-route {
+  position: relative;
+  border-left: 1px solid var(--color-ash);
+}
+
+.ns-route::before {
+  position: absolute;
+  top: 18px;
+  left: -3px;
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  background: var(--color-electric-blue);
+  content: "";
+}
+
+.ns-stamp {
+  border: 1px solid rgba(37, 99, 235, 0.38);
+  box-shadow: inset 0 0 0 3px rgba(37, 99, 235, 0.06);
+}
+
 *:focus-visible {
   outline: 2px solid var(--color-electric-blue);
   outline-offset: 2px;
@@ -123,4 +197,35 @@ body {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* --- Console tour ------------------------------------------------------------------
+   The hero walks Overview → Incident → Fleet → Drills → Evidence. Motion is limited to
+   a short rise and fade on the incoming panel plus a dwell bar on the active rail item,
+   so the movement reads as navigation rather than decoration. */
+
+@keyframes ns-panel-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ns-dwell {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+.tour-panel-enter {
+  animation: ns-panel-in 420ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+.tour-dwell {
+  animation: ns-dwell 5200ms linear both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-panel-enter,
+  .tour-dwell {
+    animation: none;
+  }
+  .tour-dwell { width: 100%; }
 }

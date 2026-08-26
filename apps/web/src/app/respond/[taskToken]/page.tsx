@@ -15,12 +15,15 @@ export default async function RespondPage({
   if (!view) notFound();
 
   return (
-    <div className="min-h-screen bg-[#f5f5f5]">
+    <div className="thermal-trace min-h-screen bg-[#f5f5f5]">
       <header className="sticky top-0 z-10 border-b border-[#e5e5e5] bg-white px-4 py-3">
         <div className="mx-auto flex max-w-[560px] items-center justify-between gap-3">
           <span className="inline-flex items-center gap-2">
-            <span className="inline-block h-2 w-2 rounded-full bg-[#2563eb]" aria-hidden />
-            <span className="text-[14px] font-semibold text-[#0a0a0a]">Night Shift</span>
+            <span className="relative inline-grid h-3 w-3 place-items-center" aria-hidden>
+              <span className="absolute inset-0 rounded-full border border-[#2563eb]/40" />
+              <span className="h-1 w-1 rounded-full bg-[#2563eb]" />
+            </span>
+            <span className="text-[14px] font-semibold tracking-[-0.01em] text-[#0a0a0a]">Night Shift</span>
           </span>
           <span className="text-[12px] text-[#737373]">{view.responder_id}</span>
         </div>

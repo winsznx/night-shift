@@ -10,7 +10,7 @@ export default async function VerifyPage() {
   const evidence = await getEvidence();
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="thermal-trace min-h-screen bg-white">
       <header className="border-b border-[#e5e5e5]">
         <div className="mx-auto flex max-w-[1000px] items-center justify-between gap-4 px-6 py-3.5">
           <Link href="/"><Logo /></Link>
@@ -21,8 +21,8 @@ export default async function VerifyPage() {
       </header>
 
       <main className="mx-auto max-w-[1000px] px-6 py-10">
-        <p className="text-[12px] font-medium tracking-wide text-[#2563eb] uppercase">Verification</p>
-        <h1 className="mt-1.5 max-w-[24ch] text-[30px] leading-tight font-semibold text-[#171717]">
+        <p className="ns-eyebrow">Independent verification</p>
+        <h1 className="mt-2 max-w-[24ch] text-[34px] leading-[1.05] font-semibold tracking-[-0.03em] text-[#171717]">
           Check the evidence without trusting us
         </h1>
         <p className="mt-3 max-w-[70ch] text-[16px] leading-relaxed text-[#525252]">

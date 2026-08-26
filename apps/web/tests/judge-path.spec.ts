@@ -17,8 +17,8 @@ test.describe("judge path", () => {
     await expect(page.getByText(/no real biobank samples were moved/i).first()).toBeVisible();
 
     // Primary calls to action exist and point somewhere real.
-    await expect(page.getByRole("link", { name: /open the live incident/i })).toBeVisible();
-    await expect(page.getByRole("link", { name: /see the disaster drills/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /watch the rescue/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /explore failure drills/i })).toBeVisible();
   });
 
   test("landing has no dead controls", async ({ page }) => {
@@ -147,5 +147,47 @@ test.describe("failure and refusal states are visible", () => {
   test("freezers page explains free space is not availability", async ({ page }) => {
     await page.goto("/app/freezers");
     await expect(page.getByText(/free space is not availability/i)).toBeVisible();
+  });
+});
+
+test.describe("hero console tour", () => {
+  test("walks from the estate through to signed evidence", async ({ page }, testInfo) => {
+    await page.goto("/");
+    // The rail is the desktop affordance; below lg the tour exposes a stepper instead.
+    const desktop = testInfo.project.name === "desktop";
+    const controls = desktop
+      ? page.locator('nav[aria-label="Command console preview"] button')
+      : page.locator('[aria-label="Overview"], [aria-label="Evidence"]');
+    await controls.first().scrollIntoViewIfNeeded();
+
+    // More than one stop, or the hero is back to being a single posed screenshot.
+    expect(await controls.count()).toBeGreaterThan(1);
+
+    // Clicking a stop shows that surface, so the tour is navigable and not decoration.
+    const evidence = page.getByRole("button", { name: "Evidence" }).first();
+    if (await evidence.count()) {
+      await evidence.click();
+      await expect(evidence).toHaveAttribute("aria-current", "true");
+      await expect(page.getByText(/signed incident manifests/i).first()).toBeVisible();
+    }
+  });
+
+  test("the rail fills the frame so the rounded corner is never broken", async ({
+    page,
+  }, testInfo) => {
+    test.skip(testInfo.project.name !== "desktop", "the rail only renders at lg and above");
+    await page.goto("/");
+    const rail = page.locator('nav[aria-label="Command console preview"]');
+    await rail.scrollIntoViewIfNeeded();
+    const aside = page.locator("aside").filter({ has: rail });
+    const frame = page.locator("div.rounded-\\[16px\\]").first();
+
+    const asideBox = await aside.boundingBox();
+    const frameBox = await frame.boundingBox();
+    // The tinted rail column must reach the bottom of the frame. When a short panel was
+    // active it stopped early and left a square-cornered white gap inside the rounding.
+    expect(
+      Math.abs(asideBox!.y + asideBox!.height - (frameBox!.y + frameBox!.height)),
+    ).toBeLessThan(2);
   });
 });
