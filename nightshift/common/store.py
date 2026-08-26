@@ -84,6 +84,16 @@ class Store(ABC):
     @abstractmethod
     def query(self, collection: str, **equals: Any) -> list[dict[str, Any]]: ...
 
+    def set_many(self, writes: list[Write]) -> None:
+        """Write many documents. The default is a loop; Firestore batches.
+
+        Seeding the estate is ~700 documents. One round trip each took minutes against
+        real Firestore, which made the live demo seed look hung. Batching turns it into
+        a couple of seconds.
+        """
+        for w in writes:
+            self.set(w.collection, w.doc_id, w.data, merge=w.merge)
+
     @abstractmethod
     def delete(self, collection: str, doc_id: str) -> None: ...
 
@@ -245,6 +255,22 @@ class FirestoreStore(Store):
         for key, value in equals.items():
             ref = ref.where(filter=self._firestore.FieldFilter(key, "==", value))
         return [d.to_dict() for d in ref.stream()]
+
+    def set_many(self, writes: list[Write]) -> None:
+        """Batched write. Firestore caps a batch at 500 operations."""
+        batch = None
+        pending = 0
+        for w in writes:
+            if batch is None:
+                batch = self._client.batch()
+            ref = self._client.collection(self._col(w.collection)).document(w.doc_id)
+            batch.set(ref, w.data, merge=w.merge)
+            pending += 1
+            if pending >= 450:
+                batch.commit()
+                batch, pending = None, 0
+        if batch is not None and pending:
+            batch.commit()
 
     def _read_versioned(self, collection: str, doc_id: str) -> tuple[dict[str, Any] | None, int]:
         # Firestore's own transaction machinery tracks the read set; the version is unused.

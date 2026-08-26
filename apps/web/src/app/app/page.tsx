@@ -15,7 +15,7 @@ import {
 } from "@/components/ui";
 import { getDrills, getOverview } from "@/lib/api";
 
-export const revalidate = 3;
+export const dynamic = "force-dynamic";
 
 export default async function OperationsOverview() {
   const [overview, drills] = await Promise.all([getOverview(), getDrills()]);

@@ -2,7 +2,7 @@ import { AppShell, ApiDown, PageHeader } from "@/components/shell";
 import { Badge, Card, CardHeader, Mono, Table, Td } from "@/components/ui";
 import { getFleet } from "@/lib/api";
 
-export const revalidate = 30;
+export const dynamic = "force-dynamic";
 
 const DOMAIN_COLUMNS = ["telemetry", "inventory", "capacity", "facilities", "custody"];
 

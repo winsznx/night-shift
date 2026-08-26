@@ -4,7 +4,7 @@ import { AppShell, ApiDown, PageHeader } from "@/components/shell";
 import { Badge, Card, Empty, Mono, StateBadge, Table, Td, timeAgo } from "@/components/ui";
 import { getOverview } from "@/lib/api";
 
-export const revalidate = 3;
+export const dynamic = "force-dynamic";
 
 export default async function IncidentsPage() {
   const overview = await getOverview();

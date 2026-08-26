@@ -296,6 +296,11 @@ def estate_hash(fixture: EstateFixture) -> str:
 
 def seed_repository(repo: Repository, fixture: EstateFixture) -> None:
     """Write the estate into a repository. Idempotent — safe to re-run."""
-    for collection, docs in fixture.as_documents().items():
-        for doc_id, doc in docs.items():
-            repo.store.set(collection, doc_id, doc)
+    from nightshift.common.store import Write
+
+    writes = [
+        Write(collection=collection, doc_id=doc_id, data=doc)
+        for collection, docs in fixture.as_documents().items()
+        for doc_id, doc in docs.items()
+    ]
+    repo.store.set_many(writes)

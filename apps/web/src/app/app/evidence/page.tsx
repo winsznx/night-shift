@@ -4,7 +4,7 @@ import { AppShell, ApiDown, PageHeader } from "@/components/shell";
 import { Badge, Card, CardHeader, Mono, Table, Td } from "@/components/ui";
 import { getEvidence } from "@/lib/api";
 
-export const revalidate = 30;
+export const dynamic = "force-dynamic";
 
 export default async function EvidencePage() {
   const evidence = await getEvidence();

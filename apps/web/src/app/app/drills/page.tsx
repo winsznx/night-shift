@@ -4,7 +4,7 @@ import { AppShell, ApiDown, PageHeader } from "@/components/shell";
 import { Badge, Card, CardHeader, Metric, Mono, Table, Td } from "@/components/ui";
 import { getDrills } from "@/lib/api";
 
-export const revalidate = 30;
+export const dynamic = "force-dynamic";
 
 export default async function DrillsPage() {
   const drills = await getDrills();

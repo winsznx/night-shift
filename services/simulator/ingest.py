@@ -68,7 +68,15 @@ def inject_failure(
             source="sensor",
         )
         readings.append(reading)
-        repo.store.set("readings", reading.id, reading.model_dump(mode="json"))
+
+    from nightshift.common.store import Write
+
+    repo.store.set_many(
+        [
+            Write(collection="readings", doc_id=r.id, data=r.model_dump(mode="json"))
+            for r in readings
+        ]
+    )
 
     freezer = repo.get_freezer(profile.freezer_id)
     if freezer is not None:

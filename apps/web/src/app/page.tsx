@@ -4,7 +4,7 @@ import { Logo } from "@/components/shell";
 import { Badge, Card, Mono } from "@/components/ui";
 import { getDrills, getEvidence, getOverview } from "@/lib/api";
 
-export const revalidate = 30;
+export const dynamic = "force-dynamic";
 
 export default async function Landing() {
   const [overview, drills, evidence] = await Promise.all([
