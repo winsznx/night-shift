@@ -12,7 +12,7 @@ rule was wrong: "resolved on paper" is not "rescued".
 from __future__ import annotations
 
 from nightshift.common.ids import close_action_id
-from nightshift.safety_kernel import ActionRequest, KernelState, evaluate_action
+from nightshift.safety_kernel import ActionRequest, evaluate_action
 from nightshift.safety_kernel.invariants import n6_no_premature_close, n6_would_hold
 from nightshift.safety_kernel.world import reconciliation_snapshot
 from nightshift.schemas.enums import ActionType, AgentName, CustodyState, IncidentState

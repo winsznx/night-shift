@@ -12,6 +12,7 @@ something a verifier has to reproduce.
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import re
@@ -38,6 +39,16 @@ from services.common.repository import Repository
 from services.gateway.broker import BrokerDeniedError, ToolBroker
 
 log = logging.getLogger(__name__)
+
+
+def _is_rate_limited(exc: BaseException) -> bool:
+    """True for a model-API quota error, which is infrastructure rather than a refusal."""
+    text = f"{type(exc).__name__}: {exc}".lower()
+    return any(
+        marker in text
+        for marker in ("resource_exhausted", "resourceexhausted", "429", "rate limit", "quota")
+    )
+
 
 SPECIALIST_ORDER = [
     AgentName.SIGNAL_INVESTIGATOR,
@@ -309,6 +320,15 @@ class IncidentOrchestrator:
             )
         return result
 
+    _RATE_LIMIT_BACKOFF_S = (15, 45, 90)
+    """Backoff for model rate limiting.
+
+    A 429 from Vertex is infrastructure, not an agent decision (N12). Abandoning the
+    incident on one would leave a real rescue half-finished because someone else was
+    using the quota, so the orchestrator waits and retries a bounded number of times
+    before recording it as an infrastructure failure.
+    """
+
     async def _invoke(self, name: AgentName, message: str) -> SpecialistResult:
         runner = self._runner_for(name)
         session_id = f"{self.incident_id}-{name.value}"
@@ -316,22 +336,50 @@ class IncidentOrchestrator:
 
         chunks: list[str] = []
         error: str | None = None
-        self._model_calls += 1
-        try:
-            async for event in runner.run_async(
-                user_id="nightshift",
-                session_id=session_id,
-                new_message=types.Content(role="user", parts=[types.Part(text=message)]),
-            ):
-                content = getattr(event, "content", None)
-                if content and getattr(content, "parts", None):
-                    for part in content.parts:
-                        if getattr(part, "text", None):
-                            chunks.append(part.text)
-        except BrokerDeniedError as denied:
-            error = f"tool authorization denied: {denied.decision.reason}"
-        except Exception as exc:
-            error = f"{type(exc).__name__}: {exc}"
+
+        for attempt in range(len(self._RATE_LIMIT_BACKOFF_S) + 1):
+            chunks = []
+            error = None
+            self._model_calls += 1
+            try:
+                async for event in runner.run_async(
+                    user_id="nightshift",
+                    session_id=session_id,
+                    new_message=types.Content(role="user", parts=[types.Part(text=message)]),
+                ):
+                    content = getattr(event, "content", None)
+                    if content and getattr(content, "parts", None):
+                        for part in content.parts:
+                            if getattr(part, "text", None):
+                                chunks.append(part.text)
+                break
+            except BrokerDeniedError as denied:
+                error = f"tool authorization denied: {denied.decision.reason}"
+                break
+            except Exception as exc:
+                error = f"{type(exc).__name__}: {exc}"
+                if not _is_rate_limited(exc) or attempt >= len(self._RATE_LIMIT_BACKOFF_S):
+                    break
+                delay = self._RATE_LIMIT_BACKOFF_S[attempt]
+                log.warning(
+                    "%s rate limited by the model API; retrying in %ss (attempt %s)",
+                    name.value,
+                    delay,
+                    attempt + 1,
+                )
+                record_event(
+                    self.repo,
+                    self.incident_id,
+                    kind="note",
+                    source=name.value,
+                    summary=(
+                        f"Model API rate limited; waiting {delay}s before retrying. "
+                        "This is an infrastructure delay, not an agent decision."
+                    ),
+                    detail={"attempt": attempt + 1, "backoff_s": delay},
+                    agent=name,
+                )
+                await asyncio.sleep(delay)
 
         raw = "\n".join(chunks).strip()
         if error is not None:
