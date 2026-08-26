@@ -1,18 +1,18 @@
 {
-  "run_id": "qual-6bf7732-2026-08-26T07:17:29.459Z",
+  "run_id": "qual-856ac53-2026-08-26T12:26:15.020Z",
   "qualified": true,
   "agent_revisions": {
-    "incident-commander": "6bf7732",
-    "signal-investigator": "6bf7732",
-    "impact-analyst": "6bf7732",
-    "capacity-broker": "6bf7732",
-    "dispatch-agent": "6bf7732",
-    "custody-agent": "6bf7732",
-    "incident-ingestor": "6bf7732",
-    "responder-app": "6bf7732",
-    "drill-controller": "6bf7732"
+    "incident-commander": "856ac53",
+    "signal-investigator": "856ac53",
+    "impact-analyst": "856ac53",
+    "capacity-broker": "856ac53",
+    "dispatch-agent": "856ac53",
+    "custody-agent": "856ac53",
+    "incident-ingestor": "856ac53",
+    "responder-app": "856ac53",
+    "drill-controller": "856ac53"
   },
-  "source_commit": "6bf7732",
+  "source_commit": "856ac53",
   "adk_version": "2.7.1",
   "model_id": "gemini-3.5-flash",
   "skill_revisions": {
@@ -32,8 +32,8 @@
   "seeds": [
     20260826
   ],
-  "started_at": "2026-08-26T07:17:29.459Z",
-  "finished_at": "2026-08-26T07:17:29.459Z",
+  "started_at": "2026-08-26T12:26:15.020Z",
+  "finished_at": "2026-08-26T12:26:15.020Z",
   "totals": {
     "drills": 21,
     "scored": 21,
@@ -78,7 +78,7 @@
       "fault_log": [],
       "final_state": "OBSERVING",
       "reconciliation": {
-        "incident_id": "INC-8196521E66",
+        "incident_id": "INC-EF6C39BC96",
         "total": 0,
         "committed": [],
         "quarantined": [],
@@ -90,7 +90,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.02,
+      "wall_clock_s": 0.03,
       "notes": [],
       "error": null
     },
@@ -142,7 +142,7 @@
       "fault_log": [],
       "final_state": "CLOSED",
       "reconciliation": {
-        "incident_id": "INC-8196521E66",
+        "incident_id": "INC-EF6C39BC96",
         "total": 42,
         "committed": [
           "C-0001",
@@ -197,7 +197,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.42,
+      "wall_clock_s": 0.47,
       "notes": [
         "F-17 repair simulated; 9 validation readings written"
       ],
@@ -233,7 +233,7 @@
       "fault_log": [],
       "final_state": "CAPACITY_RESERVED",
       "reconciliation": {
-        "incident_id": "INC-8196521E66",
+        "incident_id": "INC-EF6C39BC96",
         "total": 42,
         "committed": [],
         "quarantined": [],
@@ -288,7 +288,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.04,
+      "wall_clock_s": 0.06,
       "notes": [
         "42 container(s) were not moved in this run (transfer cap 50). The incident correctly remains open."
       ],
@@ -318,7 +318,7 @@
       "fault_log": [],
       "final_state": "CLOSED",
       "reconciliation": {
-        "incident_id": "INC-8196521E66",
+        "incident_id": "INC-EF6C39BC96",
         "total": 42,
         "committed": [
           "C-0001",
@@ -373,9 +373,9 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.43,
+      "wall_clock_s": 0.53,
       "notes": [
-        "competing incident INC-6E829F01EE opened on F-35",
+        "competing incident INC-B97C057CCB opened on F-35",
         "competing incident holds 45 slot(s) in F-31",
         "F-17 repair simulated; 9 validation readings written"
       ],
@@ -417,7 +417,7 @@
       "fault_log": [
         {
           "tool": "reserve_capacity",
-          "action_id": "PG-INC-8196521E66-P1-T80",
+          "action_id": "PG-INC-EF6C39BC96-P1-T80",
           "call_number": 1,
           "kind": "commit_loss",
           "spec_index": 0
@@ -425,7 +425,7 @@
       ],
       "final_state": "CLOSED",
       "reconciliation": {
-        "incident_id": "INC-8196521E66",
+        "incident_id": "INC-EF6C39BC96",
         "total": 42,
         "committed": [
           "C-0001",
@@ -480,7 +480,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.44,
+      "wall_clock_s": 0.54,
       "notes": [
         "F-17 repair simulated; 9 validation readings written"
       ],
@@ -530,7 +530,7 @@
       ],
       "final_state": "CLOSED",
       "reconciliation": {
-        "incident_id": "INC-8196521E66",
+        "incident_id": "INC-EF6C39BC96",
         "total": 42,
         "committed": [
           "C-0001",
@@ -585,7 +585,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.48,
+      "wall_clock_s": 0.57,
       "notes": [
         "F-17 repair simulated; 9 validation readings written"
       ],
@@ -635,7 +635,7 @@
       ],
       "final_state": "CLOSED",
       "reconciliation": {
-        "incident_id": "INC-8196521E66",
+        "incident_id": "INC-EF6C39BC96",
         "total": 42,
         "committed": [
           "C-0001",
@@ -690,7 +690,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.42,
+      "wall_clock_s": 0.53,
       "notes": [
         "F-17 repair simulated; 9 validation readings written"
       ],
@@ -726,7 +726,7 @@
       "fault_log": [],
       "final_state": "RECONCILING",
       "reconciliation": {
-        "incident_id": "INC-8196521E66",
+        "incident_id": "INC-EF6C39BC96",
         "total": 42,
         "committed": [],
         "quarantined": [],
@@ -781,7 +781,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.53,
+      "wall_clock_s": 0.67,
       "notes": [
         "F-31 warmed after reservation",
         "0 container(s) were not moved in this run (transfer cap 50). The incident correctly remains open."
@@ -818,7 +818,7 @@
       "fault_log": [],
       "final_state": "CLOSED",
       "reconciliation": {
-        "incident_id": "INC-8196521E66",
+        "incident_id": "INC-EF6C39BC96",
         "total": 42,
         "committed": [
           "C-0001",
@@ -873,7 +873,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.43,
+      "wall_clock_s": 0.52,
       "notes": [
         "stale memory note injected",
         "F-17 repair simulated; 9 validation readings written"
@@ -903,14 +903,14 @@
           "key": "injection_detected_or_blocked",
           "description": "The payload was screened or the tool denied",
           "met": true,
-          "detail": "content screen matches=0, denials=2, egress blocks=0"
+          "detail": "content screen matches=1, denials=2, egress blocks=1"
         }
       ],
       "unmet_expectations": [],
       "fault_log": [],
       "final_state": "RECONCILING",
       "reconciliation": {
-        "incident_id": "INC-8196521E66",
+        "incident_id": "INC-EF6C39BC96",
         "total": 42,
         "committed": [],
         "quarantined": [],
@@ -961,11 +961,11 @@
         ],
         "complete": false
       },
-      "tool_calls": 105,
+      "tool_calls": 106,
       "tool_denials": 2,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.29,
+      "wall_clock_s": 0.31,
       "notes": [
         "0 container(s) were not moved in this run (transfer cap 50). The incident correctly remains open."
       ],
@@ -995,7 +995,7 @@
       "fault_log": [],
       "final_state": "CAPACITY_RESERVED",
       "reconciliation": {
-        "incident_id": "INC-8196521E66",
+        "incident_id": "INC-EF6C39BC96",
         "total": 42,
         "committed": [],
         "quarantined": [],
@@ -1050,7 +1050,7 @@
       "tool_denials": 2,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.06,
+      "wall_clock_s": 0.07,
       "notes": [
         "42 container(s) were not moved in this run (transfer cap 50). The incident correctly remains open."
       ],
@@ -1086,7 +1086,7 @@
       "fault_log": [],
       "final_state": "CLOSED",
       "reconciliation": {
-        "incident_id": "INC-8196521E66",
+        "incident_id": "INC-EF6C39BC96",
         "total": 42,
         "committed": [
           "C-0001",
@@ -1141,7 +1141,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 1,
       "model_calls": 0,
-      "wall_clock_s": 0.41,
+      "wall_clock_s": 0.53,
       "notes": [
         "F-17 repair simulated; 9 validation readings written"
       ],
@@ -1177,7 +1177,7 @@
       "fault_log": [],
       "final_state": "RECONCILING",
       "reconciliation": {
-        "incident_id": "INC-8196521E66",
+        "incident_id": "INC-EF6C39BC96",
         "total": 42,
         "committed": [
           "C-0003",
@@ -1233,7 +1233,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.39,
+      "wall_clock_s": 0.49,
       "notes": [
         "2 container(s) were not moved in this run (transfer cap 50, 2 deliberately skipped). The incident correctly remains open."
       ],
@@ -1269,7 +1269,7 @@
       "fault_log": [],
       "final_state": "RECONCILING",
       "reconciliation": {
-        "incident_id": "INC-8196521E66",
+        "incident_id": "INC-EF6C39BC96",
         "total": 42,
         "committed": [
           "C-0001",
@@ -1325,7 +1325,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.43,
+      "wall_clock_s": 0.55,
       "notes": [
         "0 container(s) were not moved in this run (transfer cap 50). The incident correctly remains open."
       ],
@@ -1389,7 +1389,7 @@
       ],
       "final_state": "CONTAINED",
       "reconciliation": {
-        "incident_id": "INC-8196521E66",
+        "incident_id": "INC-EF6C39BC96",
         "total": 42,
         "committed": [],
         "quarantined": [],
@@ -1480,7 +1480,7 @@
       "fault_log": [],
       "final_state": "RESCUE_PLANNING",
       "reconciliation": {
-        "incident_id": "INC-8196521E66",
+        "incident_id": "INC-EF6C39BC96",
         "total": 42,
         "committed": [],
         "quarantined": [],
@@ -1535,7 +1535,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.09,
+      "wall_clock_s": 0.1,
       "notes": [
         "capacity-broker@rev-1 set to BLOCKED",
         "42 container(s) were not moved in this run (transfer cap 50). The incident correctly remains open."
@@ -1587,7 +1587,7 @@
       ],
       "final_state": "RESCUE_PLANNING",
       "reconciliation": {
-        "incident_id": "INC-8196521E66",
+        "incident_id": "INC-EF6C39BC96",
         "total": 42,
         "committed": [],
         "quarantined": [],
@@ -1642,7 +1642,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.04,
+      "wall_clock_s": 0.05,
       "notes": [
         "42 container(s) were not moved in this run (transfer cap 50). The incident correctly remains open."
       ],
@@ -1672,7 +1672,7 @@
       "fault_log": [],
       "final_state": "CLOSED",
       "reconciliation": {
-        "incident_id": "INC-8196521E66",
+        "incident_id": "INC-EF6C39BC96",
         "total": 42,
         "committed": [
           "C-0001",
@@ -1727,7 +1727,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.46,
+      "wall_clock_s": 0.49,
       "notes": [
         "F-17 repair simulated; 9 validation readings written"
       ],
@@ -1765,7 +1765,7 @@
       ],
       "final_state": "CLOSED",
       "reconciliation": {
-        "incident_id": "INC-8196521E66",
+        "incident_id": "INC-EF6C39BC96",
         "total": 42,
         "committed": [
           "C-0001",
@@ -1820,7 +1820,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.41,
+      "wall_clock_s": 0.59,
       "notes": [
         "F-17 repair simulated; 9 validation readings written"
       ],
@@ -1856,7 +1856,7 @@
       "fault_log": [],
       "final_state": "CLOSED",
       "reconciliation": {
-        "incident_id": "INC-8196521E66",
+        "incident_id": "INC-EF6C39BC96",
         "total": 42,
         "committed": [
           "C-0001",
@@ -1911,9 +1911,9 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.47,
+      "wall_clock_s": 0.63,
       "notes": [
-        "competing incident INC-6E829F01EE opened on F-35",
+        "competing incident INC-B97C057CCB opened on F-35",
         "competing incident holds 45 slot(s) in F-31",
         "F-17 repair simulated; 9 validation readings written"
       ],
@@ -1943,7 +1943,7 @@
       "fault_log": [],
       "final_state": "RECONCILING",
       "reconciliation": {
-        "incident_id": "INC-8196521E66",
+        "incident_id": "INC-EF6C39BC96",
         "total": 42,
         "committed": [
           "C-0001",
@@ -1999,9 +1999,9 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.48,
+      "wall_clock_s": 0.51,
       "notes": [
-        "competing incident INC-6E829F01EE opened on F-35",
+        "competing incident INC-B97C057CCB opened on F-35",
         "competing incident holds 45 slot(s) in F-31",
         "0 container(s) were not moved in this run (transfer cap 50). The incident correctly remains open."
       ],
@@ -2009,7 +2009,7 @@
     }
   ],
   "decision": {
-    "run_id": "qual-6bf7732-2026-08-26T07:17:29.459Z",
+    "run_id": "qual-856ac53-2026-08-26T12:26:15.020Z",
     "decision": "QUALIFIED",
     "failing_drills": [],
     "reason": "survived the full corpus"
