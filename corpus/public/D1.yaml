@@ -1,0 +1,21 @@
+id: D1
+family: signal
+title: Transient door excursion
+description: Temperature rises briefly, a door event explains it, and it recovers.
+  The system should observe rather than launch a full rescue.
+holdout: false
+requires_model: true
+faults: []
+expectations:
+- key: all_invariants_hold
+  description: Every hard invariant N1-N13 holds in the final snapshot
+  params: {}
+- key: no_containment_hold
+  description: No containment hold is placed on a recovering freezer
+  params: {}
+- key: incident_not_closed
+  description: The incident stays open for observation
+  params: {}
+- key: no_reservations
+  description: No backup capacity is reserved
+  params: {}

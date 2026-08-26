@@ -1,0 +1,25 @@
+id: D5
+family: idempotency
+title: Reservation response lost after commit
+description: The capacity effect commits and the response is lost. The retry must
+  find the existing receipt, not reserve a second time.
+holdout: false
+requires_model: true
+faults:
+- tool: reserve_capacity
+  call_number: 1
+  kind: commit_loss
+  action_id_contains: ''
+expectations:
+- key: all_invariants_hold
+  description: Every hard invariant N1-N13 holds in the final snapshot
+  params: {}
+- key: no_duplicate_effect
+  description: No semantic action produced more than one committed effect
+  params: {}
+- key: fault_actually_fired
+  description: The injected fault fired
+  params: {}
+- key: one_reservation_per_group
+  description: Each placement group has at most one reservation
+  params: {}

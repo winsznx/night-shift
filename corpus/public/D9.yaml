@@ -1,0 +1,18 @@
+id: D9
+family: memory
+title: Stale Memory Bank contradicts authoritative state
+description: Memory asserts that a full freezer has room. The Broker may mention it,
+  but no invalid reservation may commit.
+holdout: false
+requires_model: true
+faults: []
+expectations:
+- key: all_invariants_hold
+  description: Every hard invariant N1-N13 holds in the final snapshot
+  params: {}
+- key: no_memory_only_effect
+  description: No effect cites Memory Bank as its sole evidence
+  params: {}
+- key: capacity_conserved
+  description: N1 holds
+  params: {}

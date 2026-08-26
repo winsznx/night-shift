@@ -83,7 +83,15 @@ async def run_incident(
     scenario: ScenarioConfig | None = None,
     namespace: str = "demo",
     model: str | None = None,
+    driver: str = "agent",
 ) -> tuple[Runtime, IncidentRun]:
+    """Run one incident.
+
+    ``driver="agent"`` uses the real Gemini fleet. ``driver="scripted"`` uses the
+    deterministic policy in ``assurance.scripted``, which makes the same tool calls
+    through the same broker and services without a model in the loop. Both tiers are
+    reported separately and never pooled.
+    """
     scenario = scenario or ScenarioConfig()
     runtime = runtime or build_runtime(namespace=namespace)
     model = model or runtime.settings.model_id
@@ -149,7 +157,13 @@ async def run_incident(
     )
     simulator.announce()
 
-    orchestrator = IncidentOrchestrator(
+    orchestrator_cls: Any = IncidentOrchestrator
+    if driver == "scripted":
+        from assurance.scripted import ScriptedOrchestrator
+
+        orchestrator_cls = ScriptedOrchestrator
+
+    orchestrator = orchestrator_cls(
         runtime.repo,
         runtime.broker,
         incident_id,
@@ -344,30 +358,35 @@ def _open_competing_incident(
     )
     run.notes.append(f"competing incident {opened['incident_id']} opened on {other}")
 
-    # The competing incident takes a real reservation on the shared destination, so the
-    # contention the primary incident meets is authentic rather than staged.
-    from nightshift.schemas.core import Reservation
-    from nightshift.common.ids import reservation_action_id
-
+    # The competing incident takes its reservation through the real Capacity Service, so
+    # the contention is authentic and the resulting effect carries a receipt like any
+    # other. Writing the reservation straight into the store would have produced an
+    # effect with no receipt, which the ledger/effect agreement check in N2 correctly
+    # flags as a mismatch.
     destination = _busiest_backup(runtime)
     if destination is None:
         return
     free = runtime.repo.get_freezer(destination).free_slots  # type: ignore[union-attr]
     take = max(1, free - 2)
-    action_id = reservation_action_id(opened["incident_id"], destination, "PG-COMPETING")
-    reservation = Reservation(
-        id=f"RES-{action_id[:12]}",
-        action_id=action_id,
-        incident_id=opened["incident_id"],
-        destination_freezer_id=destination,
-        placement_group_id="PG-COMPETING",
-        slots=take,
-        state=ReservationState.ACTIVE,
-        created_at=now_iso(),
-        updated_at=now_iso(),
+    result = runtime.broker.call(
+        AgentName.CAPACITY_BROKER,
+        "reserve_capacity",
+        {
+            "incident_id": opened["incident_id"],
+            "destination_freezer_id": destination,
+            "placement_group_id": "PG-COMPETING",
+            "slots": take,
+            "evidence_sources": ["capacity:get_capacity"],
+        },
     )
-    runtime.repo.put("reservations", reservation.id, reservation)
-    run.notes.append(f"competing incident holds {take} slot(s) in {destination}")
+    status = result.get("receipt", {}).get("status")
+    if status == "COMMITTED":
+        run.notes.append(f"competing incident holds {take} slot(s) in {destination}")
+    else:
+        run.notes.append(
+            f"competing incident could not reserve in {destination}: "
+            f"{result.get('decision', {}).get('reason', status)}"
+        )
 
 
 def _busiest_backup(runtime: Runtime) -> str | None:

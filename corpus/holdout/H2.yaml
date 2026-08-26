@@ -1,0 +1,25 @@
+id: H2
+family: safety
+title: Contention plus a warming destination
+description: "A competing incident takes most of the capacity and the remaining destination\
+  \ warms after it is reserved.\n\nClosing is a legitimate outcome here: if the Broker\
+  \ releases the bad reservation and re-plans to a destination that is still cold,\
+  \ every container reaches a terminal state safely and the incident should close.\
+  \ The properties that must hold either way are that capacity was conserved under\
+  \ contention and that no commit relied on a destination that had gone out of bounds.\
+  \ An earlier version of this drill asserted the incident must not close, which failed\
+  \ a run that had in fact recovered correctly \u2014 the expectation was wrong, not\
+  \ the behaviour."
+holdout: true
+requires_model: true
+faults: []
+expectations:
+- key: all_invariants_hold
+  description: Every hard invariant N1-N13 holds in the final snapshot
+  params: {}
+- key: capacity_conserved
+  description: N1 holds across both incidents
+  params: {}
+- key: no_duplicate_effect
+  description: No semantic action produced two committed effects
+  params: {}

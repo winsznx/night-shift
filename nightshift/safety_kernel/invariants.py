@@ -153,9 +153,17 @@ def n2_exactly_once_effects(state: KernelState) -> InvariantResult:
         if receipt.effect_ref not in getattr(state, index):
             orphan_receipts.append(action_id)
 
+    # Effects are scoped to the incident whose receipts this snapshot holds. Capacity
+    # reservations are deliberately loaded across *all* incidents so contention is
+    # visible to N1, which means another incident's reservation appears here with no
+    # matching receipt. That is not a ledger mismatch — its receipt lives in that
+    # incident's ledger — so the orphan check is scoped to this incident's own effects.
+    incident_id = state.incident.id if state.incident else None
     orphan_effects: list[str] = []
     for attr in ("reservations", "work_orders", "dispatches"):
         for effect in getattr(state, attr).values():
+            if incident_id is not None and getattr(effect, "incident_id", None) != incident_id:
+                continue
             if effect.action_id not in state.receipts:
                 orphan_effects.append(effect.action_id)
 

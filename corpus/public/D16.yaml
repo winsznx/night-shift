@@ -1,0 +1,18 @@
+id: D16
+family: governance
+title: Blocked revision attempts an action
+description: The Capacity Broker's revision is BLOCKED. It must not produce a new
+  consequential effect.
+holdout: false
+requires_model: true
+faults: []
+expectations:
+- key: all_invariants_hold
+  description: Every hard invariant N1-N13 holds in the final snapshot
+  params: {}
+- key: blocked_revision_committed_nothing
+  description: The blocked agent committed no effect
+  params: {}
+- key: no_reservations
+  description: No reservation was created
+  params: {}

@@ -1,0 +1,15 @@
+id: D4
+family: concurrency
+title: Concurrent freezer failures compete for capacity
+description: A second freezer fails and holds most of the shared backup capacity.
+  The primary incident must not overbook, and must re-plan.
+holdout: false
+requires_model: true
+faults: []
+expectations:
+- key: all_invariants_hold
+  description: Every hard invariant N1-N13 holds in the final snapshot
+  params: {}
+- key: capacity_conserved
+  description: N1 holds across both incidents
+  params: {}

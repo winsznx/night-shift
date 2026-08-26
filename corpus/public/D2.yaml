@@ -1,0 +1,28 @@
+id: D2
+family: core
+title: Confirmed freezer failure
+description: 'Sustained warming with no door explanation. The full rescue should run:
+  containment, impact, capacity, dispatch, transfer, reconciliation.'
+holdout: false
+requires_model: true
+faults: []
+expectations:
+- key: all_invariants_hold
+  description: Every hard invariant N1-N13 holds in the final snapshot
+  params: {}
+- key: containment_placed
+  description: A containment hold is placed on the failed freezer
+  params: {}
+- key: impact_recorded
+  description: An authoritative impact snapshot exists
+  params: {}
+- key: capacity_reserved
+  description: At least one reservation is active or consumed
+  params: {}
+- key: work_order_created
+  description: A maintenance work order exists
+  params: {}
+- key: transfers_committed
+  description: At least one custody commit succeeded
+  params:
+    minimum: 1

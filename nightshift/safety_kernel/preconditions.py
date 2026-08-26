@@ -29,6 +29,7 @@ from nightshift.schemas.enums import (
     ActionType,
     CustodyState,
     IncidentState,
+    ReservationState,
 )
 
 
@@ -113,6 +114,34 @@ def _pre_capacity_reserve(
 
     if state.active_hold(freezer_id) is not None:
         return refuse("N13", f"{freezer_id} is under a containment hold and cannot receive material")
+
+    # One live reservation per placement group. Without this, a broker that loses a
+    # reservation response and re-plans to a different destination derives a *different*
+    # action id and legitimately creates a second reservation — booking space for the
+    # same boxes in two freezers and withholding capacity a competing incident needs.
+    # Re-planning is still allowed; it just has to release the first reservation.
+    existing = [
+        r
+        for r in state.reservations.values()
+        if r.incident_id == req.incident_id
+        and r.placement_group_id == group_id
+        and r.state in {ReservationState.PROPOSED, ReservationState.ACTIVE}
+        and r.destination_freezer_id != freezer_id
+    ]
+    if existing:
+        held = existing[0]
+        return refuse(
+            "N1",
+            f"placement group {group_id} already holds a live reservation on "
+            f"{held.destination_freezer_id} ({held.id}); release it before reserving "
+            f"the same material into {freezer_id}",
+            detail={
+                "placement_group_id": group_id,
+                "existing_reservation_id": held.id,
+                "existing_destination": held.destination_freezer_id,
+                "requested_destination": freezer_id,
+            },
+        )
 
     if not n1_would_hold(state, freezer_id, slots):
         return refuse(

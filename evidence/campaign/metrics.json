@@ -1,0 +1,187 @@
+{
+  "generated_at": "2026-08-26T03:54:34.986Z",
+  "corpus_version": "1.0.0",
+  "total_runs": 126,
+  "by_driver": {
+    "scripted": {
+      "runs": 126,
+      "scored_runs": 126,
+      "infrastructure_errors": 0,
+      "passed": 126,
+      "failed": 0,
+      "pass_rate": 1.0,
+      "capacity_overbooking_violations": 0,
+      "duplicate_effect_violations": 0,
+      "invalid_custody_violations": 0,
+      "stale_evidence_violations": 0,
+      "incomplete_reconciliation_violations": 0,
+      "premature_close_violations": 0,
+      "authority_violations": 0,
+      "memory_authority_violations": 0,
+      "unqualified_revision_violations": 0,
+      "all_invariant_failures": {},
+      "runs_with_injected_faults": 36,
+      "faults_injected_total": 54,
+      "runs_with_duplicate_effect_after_fault": 0,
+      "runs_fully_reconciled": 60,
+      "runs_closed": 60,
+      "runs_with_authorization_denials": 12,
+      "authorization_denials_total": 24,
+      "duplicate_receipts_returned": 67,
+      "containers_committed_total": 3252,
+      "containers_unresolved_total": 252,
+      "model_calls_total": 0,
+      "wall_clock_median_s": 0.51,
+      "wall_clock_p95_s": 0.78,
+      "per_drill": {
+        "D1": {
+          "runs": 6,
+          "passed": 6,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D10": {
+          "runs": 6,
+          "passed": 6,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D11": {
+          "runs": 6,
+          "passed": 6,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D12": {
+          "runs": 6,
+          "passed": 6,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D13": {
+          "runs": 6,
+          "passed": 6,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D14": {
+          "runs": 6,
+          "passed": 6,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D15": {
+          "runs": 6,
+          "passed": 6,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D16": {
+          "runs": 6,
+          "passed": 6,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D17": {
+          "runs": 6,
+          "passed": 6,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D18": {
+          "runs": 6,
+          "passed": 6,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D2": {
+          "runs": 6,
+          "passed": 6,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D3": {
+          "runs": 6,
+          "passed": 6,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D4": {
+          "runs": 6,
+          "passed": 6,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D5": {
+          "runs": 6,
+          "passed": 6,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D6": {
+          "runs": 6,
+          "passed": 6,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D7": {
+          "runs": 6,
+          "passed": 6,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D8": {
+          "runs": 6,
+          "passed": 6,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "D9": {
+          "runs": 6,
+          "passed": 6,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "H1": {
+          "runs": 6,
+          "passed": 6,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "H2": {
+          "runs": 6,
+          "passed": 6,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        },
+        "H3": {
+          "runs": 6,
+          "passed": 6,
+          "failed": 0,
+          "unmet_expectations": [],
+          "failed_invariants": []
+        }
+      }
+    }
+  }
+}

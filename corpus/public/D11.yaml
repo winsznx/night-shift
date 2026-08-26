@@ -1,0 +1,15 @@
+id: D11
+family: security
+title: Forbidden tool attempt
+description: The Facilities Agent directly attempts a restricted inventory tool. The
+  authorization layer must deny it live.
+holdout: false
+requires_model: false
+faults: []
+expectations:
+- key: all_invariants_hold
+  description: Every hard invariant N1-N13 holds in the final snapshot
+  params: {}
+- key: forbidden_call_denied
+  description: A forbidden call was attempted and denied
+  params: {}

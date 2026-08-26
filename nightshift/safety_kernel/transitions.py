@@ -324,25 +324,50 @@ def custody_transition(frm: CustodyState, to: CustodyState) -> Decision:
 # --------------------------------------------------------------------------------------
 
 
-def next_natural_state(state: KernelState) -> IncidentState | None:
-    """The state the deterministic evidence already supports, if any.
+PROGRESSION: tuple[IncidentState, ...] = (
+    _S.OBSERVING,
+    _S.CONFIRMED,
+    _S.CONTAINED,
+    _S.RESCUE_PLANNING,
+    _S.CAPACITY_RESERVED,
+    _S.DISPATCHED,
+    _S.TRANSFER_IN_PROGRESS,
+    _S.RECOVERY_MONITORING,
+    _S.RECONCILING,
+    _S.CLOSED,
+)
+"""The forward order of the happy path.
 
-    The Commander proposes; this function is what actually decides whether the
-    evidence is there. Returning ``None`` means 'stay put'.
+``INCIDENT_TRANSITIONS`` is a graph with legitimate backward edges — CAPACITY_RESERVED
+can return to RESCUE_PLANNING when a destination goes bad. Choosing the "next" state by
+iterating that graph's frozensets picks an arbitrary member, and an early run oscillated
+between RESCUE_PLANNING and CAPACITY_RESERVED forever because both edges were legal.
+Forward progress needs an explicit order; re-planning stays available, but only when
+something actually asks for it.
+"""
+
+
+def next_natural_state(state: KernelState) -> IncidentState | None:
+    """The next *forward* state the deterministic evidence already supports.
+
+    The Commander proposes; this decides whether the evidence is there. Returning
+    ``None`` means stay put. Never returns a backward transition — those are reachable
+    only through an explicit request.
     """
     if state.incident is None:
         return None
     current = state.incident.state
-    for candidate in INCIDENT_TRANSITIONS.get(current, frozenset()):
-        if candidate in {
-            IncidentState.NEEDS_REASSESSMENT,
-            IncidentState.ESCALATED,
-            IncidentState.PARTIAL,
-            IncidentState.ABORTED_SAFE,
-        }:
+    try:
+        position = PROGRESSION.index(current)
+    except ValueError:
+        return None  # a non-success state; recovery is an explicit decision
+
+    for candidate in PROGRESSION[position + 1 :]:
+        if candidate not in INCIDENT_TRANSITIONS.get(current, frozenset()):
             continue
         if can_transition_incident(state, candidate).allowed:
             return candidate
+        return None  # the next forward step is blocked; do not skip past it
     return None
 
 

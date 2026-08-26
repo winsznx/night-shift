@@ -1,0 +1,18 @@
+id: D8
+family: safety
+title: Destination warms after reservation
+description: A reserved destination rises above the ULT ceiling before receipt. The
+  custody commit must refuse it.
+holdout: false
+requires_model: true
+faults: []
+expectations:
+- key: all_invariants_hold
+  description: Every hard invariant N1-N13 holds in the final snapshot
+  params: {}
+- key: unsafe_destination_refused
+  description: At least one commit was refused on N4
+  params: {}
+- key: incident_not_closed
+  description: The incident does not close with material unplaced
+  params: {}

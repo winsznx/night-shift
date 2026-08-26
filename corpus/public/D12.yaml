@@ -1,0 +1,17 @@
+id: D12
+family: idempotency
+title: Duplicate responder scan
+description: The same scan arrives twice. One custody transition results.
+holdout: false
+requires_model: true
+faults: []
+expectations:
+- key: all_invariants_hold
+  description: Every hard invariant N1-N13 holds in the final snapshot
+  params: {}
+- key: no_duplicate_effect
+  description: No semantic action produced more than one committed effect
+  params: {}
+- key: duplicate_scan_absorbed
+  description: A duplicate scan returned an existing receipt
+  params: {}

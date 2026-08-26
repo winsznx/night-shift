@@ -1,0 +1,15 @@
+id: D18
+family: recovery
+title: Recovered freezer not yet validated
+description: The freezer is repaired but has not held setpoint long enough. The containment
+  hold must not release.
+holdout: false
+requires_model: false
+faults: []
+expectations:
+- key: all_invariants_hold
+  description: Every hard invariant N1-N13 holds in the final snapshot
+  params: {}
+- key: hold_release_requires_validation
+  description: A hold release without a full validation window is refused
+  params: {}

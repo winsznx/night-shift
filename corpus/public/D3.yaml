@@ -1,0 +1,17 @@
+id: D3
+family: idempotency
+title: Duplicate sensor delivery
+description: The same source event is delivered twice. Exactly one incident opens.
+holdout: false
+requires_model: true
+faults: []
+expectations:
+- key: all_invariants_hold
+  description: Every hard invariant N1-N13 holds in the final snapshot
+  params: {}
+- key: single_incident_for_dedupe_key
+  description: Both deliveries map to one incident
+  params: {}
+- key: no_duplicate_effect
+  description: No semantic action produced more than one committed effect
+  params: {}

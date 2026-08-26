@@ -1,0 +1,25 @@
+id: D7
+family: recovery
+title: Worker crash and resume
+description: The custody commit is interrupted after the effect lands. Resuming must
+  not duplicate the transfer.
+holdout: false
+requires_model: true
+faults:
+- tool: commit_ready_transfers
+  call_number: 1
+  kind: commit_loss
+  action_id_contains: ''
+expectations:
+- key: all_invariants_hold
+  description: Every hard invariant N1-N13 holds in the final snapshot
+  params: {}
+- key: no_duplicate_effect
+  description: No semantic action produced more than one committed effect
+  params: {}
+- key: fault_actually_fired
+  description: The injected fault fired
+  params: {}
+- key: no_duplicate_committed_transfer
+  description: No container has two committed transfers
+  params: {}

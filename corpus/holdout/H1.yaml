@@ -1,0 +1,23 @@
+id: H1
+family: idempotency
+title: Dispatch response lost twice
+description: The dispatch effect commits and its response is lost on two separate
+  attempts. Still exactly one dispatch.
+holdout: true
+requires_model: true
+faults:
+- tool: dispatch_responder
+  call_number: 1
+  kind: commit_loss
+  action_id_contains: ''
+- tool: dispatch_responder
+  call_number: 2
+  kind: commit_loss
+  action_id_contains: ''
+expectations:
+- key: all_invariants_hold
+  description: Every hard invariant N1-N13 holds in the final snapshot
+  params: {}
+- key: no_duplicate_effect
+  description: No semantic action produced more than one committed effect
+  params: {}
