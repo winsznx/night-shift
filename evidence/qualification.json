@@ -1,18 +1,18 @@
 {
-  "run_id": "qual-856ac53-2026-08-26T12:26:15.020Z",
+  "run_id": "qual-157db5b-2026-08-26T12:26:15.020Z",
   "qualified": true,
   "agent_revisions": {
-    "incident-commander": "856ac53",
-    "signal-investigator": "856ac53",
-    "impact-analyst": "856ac53",
-    "capacity-broker": "856ac53",
-    "dispatch-agent": "856ac53",
-    "custody-agent": "856ac53",
-    "incident-ingestor": "856ac53",
-    "responder-app": "856ac53",
-    "drill-controller": "856ac53"
+    "incident-commander": "157db5b",
+    "signal-investigator": "157db5b",
+    "impact-analyst": "157db5b",
+    "capacity-broker": "157db5b",
+    "dispatch-agent": "157db5b",
+    "custody-agent": "157db5b",
+    "incident-ingestor": "157db5b",
+    "responder-app": "157db5b",
+    "drill-controller": "157db5b"
   },
-  "source_commit": "856ac53",
+  "source_commit": "157db5b",
   "adk_version": "2.7.1",
   "model_id": "gemini-3.5-flash",
   "skill_revisions": {
@@ -2009,7 +2009,7 @@
     }
   ],
   "decision": {
-    "run_id": "qual-856ac53-2026-08-26T12:26:15.020Z",
+    "run_id": "qual-157db5b-2026-08-26T12:26:15.020Z",
     "decision": "QUALIFIED",
     "failing_drills": [],
     "reason": "survived the full corpus"
