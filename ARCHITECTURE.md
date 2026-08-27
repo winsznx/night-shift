@@ -35,6 +35,19 @@ candidate revision
 
 ## Component map
 
+Two interactive diagrams carry the same facts as this document, with guided views that
+walk one path at a time. Both are self-contained HTML — open the file, no server and no
+network:
+
+| Diagram | What it shows |
+|---|---|
+| [`docs/diagrams/night-shift-architecture.html`](docs/diagrams/night-shift-architecture.html) | The runtime map: how a sensor reading becomes a signed manifest, and where authority changes hands |
+| [`docs/diagrams/night-shift-exactly-once.html`](docs/diagrams/night-shift-exactly-once.html) | The commit sequence, run twice — the same semantic action either side of a worker restart |
+
+![Night Shift runtime architecture](docs/diagrams/preview/architecture.png)
+
+The ASCII map below stays authoritative for anyone reading in a terminal or a plain diff.
+
 ```
                           PUBLIC WEB (Next.js)
                                   │

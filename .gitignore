@@ -44,3 +44,7 @@ tmp/
 # but scratch runs are not.
 evidence/scratch/
 evidence/**/*.tmp
+
+# Regenerable diagram QA output. The specifications and the delivered HTML are tracked;
+# the containment screenshots and receipts are rebuilt on demand.
+docs/diagrams/*.visual-check.*

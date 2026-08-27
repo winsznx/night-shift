@@ -1,0 +1,338 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Night Shift \u2014 proof-carrying freezer rescue",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1260,
+      640
+    ],
+    "views": [
+      {
+        "id": "qualify",
+        "label": "Revisions earn traffic",
+        "focus": [
+          "drills",
+          "qualification",
+          "fleet"
+        ],
+        "note": "A revision handles no incident until the drill corpus scores it. Missing qualification counts as unqualified."
+      },
+      {
+        "id": "decide",
+        "label": "Agents decide",
+        "focus": [
+          "sensor",
+          "fleet",
+          "broker"
+        ],
+        "note": "Gemini reasons over messy telemetry and proposes an action. Nothing it says has yet become true."
+      },
+      {
+        "id": "authorize",
+        "label": "Code authorizes",
+        "focus": [
+          "broker",
+          "services",
+          "kernel",
+          "firestore"
+        ],
+        "note": "The kernel recomputes every invariant against authoritative state before any effect commits."
+      },
+      {
+        "id": "prove",
+        "label": "Evidence proves",
+        "focus": [
+          "firestore",
+          "kms",
+          "verifier"
+        ],
+        "note": "A signed manifest lets a reader rebuild the world and recompute the verdict without trusting us."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "drills",
+      "type": "backend",
+      "label": "Drill range",
+      "sublabel": "126 scripted \u00b7 18 agent",
+      "pos": [
+        60,
+        70
+      ],
+      "size": [
+        150,
+        72
+      ]
+    },
+    {
+      "id": "qualification",
+      "type": "security",
+      "label": "Qualification gate",
+      "sublabel": "blocks unqualified",
+      "pos": [
+        380,
+        70
+      ],
+      "size": [
+        150,
+        72
+      ]
+    },
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "Operator console",
+      "sublabel": "Next.js on Cloud Run",
+      "brand": "next-js",
+      "pos": [
+        700,
+        70
+      ],
+      "size": [
+        150,
+        72
+      ]
+    },
+    {
+      "id": "bff",
+      "type": "backend",
+      "label": "Public BFF",
+      "sublabel": "read-only surface",
+      "pos": [
+        1020,
+        70
+      ],
+      "size": [
+        150,
+        72
+      ]
+    },
+    {
+      "id": "sensor",
+      "type": "external",
+      "label": "Freezer telemetry",
+      "sublabel": "synthetic estate",
+      "pos": [
+        60,
+        285
+      ],
+      "size": [
+        150,
+        72
+      ]
+    },
+    {
+      "id": "fleet",
+      "type": "backend",
+      "label": "Agent fleet",
+      "sublabel": "Gemini 3.5 \u00b7 ADK",
+      "brand": "google-gemini",
+      "pos": [
+        380,
+        285
+      ],
+      "size": [
+        150,
+        72
+      ]
+    },
+    {
+      "id": "broker",
+      "type": "security",
+      "label": "Tool broker",
+      "sublabel": "identity \u00b7 policy",
+      "pos": [
+        700,
+        285
+      ],
+      "size": [
+        150,
+        72
+      ]
+    },
+    {
+      "id": "services",
+      "type": "backend",
+      "label": "Six domain services",
+      "sublabel": "six Cloud Run identities",
+      "brand": "google-cloud",
+      "pos": [
+        1020,
+        285
+      ],
+      "size": [
+        150,
+        72
+      ]
+    },
+    {
+      "id": "kernel",
+      "type": "security",
+      "label": "Rescue Safety Kernel",
+      "sublabel": "N1\u2013N13 \u00b7 pure, no I/O",
+      "pos": [
+        1020,
+        500
+      ],
+      "size": [
+        150,
+        72
+      ]
+    },
+    {
+      "id": "firestore",
+      "type": "database",
+      "label": "Firestore",
+      "sublabel": "authoritative state",
+      "brand": "firebase",
+      "pos": [
+        700,
+        500
+      ],
+      "size": [
+        150,
+        72
+      ]
+    },
+    {
+      "id": "kms",
+      "type": "cloud",
+      "label": "Cloud KMS",
+      "sublabel": "signs the manifest",
+      "brand": "google-cloud",
+      "pos": [
+        380,
+        500
+      ],
+      "size": [
+        150,
+        72
+      ]
+    },
+    {
+      "id": "verifier",
+      "type": "external",
+      "label": "Offline verifier",
+      "sublabel": "no model \u00b7 no network",
+      "pos": [
+        60,
+        500
+      ],
+      "size": [
+        150,
+        72
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "drills-qualification",
+      "from": "drills",
+      "to": "qualification",
+      "label": "drill results"
+    },
+    {
+      "id": "qualification-fleet",
+      "from": "qualification",
+      "to": "fleet",
+      "label": "qualified only",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 24
+    },
+    {
+      "id": "sensor-fleet",
+      "from": "sensor",
+      "to": "fleet",
+      "label": "deduped incident"
+    },
+    {
+      "id": "fleet-broker",
+      "from": "fleet",
+      "to": "broker",
+      "label": "proposed action",
+      "variant": "emphasis"
+    },
+    {
+      "id": "broker-services",
+      "from": "broker",
+      "to": "services",
+      "label": "authorized call",
+      "variant": "emphasis"
+    },
+    {
+      "id": "services-kernel",
+      "from": "services",
+      "to": "kernel",
+      "label": "preconditions",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 24
+    },
+    {
+      "id": "kernel-firestore",
+      "from": "kernel",
+      "to": "firestore",
+      "label": "one transaction",
+      "variant": "emphasis"
+    },
+    {
+      "id": "firestore-kms",
+      "from": "firestore",
+      "to": "kms",
+      "label": "state snapshot"
+    },
+    {
+      "id": "kms-verifier",
+      "from": "kms",
+      "to": "verifier",
+      "label": "signed manifest",
+      "variant": "emphasis"
+    },
+    {
+      "id": "web-bff",
+      "from": "web",
+      "to": "bff",
+      "label": "HTTPS"
+    },
+    {
+      "id": "bff-services",
+      "from": "bff",
+      "to": "services",
+      "label": "read-only",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 24
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "The one rule",
+      "items": [
+        "Agents decide what to do; deterministic code decides what becomes true",
+        "No LLM ever writes to Firestore directly"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Refusal is a first-class outcome",
+      "items": [
+        "An unsafe action is refused with the invariant that blocked it",
+        "Closure is refused while any impacted container is unreconciled"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Authority, four layers deep",
+      "items": [
+        "Toolset construction, broker, service route guard, Cloud Run IAM",
+        "Exactly one agent holds each write domain"
+      ]
+    }
+  ]
+}
