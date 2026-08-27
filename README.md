@@ -52,6 +52,17 @@ already happened, whether a responder is authorised, or whether an incident may 
 Those belong to a pure Python safety kernel that the production services and an offline
 verifier both call — the same code, on the same inputs.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/diagrams/preview/architecture.dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="docs/diagrams/preview/architecture.light.png">
+  <img alt="Night Shift runtime map: telemetry enters an agent fleet, every proposed action passes a tool broker and the safety kernel before Firestore commits it, and the resulting state is signed by Cloud KMS and checked by an offline verifier." src="docs/diagrams/preview/architecture.light.png">
+</picture>
+
+The same map is also an interactive artifact with guided views that walk one path at a
+time: [`docs/diagrams/night-shift-architecture.html`](docs/diagrams/night-shift-architecture.html).
+It is a single self-contained file, so it opens straight from disk with no server and no
+network.
+
 ## What actually runs
 
 Six ADK specialists on Gemini 3.5 Flash, six Cloud Run domain services under six distinct
@@ -109,6 +120,18 @@ call replayed the first call's receipt.
 If you test resume safety by raising from a plugin, you will observe no re-invocation and
 conclude idempotency is optional. Then a pod eviction produces the third shape and you
 have booked the freezer twice. Details in [CONTRIBUTIONS.md](CONTRIBUTIONS.md).
+
+This is what the third shape looks like. The same semantic action arrives twice; the
+second pass finds the receipt at step 3 and never reaches the kernel or the write:
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/diagrams/preview/exactly-once.dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="docs/diagrams/preview/exactly-once.light.png">
+  <img alt="The commit sequence run twice. The first attempt finds no receipt, evaluates kernel preconditions, and commits the effect and its receipt together. After the worker restarts, the same action finds the existing committed receipt and returns it without consulting the kernel or writing anything." src="docs/diagrams/preview/exactly-once.light.png">
+</picture>
+
+Interactive version:
+[`night-shift-exactly-once.html`](docs/diagrams/night-shift-exactly-once.html).
 
 ## Try it without credentials
 

@@ -106,10 +106,46 @@ def main() -> int:
         reconciled=scripted.get("runs_fully_reconciled", 0),
         median=scripted.get("wall_clock_median_s", "—"),
         api_line=_deployment_block(web_url, api_url),
+        architecture_figure=_theme_aware_figure(
+            "architecture",
+            "Night Shift runtime map: telemetry enters an agent fleet, every proposed "
+            "action passes a tool broker and the safety kernel before Firestore commits "
+            "it, and the resulting state is signed by Cloud KMS and checked by an "
+            "offline verifier.",
+        ),
+        exactly_once_figure=_theme_aware_figure(
+            "exactly-once",
+            "The commit sequence run twice. The first attempt finds no receipt, "
+            "evaluates kernel preconditions, and commits the effect and its receipt "
+            "together. After the worker restarts, the same action finds the existing "
+            "committed receipt and returns it without consulting the kernel or writing "
+            "anything.",
+        ),
     )
     (ROOT / "README.md").write_text(readme, encoding="utf-8")
     print(f"Wrote README.md ({len(readme.splitlines())} lines)")
     return 0
+
+
+
+def _theme_aware_figure(stem: str, alt: str) -> str:
+    """A diagram that follows the reader's GitHub theme.
+
+    GitHub strips most HTML from Markdown but honours <picture> with a
+    prefers-color-scheme source, which is the only way to keep a light diagram off a dark
+    page. The <img> fallback matters: any renderer that ignores <picture> still shows the
+    light asset rather than nothing.
+    """
+    base = f"docs/diagrams/preview/{stem}"
+    return "\n".join(
+        [
+            "<picture>",
+            f'  <source media="(prefers-color-scheme: dark)" srcset="{base}.dark.png">',
+            f'  <source media="(prefers-color-scheme: light)" srcset="{base}.light.png">',
+            f'  <img alt="{alt}" src="{base}.light.png">',
+            "</picture>",
+        ]
+    )
 
 
 def _deployment_block(web_url: str, api_url: str) -> str:
@@ -176,6 +212,13 @@ already happened, whether a responder is authorised, or whether an incident may 
 Those belong to a pure Python safety kernel that the production services and an offline
 verifier both call — the same code, on the same inputs.
 
+{architecture_figure}
+
+The same map is also an interactive artifact with guided views that walk one path at a
+time: [`docs/diagrams/night-shift-architecture.html`](docs/diagrams/night-shift-architecture.html).
+It is a single self-contained file, so it opens straight from disk with no server and no
+network.
+
 ## What actually runs
 
 Six ADK specialists on Gemini 3.5 Flash, six Cloud Run domain services under six distinct
@@ -233,6 +276,14 @@ call replayed the first call's receipt.
 If you test resume safety by raising from a plugin, you will observe no re-invocation and
 conclude idempotency is optional. Then a pod eviction produces the third shape and you
 have booked the freezer twice. Details in [CONTRIBUTIONS.md](CONTRIBUTIONS.md).
+
+This is what the third shape looks like. The same semantic action arrives twice; the
+second pass finds the receipt at step 3 and never reaches the kernel or the write:
+
+{exactly_once_figure}
+
+Interactive version:
+[`night-shift-exactly-once.html`](docs/diagrams/night-shift-exactly-once.html).
 
 ## Try it without credentials
 

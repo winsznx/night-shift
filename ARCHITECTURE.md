@@ -44,7 +44,11 @@ network:
 | [`docs/diagrams/night-shift-architecture.html`](docs/diagrams/night-shift-architecture.html) | The runtime map: how a sensor reading becomes a signed manifest, and where authority changes hands |
 | [`docs/diagrams/night-shift-exactly-once.html`](docs/diagrams/night-shift-exactly-once.html) | The commit sequence, run twice — the same semantic action either side of a worker restart |
 
-![Night Shift runtime architecture](docs/diagrams/preview/architecture.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/diagrams/preview/architecture.dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="docs/diagrams/preview/architecture.light.png">
+  <img alt="Night Shift runtime map: telemetry enters an agent fleet, every proposed action passes a tool broker and the safety kernel before Firestore commits it, and the resulting state is signed by Cloud KMS and checked by an offline verifier." src="docs/diagrams/preview/architecture.light.png">
+</picture>
 
 The ASCII map below stays authoritative for anyone reading in a terminal or a plain diff.
 
