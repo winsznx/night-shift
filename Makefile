@@ -195,5 +195,9 @@ deploy-web: ## Build and deploy the web app to Cloud Run
 	./infra/deploy/deploy_web.sh $(PROJECT) $(REGION)
 
 .PHONY: qualify
+ablation: ## Run the corpus with the Safety Kernel removed, and compare
+	$(PY) python -m assurance.ablation --seeds 6
+
+.PHONY: qualify
 qualify: ## Run the qualification gate (refuses unqualified revisions)
 	$(PY) python scripts/check_qualification.py

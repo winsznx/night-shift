@@ -213,6 +213,14 @@ active when `NIGHTSHIFT_GEMMA_MODEL` is configured. With nothing configured, the
 heuristic runs alone, which is what keeps the drill corpus deterministic and
 credential-free.
 
+The zero in the false-positive column deserves the same scepticism as the catch rate, and
+gets less of it here than it should. Three benign messages is not a control set. They were
+written to read as ordinary lab traffic, not to be hard, so the zero says that no layer
+tripped on three easy negatives and almost nothing about how any of them behaves on benign
+text that happens to discuss exports, permissions, or urgency. A screening layer that
+refuses real vendor mail is a live incident of its own, and nothing here measures that
+risk. Read the column as "no obvious over-blocking", not as a false-positive rate.
+
 The finding that matters is the one underneath. The realistic attack got past the
 probabilistic layer, and nothing happened, because the Dispatch Agent holds no inventory
 authority and had nothing to reach. That is what defence in depth is supposed to look

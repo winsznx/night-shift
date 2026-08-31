@@ -1,0 +1,35 @@
+{
+  "seeds": [
+    20260826,
+    20260927,
+    20261028,
+    20261129,
+    20261230,
+    20261331
+  ],
+  "arms": {
+    "control": {
+      "total_runs": 126,
+      "passed": 126,
+      "failed": 0,
+      "failed_invariants": {},
+      "failing_drills": []
+    },
+    "kernel": {
+      "total_runs": 126,
+      "passed": 96,
+      "failed": 30,
+      "failed_invariants": {
+        "N10": 6,
+        "N4": 6
+      },
+      "failing_drills": [
+        "D14",
+        "D16",
+        "D5",
+        "D8",
+        "H3"
+      ]
+    }
+  }
+}

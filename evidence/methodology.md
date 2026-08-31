@@ -64,6 +64,41 @@ The neutral control is the seed list itself: `20260826, 20260927, 20261028, 2026
 the generated detail and event ordering and change nothing about what any drill asserts,
 so a result that holds on one seed and not another is variance rather than a property.
 
+### The ablated arm
+
+Those controls rule out an inert or an eager system. None of them answers the question a
+sceptic should ask next, which is whether the Safety Kernel is what produced the result or
+whether the rest of the architecture would have got there anyway.
+
+`assurance/ablation.py` runs the corpus twice over the same six seeds. The `kernel` arm
+rebinds `services.common.effects.evaluate_action` to a function that allows every action.
+`effects.py` imports that symbol at module scope, so the rebind removes exactly step 5 of
+the seven-step commit sequence and duplicates no logic: the transaction, the receipt
+lookup, the authorization check and the write all still run. What is measured is the
+kernel's contribution, not the contribution of everything at once.
+
+| Arm | Passed | Invariant violations |
+|---|---|---|
+| control | 126 / 126 | none |
+| kernel removed | 96 / 126 | N4 x6, N10 x6 across D5, D8, D14, D16, H3 |
+
+Raw output is `evidence/ablation/ablation.json`, reproduced with `make ablation`. The
+control arm reproduces the published campaign exactly, which is the check that the harness
+did not change underneath the comparison.
+
+Two honest readings. First, N1, N2 and N3 hold in **both** arms. Removing the preconditions
+does not produce overbooking or duplicate effects, because Firestore's transaction and the
+receipt short-circuit are separate mechanisms. That is a null result and it is what defence
+in depth is supposed to look like, so it is reported rather than buried. Second, the
+ablation runs on the deterministic tier only. Ablating the live-agent tier would cost model
+calls for a comparison the scripted tier already makes cleanly, so the kernel's contribution
+is measured, and measured on one tier.
+
+The guard in `assurance/ablation.py` refuses to run against anything but the in-memory
+store, and a unit test asserts `effects.evaluate_action` is still bound to the real kernel
+at import, so a leaked patch from an ablation arm fails the suite rather than silently
+disarming production.
+
 ## Scoring
 
 `assurance/qualify.py` computes PASS/FAIL by deterministic Python over stored artifacts:

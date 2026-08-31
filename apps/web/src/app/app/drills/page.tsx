@@ -6,6 +6,10 @@ import { getDrills } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
+/** Deterministic tier first, live-agent tier second, matching the cards above. */
+const TIER_ORDER = ["scripted", "agent"] as const;
+const TIER_LABEL: Record<string, string> = { scripted: "det", agent: "agent" };
+
 export default async function DrillsPage() {
   const drills = await getDrills();
 
@@ -89,9 +93,15 @@ export default async function DrillsPage() {
               minWidth={940}
             >
               {drills.drills.map((d) => {
-                const results = Object.values(d.results ?? {});
-                const runs = results.reduce((n, r) => n + r.runs, 0);
-                const passed = results.reduce((n, r) => n + r.passed, 0);
+                // Per driver, never summed. Adding the deterministic and live-agent tiers
+                // together is the one thing the methodology forbids: they run different
+                // seed counts against the same drill, so a pooled ratio invents a
+                // denominator that belongs to neither tier and reads as a failure the
+                // corpus never had.
+                const perDriver = TIER_ORDER.flatMap((driver) => {
+                  const r = d.results?.[driver];
+                  return r && r.runs > 0 ? [{ driver, runs: r.runs, passed: r.passed }] : [];
+                });
                 return (
                   <tr key={d.id} className="hover:bg-[#f5f5f5]">
                     <Td>
@@ -119,12 +129,20 @@ export default async function DrillsPage() {
                       <Mono>{d.expectations.length}</Mono>
                     </Td>
                     <Td>
-                      {runs === 0 ? (
+                      {perDriver.length === 0 ? (
                         <span className="text-[13px] text-[#a3a3a3]">not run</span>
                       ) : (
-                        <Badge tone={passed === runs ? "green" : "red"} dot>
-                          {passed}/{runs}
-                        </Badge>
+                        <span className="flex flex-wrap items-center gap-1.5">
+                          {perDriver.map((t) => (
+                            <Badge
+                              key={t.driver}
+                              tone={t.passed === t.runs ? "green" : "red"}
+                              dot
+                            >
+                              {TIER_LABEL[t.driver] ?? t.driver} {t.passed}/{t.runs}
+                            </Badge>
+                          ))}
+                        </span>
                       )}
                     </Td>
                   </tr>

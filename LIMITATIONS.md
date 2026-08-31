@@ -134,21 +134,25 @@ demonstrated separately and is not pooled into the corpus counts.
 
 ## What was not measured
 
-- **No control arm without the Safety Kernel.** Every one of the 144 published runs across
-  both tiers ran the full kernel. Nothing here compares Night Shift against a system that
-  lacks it, so the counts show that violations did not occur, not that the kernel is what
-  prevented them. The nearest thing to a counterfactual in the repo is drill D12, where
-  disabling the committed-receipt short-circuit turns a passing run into a failing one,
-  and that arm was not run as part of the published campaign.
+- **The kernel was ablated on the deterministic tier only.** The control arm now exists
+  and is published in `evidence/ablation/ablation.json`: the same 21-drill corpus at the
+  same six seeds runs 126 of 126 with the kernel and 96 of 126 without it, unmasking six
+  N4 and six N10 violations across D5, D8, D14, D16 and H3. The live-agent tier was not
+  ablated, because that arm costs model calls and the deterministic tier is where the
+  comparison is clean. So the kernel's contribution is measured, and measured on one tier.
+  Read the honest null too: N1, N2 and N3 hold in both arms, because authorization and the
+  transactional commit are separate mechanisms from the preconditions. That is what
+  defence in depth means, and it is reported rather than dressed up.
 - **One estate, one failing unit.** All runs use a single synthetic estate topology with
   F-17 fixed as the freezer that fails. That licenses claims about this system's behaviour
   under the disclosed fault set. It licenses nothing about a different estate shape, a
   different failure mode, or a larger site.
-- **Layer 3 runs on the committed default HMAC secret in the deployed environment.**
-  Nothing in the repo or the deploy script sets `NIGHTSHIFT_AGENT_SECRET`, so the shipped
-  deployment authenticates Night Shift principal tokens against the literal
-  `nightshift-local-dev-secret`. Layer 4, Cloud Run IAM, is unaffected and still refuses a
-  forbidden call at the edge. `SECURITY.md` states what this costs and the one-line fix.
+- **Two responder task tokens were published before the manifest writer redacted them.**
+  They were committed inside signed manifests, so git history carries them and cannot be
+  rewritten without invalidating those signatures. Both have been rotated and now match
+  nothing: the published values return 404 against every responder route. Manifests store
+  a SHA-256 prefix from here on. The tokens stay in history and are dead, which is the
+  honest end state, because a pushed secret can never be recalled from forks and clones.
 - **Responder capture evidence is measured on its logic, not on model accuracy.** The
   deterministic adjudication is covered by tests. What is not measured is how often Gemini
   misreads a real label or a real freezer display under real lighting, because no such

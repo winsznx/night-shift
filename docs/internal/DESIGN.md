@@ -1,4 +1,9 @@
-# Dub — Style Reference
+# Visual style reference
+
+> Working notes. A public SaaS product's visual system, recorded during design as a
+> reference for tone, density and restraint. No third-party code, assets or trademarks
+> are used in Night Shift; the tokens the product actually ships are in
+> `apps/web/src/app/globals.css`.
 > frosted link dashboard on rice paper
 
 **Theme:** light

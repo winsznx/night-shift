@@ -1,5 +1,5 @@
 /**
- * The component vocabulary, straight from DESIGN.md.
+ * The component vocabulary, straight from docs/internal/DESIGN.md.
  *
  * Borders define containers, not shadows. Three radii: 9999px for pills, 8px for
  * buttons, 12px for cards, 16px for large feature surfaces. One chromatic accent per
