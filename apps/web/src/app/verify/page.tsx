@@ -66,7 +66,7 @@ python -m nightshift.verify --manifest evidence/incidents/INC-0E7C54F8B5.manifes
               </tr>
               <tr>
                 <Td><Badge tone="orange">PARTIAL</Badge></Td>
-                <Td className="text-[13px]">Everything checkable checked out, but something could not be checked — most often an unsigned manifest. Never reported as PASS.</Td>
+                <Td className="text-[13px]">Everything checkable checked out, but something could not be checked, most often an unsigned manifest. Never reported as PASS.</Td>
                 <Td><Mono>2</Mono></Td>
               </tr>
             </Table>
@@ -111,7 +111,7 @@ python -m nightshift.verify --manifest evidence/incidents/INC-0E7C54F8B5.manifes
             <p className="mt-1.5 max-w-[78ch] text-[13px] leading-relaxed text-[#525252]">
               It proves the stored verdict follows from the stored state, and that the state
               was signed by the holder of the published key. It does not prove the state
-              describes the physical world — this is a synthetic estate and the responder
+              describes the physical world. This is a synthetic estate and the responder
               movements are simulated. It also says nothing about the quality of the agents&apos;
               judgement, only that the deterministic rules held whatever they decided.
             </p>

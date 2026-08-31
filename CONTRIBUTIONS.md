@@ -2,8 +2,8 @@
 
 ## What this build found in Google ADK
 
-Night Shift's dominant mechanism — idempotent effects behind semantic action IDs —
-depends entirely on knowing what ADK does to a tool that has already committed when a run
+Night Shift's dominant mechanism, idempotent effects behind semantic action IDs, depends
+entirely on knowing what ADK does to a tool that has already committed when a run
 resumes. PRD §22 required proving that rather than assuming it, and the proof turned up
 something worth writing down.
 
@@ -25,9 +25,9 @@ different ways, then resumes the same `invocation_id`:
 | B | the tool function itself raises after committing | no |
 | C | the invocation is cancelled mid-flight (`task.cancel()`) | **yes** |
 
-Only variant C — a worker actually dying, which is the realistic case — re-invokes the
-committed tool. Variants A and B terminate the invocation in a way that resume treats as
-complete.
+Only variant C re-invokes the committed tool. That is a worker actually dying, which is
+the realistic case. Variants A and B terminate the invocation in a way that resume treats
+as complete.
 
 **Why this matters to anyone building effectful ADK agents.** If you test resume safety
 by raising from a plugin or from your tool, you will observe no re-invocation and may
@@ -53,7 +53,7 @@ was identical and the second call replayed the first call's receipt. Without tha
 would have been two reservations.
 
 **What we would suggest upstream.** This is a documentation and test-coverage gap rather
-than a bug — the behaviour is defensible, and arguably correct for each shape in
+than a bug. The behaviour is defensible, and arguably correct for each shape in
 isolation. What is missing is a statement in the resumability documentation that tool
 re-invocation on resume depends on *how* the invocation ended, together with the guidance
 that follows from it: any tool with a side effect must be idempotent on a key the caller
@@ -75,7 +75,7 @@ to claim one would be worse than saying plainly that it is ready to file and has
   but it means a tool-using agent's structured output has to be validated by the caller.
   Night Shift embeds the JSON Schema in the instruction and validates the final message
   with Pydantic. An earlier attempt used a compact field listing instead, and the model
-  invented plausible-but-wrong names for nested objects — `{"specialist":
+  invented plausible-but-wrong names for nested objects: `{"specialist":
   "impact-assessment", "reason": …}` instead of `{"specialist": "impact-analyst",
   "objective": …}`. Full JSON Schema plus one worked example fixed it.
 - `ResumabilityConfig` emits an `[EXPERIMENTAL]` warning on every `App` construction, which
@@ -93,7 +93,7 @@ Two rules matter more than style:
 1. **Never weaken a drill to make it pass.** If a drill fails, either the system is wrong
    or the expectation encoded an assumption that was never true. Both are fine outcomes;
    deleting the assertion is not. Where an expectation was genuinely wrong, correct it and
-   record the reasoning in the drill's own description — see H2 in
+   record the reasoning in the drill's own description. See H2 in
    [`assurance/corpus.py`](assurance/corpus.py) for the pattern.
 2. **Tests assert against the kernel, not against a second implementation.** If a test
    needs to know what should happen, it calls the same invariant function production

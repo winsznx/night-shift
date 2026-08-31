@@ -100,8 +100,8 @@ export default async function Landing() {
 
             <p className="mx-auto mt-6 max-w-[70ch] text-[12px] text-[#737373]">
               A worker restart replayed one receipt, not one rescue. An unsafe custody move was
-              refused. The research estate is synthetic and responder movements are simulated —
-              no real biobank samples were moved.
+              refused. The research estate is synthetic and responder movements are simulated.
+              No real biobank samples were moved.
             </p>
           </div>
         </div>
@@ -243,7 +243,7 @@ export default async function Landing() {
                 Each agent runs under its own identity with its own tool set. The Dispatch
                 Agent holds no inventory authority at all, so a poisoned vendor reply asking
                 it to export the specimen list has nothing to reach. The Commander cannot
-                reserve capacity, open work orders, or move material — a compromised
+                reserve capacity, open work orders, or move material. A compromised
                 Commander can request a plan change and nothing else.
               </p>
               <Link
@@ -261,7 +261,7 @@ export default async function Landing() {
                 Capacity conservation, exactly-once effects, custody prerequisites,
                 destination freshness, complete reconciliation, no premature close. The
                 production services check them before committing, and the offline verifier
-                recomputes them from the stored snapshot afterwards — with no model
+                recomputes them from the stored snapshot afterwards, with no model
                 involved.
               </p>
               <Link
@@ -279,7 +279,7 @@ export default async function Landing() {
       <Section
         eyebrow="Qualification"
         title="No revision gets authority because it built"
-        body="Every candidate revision runs a disaster drill corpus with faults injected at tool boundaries. The verdict is computed by deterministic Python over stored artifacts — an LLM may explain a failure, never change it."
+        body="Every candidate revision runs a disaster drill corpus with faults injected at tool boundaries. The verdict is computed by deterministic Python over stored artifacts. An LLM may explain a failure, never change it."
       >
         {scripted ? (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -350,7 +350,7 @@ export default async function Landing() {
             className="h-auto w-full"
           />
           <figcaption className="px-2 pt-2 text-[12px] text-[#525252]">
-            Every path ends in a checked, signed state—not an assertion in a dashboard.
+            Every path ends in a checked, signed state, not an assertion in a dashboard.
           </figcaption>
         </figure>
         <Card padded={false}>
@@ -454,7 +454,7 @@ export default async function Landing() {
           <div>
             <Logo size={14} />
             <p className="mt-3 max-w-[34ch] text-[13px] leading-relaxed text-[#525252]">
-              A controlled response layer for research-freezer incidents—from first alarm to reconciled custody.
+              A controlled response layer for research-freezer incidents, from first alarm to reconciled custody.
             </p>
           </div>
           <div>
@@ -798,7 +798,7 @@ function TempTrace({ freezer }: { freezer: { current_temp_c: number; setpoint_c:
       </div>
       <p className="mt-2 text-[12px] text-[#525252]">
         {over
-          ? "Above alarm threshold — sustained warming confirmed."
+          ? "Above alarm threshold. Sustained warming confirmed."
           : "Holding within alarm threshold."}
       </p>
     </div>
@@ -957,7 +957,7 @@ function PanelFleet({ fleet }: { fleet: NonNullable<Awaited<ReturnType<typeof ge
       </ul>
       <p className="mt-3 text-[12px] leading-relaxed text-[#525252]">
         The Dispatch Agent can read vendor repair notes and holds no inventory authority at
-        all — even if a vendor note asks it to export the specimen manifest.
+        all, even if a vendor note asks it to export the specimen manifest.
       </p>
     </PanelShell>
   );

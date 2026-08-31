@@ -210,8 +210,8 @@ count against a guard whose purpose is detecting an agent looping.
 container would need 42 model turns.
 
 **Decision.** `commit_ready_transfers` commits every container whose evidence is complete,
-running each through the full single-commit path — same action ID, same N3/N4 evaluation,
-same receipt.
+running each through the full single-commit path, with the same action ID, the same
+N3/N4 evaluation, and the same receipt.
 
 **Why it is not a bulk override.** A batch of forty with one warmed destination commits
 thirty-nine and refuses one, with the reason attached to that container specifically.
@@ -224,8 +224,8 @@ thirty-nine and refuses one, with the reason attached to that container specific
 incident must not close, and failed a run that had released the bad reservation,
 re-planned to a cold destination, and reconciled everything.
 
-**Decision.** The expectation was replaced with the properties that actually matter —
-capacity conserved under contention, no commit on out-of-bounds evidence — and the
+**Decision.** The expectation was replaced with the properties that actually matter:
+capacity conserved under contention, and no commit on out-of-bounds evidence. The
 reasoning is recorded in the drill's own description.
 
 **Why this is worth recording.** Weakening a drill to make it pass is exactly the failure
@@ -239,10 +239,10 @@ the assertion encoded an assumption about recovery that was never true.
 **Found by.** External review of the identity work, before deployment.
 
 **What was wrong.** The provisioning script granted every domain service account
-`serviceAccountTokenCreator` on every agent account — 49 bindings. The intent was to make
-per-agent identity work regardless of which process made the call. The effect was that a
-compromised Custody service could mint a token as the Dispatch Agent and call its peers
-holding that agent's authority.
+`serviceAccountTokenCreator` on every agent account. That was 49 bindings. The intent
+was to make per-agent identity work regardless of which process made the call. The
+effect was that a compromised Custody service could mint a token as the Dispatch Agent
+and call its peers holding that agent's authority.
 
 **Decision.** Only `ns-svc-bff`, the account the agent loop actually runs as, may
 impersonate agents. The script now also revokes the wider grant, so re-running it on an
@@ -251,7 +251,7 @@ were revoked from the live project.
 
 **Why this is worth recording.** The whole least-privilege claim is that an agent cannot
 reach what it has no business reaching. A grant that lets any service borrow any agent's
-identity does not weaken that claim slightly — it supplies exactly the lateral path the
+identity does not weaken that claim slightly. It supplies exactly the lateral path the
 model is supposed to deny, while every layer above it keeps reporting success.
 
 ---
@@ -263,7 +263,7 @@ returns.
 
 **What was wrong.** The transport parsed the response body before looking at the status.
 Cloud Run's edge refuses an unauthorized caller with an HTML error page, so the JSON
-decoder raised first and the denial surfaced as `TransportError` — classified N12
+decoder raised first and the denial surfaced as `TransportError`, classified N12
 INFRASTRUCTURE, which the qualification engine is designed to *excuse* rather than score.
 
 **Decision.** Authorization statuses are settled before the body is parsed, and 401/403

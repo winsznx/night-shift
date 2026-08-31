@@ -39,7 +39,7 @@ export default async function FreezersPage() {
     <AppShell active="/app/freezers">
       <PageHeader
         title="Freezer estate"
-        subtitle="Authoritative telemetry. Reading age matters as much as temperature — a destination commit is refused on a stale reading even if the number looks fine."
+        subtitle="Authoritative telemetry. Reading age matters as much as temperature. A destination commit is refused on a stale reading even if the number looks fine."
       />
       {!overview ? (
         <ApiDown what="The freezer estate" />

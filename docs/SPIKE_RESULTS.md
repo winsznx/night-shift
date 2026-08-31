@@ -1,4 +1,4 @@
-# Phase 0 — Sponsor seam spike results
+# Phase 0 sponsor seam spike results
 
 Recorded 26 Aug 2026 against project `project-2ac1d1fb-7da1-46b4-90e`, region
 `us-central1`. Every row below was produced by running the command shown, not inferred
@@ -45,12 +45,12 @@ different interruption shapes were provoked against a real Gemini-backed run
 
 | Variant | Tool re-invoked on resume? | Duplicate effect? |
 |---|---|---|
-| A — `after_tool_callback` raises after the effect commits | no | no |
-| B — the tool itself raises after committing | no | no |
-| C — the invocation is cancelled mid-flight (a worker actually dying) | **yes** | no |
+| A: `after_tool_callback` raises after the effect commits | no | no |
+| B: the tool itself raises after committing | no | no |
+| C: the invocation is cancelled mid-flight (a worker actually dying) | **yes** | no |
 
 Variant C is the one that matters. The resumed run called `reserve_capacity` a second
-time — 2 tool calls, 1 committed effect — and the second call returned the first call's
+time (2 tool calls, 1 committed effect), and the second call returned the first call's
 receipt because the semantic action ID was identical.
 
 That is the empirical basis for the whole idempotency design. Semantic action IDs and
@@ -103,5 +103,5 @@ Two, both silent until runtime:
 2. `.gcloudignore` contained an unanchored `evidence/` pattern, which also matched
    `nightshift/evidence/` and stripped a Python package out of the build context. The
    container failed to start with `ModuleNotFoundError: No module named
-   'nightshift.evidence'` — an error that says nothing about ignore rules. Every pattern
+   'nightshift.evidence'`, an error that says nothing about ignore rules. Every pattern
    is now anchored with a leading `/`.

@@ -82,7 +82,7 @@ export default async function DrillsPage() {
           <Card padded={false}>
             <CardHeader
               title="Corpus"
-              subtitle="Expectations are written as invariants and observable state, never as scenario IDs — an agent cannot be tuned to pass a specific drill"
+              subtitle="Expectations are written as invariants and observable state, never as scenario IDs, so an agent cannot be tuned to pass a specific drill"
             />
             <Table
               headers={["Drill", "Family", "Scenario", "Faults", "Expectations", "Result"]}

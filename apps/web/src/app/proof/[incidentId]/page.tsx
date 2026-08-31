@@ -51,7 +51,7 @@ export default async function ProofPage({
           <p className="mt-2 max-w-[70ch] text-[15px] leading-relaxed text-[#525252]">
             This manifest carries the full authoritative state snapshot. The verification
             below was recomputed from that snapshot just now, using the same Safety Kernel
-            the production services used — no model, no network.
+            the production services used. No model, no network.
           </p>
         </div>
 
@@ -206,7 +206,7 @@ export default async function ProofPage({
               Exit code 0 for PASS, 1 for MISMATCH, 2 for PARTIAL. The verifier rebuilds the
               world from the snapshot and re-runs the same invariant functions the services
               ran. If someone edits the snapshot to make a partial rescue look complete, the
-              artifact hash fails and the recomputed verdict diverges — both are reported
+              artifact hash fails and the recomputed verdict diverges. Both are reported
               separately so you can see which happened.
             </p>
           </Card>
