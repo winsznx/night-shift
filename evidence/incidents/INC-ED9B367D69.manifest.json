@@ -4,13 +4,13 @@
   "synthetic": true,
   "simulated_field_events": true,
   "namespace": "demo",
-  "evaluated_at": "2026-08-26T05:35:36.238Z",
+  "evaluated_at": "2026-08-31T07:38:17.642Z",
   "incident_state": "RECONCILING",
   "severity": "SEV1",
   "opened_at": "2026-08-26T05:14:11.776Z",
   "closed_at": null,
   "failed_freezer_id": "F-17",
-  "estate_fixture_hash": "382fd8e6f9ad412de71e12a5fb57eb57fcff693dbaddc37434f66d73288b8f9e",
+  "estate_fixture_hash": "3948201f4642813edc42075333ab73300531699a9812969934e1199776b5b68d",
   "opening_evidence": [
     {
       "event_id": "evt-sensor-primary",
@@ -249,9 +249,264 @@
     {
       "invariant": "N4",
       "title": "Fresh destination evidence",
-      "holds": true,
-      "detail": "every commit used fresh, in-bounds destination evidence",
-      "evidence": {}
+      "holds": false,
+      "detail": "42 commit(s) relied on unusable destination evidence",
+      "evidence": {
+        "violations": [
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0001",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0002",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0003",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0004",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0005",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0006",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0007",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0008",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0009",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0010",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0011",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0012",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0013",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0014",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0015",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0016",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0017",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0018",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0019",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0020",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0021",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0022",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0023",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0024",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0025",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0026",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0027",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0028",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0029",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0030",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0031",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0032",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0033",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0034",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0035",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0036",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0037",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0038",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0039",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0040",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0041",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          },
+          {
+            "transfer_id": "TR-INC-ED9B367D69-C-0042",
+            "reason": "destination reading is 439746s old, limit 900s",
+            "age_s": 439746.4,
+            "temp_c": -80.94
+          }
+        ]
+      }
     },
     {
       "invariant": "N5",
@@ -370,14 +625,16 @@
       "evidence": {}
     }
   ],
-  "invariants_all_hold": true,
-  "failed_invariants": [],
+  "invariants_all_hold": false,
+  "failed_invariants": [
+    "N4"
+  ],
   "delivered_event_ids": [
     "evt-sensor-primary"
   ],
   "trace_ids": [],
-  "source_commit": "5395abd",
-  "deployment_env": "local",
+  "source_commit": "6b52e0e",
+  "deployment_env": "cloud-run",
   "model_id": "gemini-3.5-flash",
   "adk_version": "2.7.1",
   "corpus_version": "1.0.0",
@@ -385,7 +642,7 @@
   "limitations": [
     "The research estate, specimen records, and responder roster are synthetic.",
     "Responder scans in this run were produced by the bounded field simulator; no physical movement occurred.",
-    "Content screening used the model-armor backend."
+    "Content screening used the heuristic-offline backend."
   ],
   "state_snapshot": {
     "incident": {
@@ -535,9 +792,9 @@
         "STUDY-EMBER"
       ],
       "priority_breakdown": {
-        "2": 13,
+        "3": 11,
         "1": 18,
-        "3": 11
+        "2": 13
       },
       "placement_groups": [
         {
@@ -635,23 +892,23 @@
         "setpoint_c": -80.0,
         "alarm_high_c": -65.0,
         "total_slots": 144,
-        "occupied_slots": 104,
+        "occupied_slots": 122,
         "state": "HEALTHY",
-        "current_temp_c": -80.2,
-        "last_reading_at": "2026-08-26T05:35:10.635Z",
+        "current_temp_c": -79.92,
+        "last_reading_at": "2026-08-31T06:58:09.463Z",
         "is_backup_qualified": true,
         "maintenance": [
           {
             "id": "MNT-F-03-1",
             "freezer_id": "F-03",
-            "occurred_at": "2026-03-14T05:14:07.184Z",
+            "occurred_at": "2026-03-14T11:59:09.036Z",
             "summary": "Stage-2 compressor serviced, refrigerant topped",
             "fault_class": "COMPRESSOR_FAILURE"
           },
           {
             "id": "MNT-F-03-2",
             "freezer_id": "F-03",
-            "occurred_at": "2026-05-28T05:14:07.184Z",
+            "occurred_at": "2026-05-28T11:59:09.036Z",
             "summary": "Controller firmware updated after alarm latch",
             "fault_class": "CONTROLLER_FAULT"
           }
@@ -669,21 +926,21 @@
         "total_slots": 120,
         "occupied_slots": 109,
         "state": "HEALTHY",
-        "current_temp_c": -79.46,
-        "last_reading_at": "2026-08-26T05:35:10.635Z",
+        "current_temp_c": -80.62,
+        "last_reading_at": "2026-08-31T06:58:09.463Z",
         "is_backup_qualified": true,
         "maintenance": [
           {
             "id": "MNT-F-08-1",
             "freezer_id": "F-08",
-            "occurred_at": "2026-06-04T05:14:07.184Z",
+            "occurred_at": "2026-06-04T11:59:09.036Z",
             "summary": "Door gasket replaced during preventive service",
             "fault_class": "DOOR_SEAL"
           },
           {
             "id": "MNT-F-08-2",
             "freezer_id": "F-08",
-            "occurred_at": "2026-07-11T05:14:07.184Z",
+            "occurred_at": "2026-07-11T11:59:09.036Z",
             "summary": "Stage-2 compressor serviced, refrigerant topped",
             "fault_class": "COMPRESSOR_FAILURE"
           }
@@ -701,21 +958,21 @@
         "total_slots": 96,
         "occupied_slots": 53,
         "state": "HEALTHY",
-        "current_temp_c": -79.48,
-        "last_reading_at": "2026-08-26T05:35:10.635Z",
+        "current_temp_c": -78.98,
+        "last_reading_at": "2026-08-31T06:58:09.463Z",
         "is_backup_qualified": true,
         "maintenance": [
           {
             "id": "MNT-F-11-1",
             "freezer_id": "F-11",
-            "occurred_at": "2026-01-16T05:14:07.184Z",
+            "occurred_at": "2026-01-16T11:59:09.036Z",
             "summary": "Stage-2 compressor serviced, refrigerant topped",
             "fault_class": "COMPRESSOR_FAILURE"
           },
           {
             "id": "MNT-F-11-2",
             "freezer_id": "F-11",
-            "occurred_at": "2026-04-18T05:14:07.184Z",
+            "occurred_at": "2026-04-18T11:59:09.036Z",
             "summary": "Door gasket replaced during preventive service",
             "fault_class": "DOOR_SEAL"
           }
@@ -733,21 +990,21 @@
         "total_slots": 144,
         "occupied_slots": 78,
         "state": "VALIDATED",
-        "current_temp_c": -79.9,
-        "last_reading_at": "2026-08-26T05:35:18.122Z",
+        "current_temp_c": -79.78,
+        "last_reading_at": "2026-08-31T06:58:09.463Z",
         "is_backup_qualified": false,
         "maintenance": [
           {
             "id": "MNT-F-17-1",
             "freezer_id": "F-17",
-            "occurred_at": "2025-11-07T05:14:07.184Z",
+            "occurred_at": "2025-11-07T11:59:09.036Z",
             "summary": "Door gasket replaced during preventive service",
             "fault_class": "DOOR_SEAL"
           },
           {
             "id": "MNT-F-17-2",
             "freezer_id": "F-17",
-            "occurred_at": "2026-06-30T05:14:07.184Z",
+            "occurred_at": "2026-06-30T11:59:09.036Z",
             "summary": "Stage-2 compressor serviced, refrigerant topped",
             "fault_class": "COMPRESSOR_FAILURE"
           }
@@ -765,14 +1022,14 @@
         "total_slots": 144,
         "occupied_slots": 138,
         "state": "HEALTHY",
-        "current_temp_c": -78.72,
-        "last_reading_at": "2026-08-26T05:35:10.635Z",
+        "current_temp_c": -78.96,
+        "last_reading_at": "2026-08-31T06:58:09.463Z",
         "is_backup_qualified": true,
         "maintenance": [
           {
             "id": "MNT-F-22-1",
             "freezer_id": "F-22",
-            "occurred_at": "2026-05-11T05:14:07.184Z",
+            "occurred_at": "2026-05-11T11:59:09.036Z",
             "summary": "Door gasket replaced during preventive service",
             "fault_class": "DOOR_SEAL"
           }
@@ -790,21 +1047,21 @@
         "total_slots": 96,
         "occupied_slots": 33,
         "state": "HEALTHY",
-        "current_temp_c": -68.74,
-        "last_reading_at": "2026-08-26T05:35:10.635Z",
+        "current_temp_c": -68.22,
+        "last_reading_at": "2026-08-31T06:58:09.463Z",
         "is_backup_qualified": false,
         "maintenance": [
           {
             "id": "MNT-F-24-1",
             "freezer_id": "F-24",
-            "occurred_at": "2025-08-30T05:14:07.184Z",
+            "occurred_at": "2025-08-30T11:59:09.036Z",
             "summary": "Stage-2 compressor serviced, refrigerant topped",
             "fault_class": "COMPRESSOR_FAILURE"
           },
           {
             "id": "MNT-F-24-2",
             "freezer_id": "F-24",
-            "occurred_at": "2026-07-31T05:14:07.184Z",
+            "occurred_at": "2026-07-31T11:59:09.036Z",
             "summary": "Door gasket replaced during preventive service",
             "fault_class": "DOOR_SEAL"
           }
@@ -820,30 +1077,30 @@
         "setpoint_c": -80.0,
         "alarm_high_c": -65.0,
         "total_slots": 120,
-        "occupied_slots": 115,
+        "occupied_slots": 97,
         "state": "HEALTHY",
-        "current_temp_c": -81.04,
-        "last_reading_at": "2026-08-26T05:35:10.635Z",
+        "current_temp_c": -80.78,
+        "last_reading_at": "2026-08-31T06:58:09.463Z",
         "is_backup_qualified": true,
         "maintenance": [
           {
             "id": "MNT-F-31-1",
             "freezer_id": "F-31",
-            "occurred_at": "2025-08-24T05:14:07.184Z",
+            "occurred_at": "2025-08-24T11:59:09.036Z",
             "summary": "Controller firmware updated after alarm latch",
             "fault_class": "CONTROLLER_FAULT"
           },
           {
             "id": "MNT-F-31-2",
             "freezer_id": "F-31",
-            "occurred_at": "2026-02-12T05:14:07.184Z",
+            "occurred_at": "2026-02-12T11:59:09.036Z",
             "summary": "Stage-2 compressor serviced, refrigerant topped",
             "fault_class": "COMPRESSOR_FAILURE"
           },
           {
             "id": "MNT-F-31-3",
             "freezer_id": "F-31",
-            "occurred_at": "2026-03-21T05:14:07.184Z",
+            "occurred_at": "2026-03-21T11:59:09.036Z",
             "summary": "Door gasket replaced during preventive service",
             "fault_class": "DOOR_SEAL"
           }
@@ -861,28 +1118,28 @@
         "total_slots": 72,
         "occupied_slots": 63,
         "state": "HEALTHY",
-        "current_temp_c": -80.48,
-        "last_reading_at": "2026-08-26T05:35:10.635Z",
+        "current_temp_c": -80.06,
+        "last_reading_at": "2026-08-31T06:58:09.463Z",
         "is_backup_qualified": true,
         "maintenance": [
           {
             "id": "MNT-F-35-1",
             "freezer_id": "F-35",
-            "occurred_at": "2025-09-27T05:14:07.184Z",
+            "occurred_at": "2025-09-27T11:59:09.036Z",
             "summary": "Controller firmware updated after alarm latch",
             "fault_class": "CONTROLLER_FAULT"
           },
           {
             "id": "MNT-F-35-3",
             "freezer_id": "F-35",
-            "occurred_at": "2026-01-07T05:14:07.184Z",
+            "occurred_at": "2026-01-07T11:59:09.036Z",
             "summary": "Routine preventive maintenance completed",
             "fault_class": "UNKNOWN"
           },
           {
             "id": "MNT-F-35-2",
             "freezer_id": "F-35",
-            "occurred_at": "2026-01-26T05:14:07.184Z",
+            "occurred_at": "2026-01-26T11:59:09.036Z",
             "summary": "Routine preventive maintenance completed",
             "fault_class": "UNKNOWN"
           }
@@ -902,7 +1159,7 @@
         "specimen_count": 81,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0002": {
@@ -916,13 +1173,13 @@
         "specimen_count": 81,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0003": {
         "id": "C-0003",
-        "freezer_id": "F-31",
-        "slot_id": "F-31-SLOT-0003",
+        "freezer_id": "F-03",
+        "slot_id": "F-03-SLOT-0003",
         "kind": "box",
         "study_id": "STUDY-EMBER",
         "owner_ref": "owner-study-ember",
@@ -930,13 +1187,13 @@
         "specimen_count": 81,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0004": {
         "id": "C-0004",
-        "freezer_id": "F-31",
-        "slot_id": "F-31-SLOT-0004",
+        "freezer_id": "F-03",
+        "slot_id": "F-03-SLOT-0004",
         "kind": "rack",
         "study_id": "STUDY-ATLAS",
         "owner_ref": "owner-study-atlas",
@@ -944,7 +1201,7 @@
         "specimen_count": 49,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0005": {
@@ -958,7 +1215,7 @@
         "specimen_count": 49,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0006": {
@@ -972,13 +1229,13 @@
         "specimen_count": 100,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0007": {
         "id": "C-0007",
-        "freezer_id": "F-31",
-        "slot_id": "F-31-SLOT-0007",
+        "freezer_id": "F-03",
+        "slot_id": "F-03-SLOT-0007",
         "kind": "box",
         "study_id": "STUDY-EMBER",
         "owner_ref": "owner-study-ember",
@@ -986,7 +1243,7 @@
         "specimen_count": 121,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0008": {
@@ -1000,7 +1257,7 @@
         "specimen_count": 81,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0009": {
@@ -1014,7 +1271,7 @@
         "specimen_count": 49,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0010": {
@@ -1028,7 +1285,7 @@
         "specimen_count": 100,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0011": {
@@ -1042,13 +1299,13 @@
         "specimen_count": 81,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0012": {
         "id": "C-0012",
-        "freezer_id": "F-31",
-        "slot_id": "F-31-SLOT-0012",
+        "freezer_id": "F-03",
+        "slot_id": "F-03-SLOT-0012",
         "kind": "box",
         "study_id": "STUDY-BOREAL",
         "owner_ref": "owner-study-boreal",
@@ -1056,7 +1313,7 @@
         "specimen_count": 81,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0013": {
@@ -1070,7 +1327,7 @@
         "specimen_count": 81,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0014": {
@@ -1084,13 +1341,13 @@
         "specimen_count": 121,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0015": {
         "id": "C-0015",
-        "freezer_id": "F-31",
-        "slot_id": "F-31-SLOT-0015",
+        "freezer_id": "F-03",
+        "slot_id": "F-03-SLOT-0015",
         "kind": "box",
         "study_id": "STUDY-EMBER",
         "owner_ref": "owner-study-ember",
@@ -1098,7 +1355,7 @@
         "specimen_count": 121,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0016": {
@@ -1112,13 +1369,13 @@
         "specimen_count": 81,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0017": {
         "id": "C-0017",
-        "freezer_id": "F-31",
-        "slot_id": "F-31-SLOT-0017",
+        "freezer_id": "F-03",
+        "slot_id": "F-03-SLOT-0017",
         "kind": "rack",
         "study_id": "STUDY-EMBER",
         "owner_ref": "owner-study-ember",
@@ -1126,7 +1383,7 @@
         "specimen_count": 100,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0018": {
@@ -1140,7 +1397,7 @@
         "specimen_count": 49,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0019": {
@@ -1154,7 +1411,7 @@
         "specimen_count": 81,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0020": {
@@ -1168,13 +1425,13 @@
         "specimen_count": 121,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0021": {
         "id": "C-0021",
-        "freezer_id": "F-31",
-        "slot_id": "F-31-SLOT-0021",
+        "freezer_id": "F-03",
+        "slot_id": "F-03-SLOT-0021",
         "kind": "cryobox",
         "study_id": "STUDY-ATLAS",
         "owner_ref": "owner-study-atlas",
@@ -1182,13 +1439,13 @@
         "specimen_count": 121,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0022": {
         "id": "C-0022",
-        "freezer_id": "F-31",
-        "slot_id": "F-31-SLOT-0022",
+        "freezer_id": "F-03",
+        "slot_id": "F-03-SLOT-0022",
         "kind": "box",
         "study_id": "STUDY-EMBER",
         "owner_ref": "owner-study-ember",
@@ -1196,7 +1453,7 @@
         "specimen_count": 81,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0023": {
@@ -1210,13 +1467,13 @@
         "specimen_count": 49,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0024": {
         "id": "C-0024",
-        "freezer_id": "F-31",
-        "slot_id": "F-31-SLOT-0024",
+        "freezer_id": "F-03",
+        "slot_id": "F-03-SLOT-0024",
         "kind": "box",
         "study_id": "STUDY-CIRRUS",
         "owner_ref": "owner-study-cirrus",
@@ -1224,7 +1481,7 @@
         "specimen_count": 100,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0025": {
@@ -1238,13 +1495,13 @@
         "specimen_count": 100,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0026": {
         "id": "C-0026",
-        "freezer_id": "F-31",
-        "slot_id": "F-31-SLOT-0026",
+        "freezer_id": "F-03",
+        "slot_id": "F-03-SLOT-0026",
         "kind": "box",
         "study_id": "STUDY-BOREAL",
         "owner_ref": "owner-study-boreal",
@@ -1252,13 +1509,13 @@
         "specimen_count": 121,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0027": {
         "id": "C-0027",
-        "freezer_id": "F-31",
-        "slot_id": "F-31-SLOT-0027",
+        "freezer_id": "F-03",
+        "slot_id": "F-03-SLOT-0027",
         "kind": "cryobox",
         "study_id": "STUDY-CIRRUS",
         "owner_ref": "owner-study-cirrus",
@@ -1266,13 +1523,13 @@
         "specimen_count": 100,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0028": {
         "id": "C-0028",
-        "freezer_id": "F-31",
-        "slot_id": "F-31-SLOT-0028",
+        "freezer_id": "F-03",
+        "slot_id": "F-03-SLOT-0028",
         "kind": "cryobox",
         "study_id": "STUDY-ATLAS",
         "owner_ref": "owner-study-atlas",
@@ -1280,7 +1537,7 @@
         "specimen_count": 49,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0029": {
@@ -1294,13 +1551,13 @@
         "specimen_count": 100,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0030": {
         "id": "C-0030",
-        "freezer_id": "F-31",
-        "slot_id": "F-31-SLOT-0030",
+        "freezer_id": "F-03",
+        "slot_id": "F-03-SLOT-0030",
         "kind": "box",
         "study_id": "STUDY-ATLAS",
         "owner_ref": "owner-study-atlas",
@@ -1308,7 +1565,7 @@
         "specimen_count": 121,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0031": {
@@ -1322,7 +1579,7 @@
         "specimen_count": 81,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0032": {
@@ -1336,7 +1593,7 @@
         "specimen_count": 121,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0033": {
@@ -1350,13 +1607,13 @@
         "specimen_count": 100,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0034": {
         "id": "C-0034",
-        "freezer_id": "F-31",
-        "slot_id": "F-31-SLOT-0034",
+        "freezer_id": "F-03",
+        "slot_id": "F-03-SLOT-0034",
         "kind": "box",
         "study_id": "STUDY-ATLAS",
         "owner_ref": "owner-study-atlas",
@@ -1364,7 +1621,7 @@
         "specimen_count": 81,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0035": {
@@ -1378,13 +1635,13 @@
         "specimen_count": 100,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0036": {
         "id": "C-0036",
-        "freezer_id": "F-31",
-        "slot_id": "F-31-SLOT-0036",
+        "freezer_id": "F-03",
+        "slot_id": "F-03-SLOT-0036",
         "kind": "box",
         "study_id": "STUDY-BOREAL",
         "owner_ref": "owner-study-boreal",
@@ -1392,7 +1649,7 @@
         "specimen_count": 121,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0037": {
@@ -1406,13 +1663,13 @@
         "specimen_count": 81,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0038": {
         "id": "C-0038",
-        "freezer_id": "F-31",
-        "slot_id": "F-31-SLOT-0038",
+        "freezer_id": "F-03",
+        "slot_id": "F-03-SLOT-0038",
         "kind": "cryobox",
         "study_id": "STUDY-BOREAL",
         "owner_ref": "owner-study-boreal",
@@ -1420,7 +1677,7 @@
         "specimen_count": 81,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0039": {
@@ -1434,13 +1691,13 @@
         "specimen_count": 81,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0040": {
         "id": "C-0040",
-        "freezer_id": "F-31",
-        "slot_id": "F-31-SLOT-0040",
+        "freezer_id": "F-03",
+        "slot_id": "F-03-SLOT-0040",
         "kind": "cryobox",
         "study_id": "STUDY-ATLAS",
         "owner_ref": "owner-study-atlas",
@@ -1448,13 +1705,13 @@
         "specimen_count": 81,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0041": {
         "id": "C-0041",
-        "freezer_id": "F-31",
-        "slot_id": "F-31-SLOT-0041",
+        "freezer_id": "F-03",
+        "slot_id": "F-03-SLOT-0041",
         "kind": "box",
         "study_id": "STUDY-ATLAS",
         "owner_ref": "owner-study-atlas",
@@ -1462,7 +1719,7 @@
         "specimen_count": 81,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0042": {
@@ -1476,7 +1733,7 @@
         "specimen_count": 81,
         "required_temp_c": -80.0,
         "custody_state": "COMMITTED",
-        "incident_id": "INC-ED9B367D69",
+        "incident_id": null,
         "synthetic": true
       },
       "C-0043": {
@@ -2153,6 +2410,20 @@
         "updated_at": "2026-08-26T05:34:52.609Z",
         "invalidation_reason": null
       },
+      "RES-2c208e9e7dbc": {
+        "id": "RES-2c208e9e7dbc",
+        "action_id": "2c208e9e7dbc049ab963e3ad343b5e71823b261b958c40d7d035e74fef1985c7",
+        "incident_id": "INC-0E7C54F8B5",
+        "destination_freezer_id": "F-31",
+        "placement_group_id": "PG-INC-0E7C54F8B5-P1-T80",
+        "slots": 1,
+        "slots_remaining": 1,
+        "slot_ids": [],
+        "state": "RELEASED",
+        "created_at": "2026-08-26T11:49:52.142Z",
+        "updated_at": "2026-08-26T11:49:59.963Z",
+        "invalidation_reason": "releasing test reservation due to lack of placement group requirements tool access"
+      },
       "RES-4e98ece15c23": {
         "id": "RES-4e98ece15c23",
         "action_id": "4e98ece15c2383d9727d069af30013110f2b72fc9125dbeee6793793b94e5fc6",
@@ -2167,6 +2438,20 @@
         "updated_at": "2026-08-26T05:34:45.039Z",
         "invalidation_reason": null
       },
+      "RES-96653cf7f0a8": {
+        "id": "RES-96653cf7f0a8",
+        "action_id": "96653cf7f0a8efa4de1fe969513c08f6c17c19c31c3bef768e587d37cc601f0e",
+        "incident_id": "INC-0E7C54F8B5",
+        "destination_freezer_id": "F-31",
+        "placement_group_id": "PG-INC-0E7C54F8B5-P3-T80",
+        "slots": 11,
+        "slots_remaining": 0,
+        "slot_ids": [],
+        "state": "CONSUMED",
+        "created_at": "2026-08-26T12:01:14.330Z",
+        "updated_at": "2026-08-26T12:20:37.295Z",
+        "invalidation_reason": null
+      },
       "RES-afb5982207f4": {
         "id": "RES-afb5982207f4",
         "action_id": "afb5982207f4c571ca522e6ceedb429ddb4286fe24437384fab4dc26060353ef",
@@ -2179,6 +2464,34 @@
         "state": "CONSUMED",
         "created_at": "2026-08-26T05:20:05.310Z",
         "updated_at": "2026-08-26T05:34:29.146Z",
+        "invalidation_reason": null
+      },
+      "RES-df2761b882a9": {
+        "id": "RES-df2761b882a9",
+        "action_id": "df2761b882a9bbc8ee7248928bd5ccaff42630bf49a891bf3de200df416d1771",
+        "incident_id": "INC-0E7C54F8B5",
+        "destination_freezer_id": "F-31",
+        "placement_group_id": "PG-INC-0E7C54F8B5-P2-T80",
+        "slots": 13,
+        "slots_remaining": 0,
+        "slot_ids": [],
+        "state": "CONSUMED",
+        "created_at": "2026-08-26T12:01:09.057Z",
+        "updated_at": "2026-08-26T12:21:07.308Z",
+        "invalidation_reason": null
+      },
+      "RES-f7aaee153a54": {
+        "id": "RES-f7aaee153a54",
+        "action_id": "f7aaee153a540f87071a498c37865182c1c1da79422e98ec8d03b6f3d5b4b2ee",
+        "incident_id": "INC-0E7C54F8B5",
+        "destination_freezer_id": "F-03",
+        "placement_group_id": "PG-INC-0E7C54F8B5-P1-T80",
+        "slots": 18,
+        "slots_remaining": 0,
+        "slot_ids": [],
+        "state": "CONSUMED",
+        "created_at": "2026-08-26T12:01:52.286Z",
+        "updated_at": "2026-08-26T12:20:56.949Z",
         "invalidation_reason": null
       }
     },
@@ -2204,7 +2517,7 @@
         "responder_id": "RESP-01",
         "responder_role": "LAB_TECH",
         "response_phase": "TRANSFER",
-        "task_token": "nQkhcZSLWrSK8W-wZtT-DLwPGUNFV6FV",
+        "task_token": "sha256:d918806923281cda",
         "status": "SENT",
         "created_at": "2026-08-26T05:21:44.369Z",
         "container_ids": []
@@ -2226,7 +2539,8 @@
           "scanned_at": "2026-08-26T05:24:58.962Z",
           "responder_id": "RESP-01",
           "signature": "923a6c0b80a634a3c0b5037ce300ce7f",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-7cc41a614664",
@@ -2235,7 +2549,8 @@
           "scanned_at": "2026-08-26T05:25:02.985Z",
           "responder_id": "RESP-01",
           "signature": "043b0908f0b0d52d0f18738ffb52f59a",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2259,7 +2574,8 @@
           "scanned_at": "2026-08-26T05:25:07.184Z",
           "responder_id": "RESP-01",
           "signature": "450e36d0b495ae817d0eb56680cefebc",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-dd9fb4458bcc",
@@ -2268,7 +2584,8 @@
           "scanned_at": "2026-08-26T05:25:11.123Z",
           "responder_id": "RESP-01",
           "signature": "612b471576363f79ae6e11747bca188a",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2292,7 +2609,8 @@
           "scanned_at": "2026-08-26T05:22:25.183Z",
           "responder_id": "RESP-01",
           "signature": "77091cfee7e76469cb1ac2d9408b5b25",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-5580def80cdb",
@@ -2301,7 +2619,8 @@
           "scanned_at": "2026-08-26T05:22:29.337Z",
           "responder_id": "RESP-01",
           "signature": "5eed4ced000539a6f005e6a1bcf79ee5",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2325,7 +2644,8 @@
           "scanned_at": "2026-08-26T05:22:33.635Z",
           "responder_id": "RESP-01",
           "signature": "7dd615056175307c97410cfa401abec9",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-5d756e90ba60",
@@ -2334,7 +2654,8 @@
           "scanned_at": "2026-08-26T05:22:37.578Z",
           "responder_id": "RESP-01",
           "signature": "ea5c241382a822d71f06a9c16522fd0b",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2358,7 +2679,8 @@
           "scanned_at": "2026-08-26T05:26:49.860Z",
           "responder_id": "RESP-01",
           "signature": "5279c73dd39ff177d006d9ee2bc32bb5",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-0cf027110387",
@@ -2367,7 +2689,8 @@
           "scanned_at": "2026-08-26T05:26:53.903Z",
           "responder_id": "RESP-01",
           "signature": "6116da0fb3757a188cd813a05e6df854",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2391,7 +2714,8 @@
           "scanned_at": "2026-08-26T05:25:15.597Z",
           "responder_id": "RESP-01",
           "signature": "d912ae517bc4f78d95acbf35e65017ae",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-bf14902bdfe5",
@@ -2400,7 +2724,8 @@
           "scanned_at": "2026-08-26T05:25:19.600Z",
           "responder_id": "RESP-01",
           "signature": "a04824b72c6cf405e46f0e6127a511f6",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2424,7 +2749,8 @@
           "scanned_at": "2026-08-26T05:22:41.984Z",
           "responder_id": "RESP-01",
           "signature": "4b9374e5d08804c05e8ca3758ce22407",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-6fbf2e0a700b",
@@ -2433,7 +2759,8 @@
           "scanned_at": "2026-08-26T05:22:46.122Z",
           "responder_id": "RESP-01",
           "signature": "5e0b68d931364f805fa81844d8c3a721",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2457,7 +2784,8 @@
           "scanned_at": "2026-08-26T05:26:58.268Z",
           "responder_id": "RESP-01",
           "signature": "265350e0b7ef6aca96f0ef40e5075aac",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-01ef2783e13f",
@@ -2466,7 +2794,8 @@
           "scanned_at": "2026-08-26T05:27:02.535Z",
           "responder_id": "RESP-01",
           "signature": "cbd219d4ea28670ddcbc19ac75e8c8ae",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2490,7 +2819,8 @@
           "scanned_at": "2026-08-26T05:25:24.008Z",
           "responder_id": "RESP-01",
           "signature": "75792a50a80b485a129ba02a306a67cc",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-07981804fed0",
@@ -2499,7 +2829,8 @@
           "scanned_at": "2026-08-26T05:25:28.121Z",
           "responder_id": "RESP-01",
           "signature": "90523e095a6b72f9b9c651c0e85f1a3d",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2523,7 +2854,8 @@
           "scanned_at": "2026-08-26T05:25:32.352Z",
           "responder_id": "RESP-01",
           "signature": "167a32096f90d8ab53111866931d4232",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-5ab6e4292592",
@@ -2532,7 +2864,8 @@
           "scanned_at": "2026-08-26T05:25:36.422Z",
           "responder_id": "RESP-01",
           "signature": "43ce5739836fad4682080b2ebd31a02c",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2556,7 +2889,8 @@
           "scanned_at": "2026-08-26T05:27:07.050Z",
           "responder_id": "RESP-01",
           "signature": "c2574b3bf183019bb87e31b7c93f00ff",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-deefa5af79fc",
@@ -2565,7 +2899,8 @@
           "scanned_at": "2026-08-26T05:27:11.143Z",
           "responder_id": "RESP-01",
           "signature": "3e1e5a26be0de326da7f0bd7c2ce3483",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2589,7 +2924,8 @@
           "scanned_at": "2026-08-26T05:22:50.590Z",
           "responder_id": "RESP-01",
           "signature": "440cd39aee122d3159a295fefbb208ab",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-6eccd8d697b5",
@@ -2598,7 +2934,8 @@
           "scanned_at": "2026-08-26T05:22:54.765Z",
           "responder_id": "RESP-01",
           "signature": "85077d34f538ebfd051637103edfd18c",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2622,7 +2959,8 @@
           "scanned_at": "2026-08-26T05:27:15.549Z",
           "responder_id": "RESP-01",
           "signature": "a8036b1c57db1beaf6e22273cd28aead",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-57d542ba6e29",
@@ -2631,7 +2969,8 @@
           "scanned_at": "2026-08-26T05:27:19.832Z",
           "responder_id": "RESP-01",
           "signature": "ac9555cc9527b6ea76deead161fa48aa",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2655,7 +2994,8 @@
           "scanned_at": "2026-08-26T05:25:40.927Z",
           "responder_id": "RESP-01",
           "signature": "28f7bcb7e597be20979a073085faf7f2",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-300ebc13f2ca",
@@ -2664,7 +3004,8 @@
           "scanned_at": "2026-08-26T05:25:44.916Z",
           "responder_id": "RESP-01",
           "signature": "b810d37f933eed2b8c3a89d08e77865d",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2688,7 +3029,8 @@
           "scanned_at": "2026-08-26T05:22:59.330Z",
           "responder_id": "RESP-01",
           "signature": "750121295b1f732458e83790811a5720",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-4de512922deb",
@@ -2697,7 +3039,8 @@
           "scanned_at": "2026-08-26T05:23:03.396Z",
           "responder_id": "RESP-01",
           "signature": "2ded25e048dfea62c49cce9fe0a57f55",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2721,7 +3064,8 @@
           "scanned_at": "2026-08-26T05:25:49.245Z",
           "responder_id": "RESP-01",
           "signature": "5e0174048224785589a05deda79d7681",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-4cfda654583c",
@@ -2730,7 +3074,8 @@
           "scanned_at": "2026-08-26T05:25:53.373Z",
           "responder_id": "RESP-01",
           "signature": "b3325392fad211c5434ed44a251482ac",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2754,7 +3099,8 @@
           "scanned_at": "2026-08-26T05:23:07.466Z",
           "responder_id": "RESP-01",
           "signature": "c11e16f5757d14a66e64f11f94342200",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-460606e4330f",
@@ -2763,7 +3109,8 @@
           "scanned_at": "2026-08-26T05:23:11.454Z",
           "responder_id": "RESP-01",
           "signature": "6ad2a589bf392d496374d3ba6f9e227b",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2787,7 +3134,8 @@
           "scanned_at": "2026-08-26T05:27:24.203Z",
           "responder_id": "RESP-01",
           "signature": "d091afcfd3c54d3eb75a05d9808c012d",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-f54ade09bf15",
@@ -2796,7 +3144,8 @@
           "scanned_at": "2026-08-26T05:27:28.171Z",
           "responder_id": "RESP-01",
           "signature": "0edaab4cd184e4c675789ceb5f61ba64",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2820,7 +3169,8 @@
           "scanned_at": "2026-08-26T05:25:57.830Z",
           "responder_id": "RESP-01",
           "signature": "a494a768aaffda95b70344712648bae2",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-e1e0ce009aa4",
@@ -2829,7 +3179,8 @@
           "scanned_at": "2026-08-26T05:26:02.022Z",
           "responder_id": "RESP-01",
           "signature": "1336929925564da6d936e2303b961f82",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2853,7 +3204,8 @@
           "scanned_at": "2026-08-26T05:27:32.664Z",
           "responder_id": "RESP-01",
           "signature": "a5862c09cca94d47ad3632db5300c18a",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-3b3de4ad8ae4",
@@ -2862,7 +3214,8 @@
           "scanned_at": "2026-08-26T05:27:36.852Z",
           "responder_id": "RESP-01",
           "signature": "37d0a0bc5d3dcc1ce0bb5b5093d42924",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2886,7 +3239,8 @@
           "scanned_at": "2026-08-26T05:23:16.118Z",
           "responder_id": "RESP-01",
           "signature": "49f9da8b8452ebc8724e203f29111a00",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-a860324ea43f",
@@ -2895,7 +3249,8 @@
           "scanned_at": "2026-08-26T05:23:20.840Z",
           "responder_id": "RESP-01",
           "signature": "919ad44da9632190a56b9a439c563dec",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2919,7 +3274,8 @@
           "scanned_at": "2026-08-26T05:23:25.348Z",
           "responder_id": "RESP-01",
           "signature": "955e0d419c3f192205b9ea5d16a299ea",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-aa9d6cc9410c",
@@ -2928,7 +3284,8 @@
           "scanned_at": "2026-08-26T05:23:29.694Z",
           "responder_id": "RESP-01",
           "signature": "a0ed8bf29fd5e08bc60c246a832d34f2",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2952,7 +3309,8 @@
           "scanned_at": "2026-08-26T05:26:06.308Z",
           "responder_id": "RESP-01",
           "signature": "52e93768a5b0ba6702810aeb1e1bd387",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-b6d1cc3ccac5",
@@ -2961,7 +3319,8 @@
           "scanned_at": "2026-08-26T05:26:10.348Z",
           "responder_id": "RESP-01",
           "signature": "49aeb838038f3ec5ce597773a6071014",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -2985,7 +3344,8 @@
           "scanned_at": "2026-08-26T05:23:34.431Z",
           "responder_id": "RESP-01",
           "signature": "c33ae817e92b278a584a33eff357a4fc",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-0b229ba16f6a",
@@ -2994,7 +3354,8 @@
           "scanned_at": "2026-08-26T05:23:38.394Z",
           "responder_id": "RESP-01",
           "signature": "f9263928807bba10c5c2febccd03e1c0",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -3018,7 +3379,8 @@
           "scanned_at": "2026-08-26T05:26:14.754Z",
           "responder_id": "RESP-01",
           "signature": "c403ec940725464069a7c5c83289b3df",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-18b76af0347c",
@@ -3027,7 +3389,8 @@
           "scanned_at": "2026-08-26T05:26:18.944Z",
           "responder_id": "RESP-01",
           "signature": "c296077106a8735c40d7f24991ec5f0b",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -3051,7 +3414,8 @@
           "scanned_at": "2026-08-26T05:23:42.955Z",
           "responder_id": "RESP-01",
           "signature": "d0bd19058af1b95e86f79a7c30b2b8cf",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-505d3bf1bf12",
@@ -3060,7 +3424,8 @@
           "scanned_at": "2026-08-26T05:23:47.034Z",
           "responder_id": "RESP-01",
           "signature": "798ddb7fc863b64bd0e36a92f0004168",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -3084,7 +3449,8 @@
           "scanned_at": "2026-08-26T05:23:51.248Z",
           "responder_id": "RESP-01",
           "signature": "472c754c13afe5d0e5ae77368a168516",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-a4f6fefd167b",
@@ -3093,7 +3459,8 @@
           "scanned_at": "2026-08-26T05:23:55.511Z",
           "responder_id": "RESP-01",
           "signature": "b6159d3db3b1ea59bea62c03d5669259",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -3117,7 +3484,8 @@
           "scanned_at": "2026-08-26T05:23:59.893Z",
           "responder_id": "RESP-01",
           "signature": "f8ce4532a7bdf664a46f3b0a928262af",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-d1c28a652d7d",
@@ -3126,7 +3494,8 @@
           "scanned_at": "2026-08-26T05:24:03.966Z",
           "responder_id": "RESP-01",
           "signature": "07f955728d977dcb79df8e3a261d5251",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -3150,7 +3519,8 @@
           "scanned_at": "2026-08-26T05:27:41.266Z",
           "responder_id": "RESP-01",
           "signature": "057ea2b881aeb80f62dd4cdb6deb53b2",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-53c3859d4161",
@@ -3159,7 +3529,8 @@
           "scanned_at": "2026-08-26T05:27:45.453Z",
           "responder_id": "RESP-01",
           "signature": "1bb097b2e9b7a3444dcd45d80a6c1e94",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -3183,7 +3554,8 @@
           "scanned_at": "2026-08-26T05:24:08.731Z",
           "responder_id": "RESP-01",
           "signature": "297ae9051a51b9253b5f25056f1d206c",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-421ae53ec3d2",
@@ -3192,7 +3564,8 @@
           "scanned_at": "2026-08-26T05:24:13.084Z",
           "responder_id": "RESP-01",
           "signature": "637763ca6cc7ef7c7644a47a962ee185",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -3216,7 +3589,8 @@
           "scanned_at": "2026-08-26T05:27:49.958Z",
           "responder_id": "RESP-01",
           "signature": "5d93dd6205bda46f850729a5d1646a7f",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-fec2cc0d240c",
@@ -3225,7 +3599,8 @@
           "scanned_at": "2026-08-26T05:27:54.172Z",
           "responder_id": "RESP-01",
           "signature": "b3ed38208b1063e6e09403fcc328501d",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -3249,7 +3624,8 @@
           "scanned_at": "2026-08-26T05:26:23.268Z",
           "responder_id": "RESP-01",
           "signature": "e912713ce911fd62af596a0b409528a3",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-142e7209dece",
@@ -3258,7 +3634,8 @@
           "scanned_at": "2026-08-26T05:26:27.401Z",
           "responder_id": "RESP-01",
           "signature": "22876a16fb5699db37691913a76cf11d",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -3282,7 +3659,8 @@
           "scanned_at": "2026-08-26T05:26:31.846Z",
           "responder_id": "RESP-01",
           "signature": "39e02aff95d08e38e41ab16291691441",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-1f93371cf161",
@@ -3291,7 +3669,8 @@
           "scanned_at": "2026-08-26T05:26:36.024Z",
           "responder_id": "RESP-01",
           "signature": "b0e81d81e6a41351ef5fa8d2b3713153",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -3315,7 +3694,8 @@
           "scanned_at": "2026-08-26T05:24:17.366Z",
           "responder_id": "RESP-01",
           "signature": "ae11c95f521996d1a3fecaf55a9f80b8",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-9f126b2757fe",
@@ -3324,7 +3704,8 @@
           "scanned_at": "2026-08-26T05:24:21.493Z",
           "responder_id": "RESP-01",
           "signature": "4f0f51a19ccdc78aaf0ed9faae96176d",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -3348,7 +3729,8 @@
           "scanned_at": "2026-08-26T05:27:58.785Z",
           "responder_id": "RESP-01",
           "signature": "47743f8a69e7940da6151e4f2da17646",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-d683a1cb6406",
@@ -3357,7 +3739,8 @@
           "scanned_at": "2026-08-26T05:28:02.871Z",
           "responder_id": "RESP-01",
           "signature": "f2b89b2f8a5ecda47489bea9ffea7b45",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -3381,7 +3764,8 @@
           "scanned_at": "2026-08-26T05:24:25.722Z",
           "responder_id": "RESP-01",
           "signature": "9771a2cf8a392e77fa38b8ef2fb387b2",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-77c476fd0e7a",
@@ -3390,7 +3774,8 @@
           "scanned_at": "2026-08-26T05:24:29.782Z",
           "responder_id": "RESP-01",
           "signature": "84465fed8dba912ab8be6d31d61ce10e",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -3414,7 +3799,8 @@
           "scanned_at": "2026-08-26T05:28:07.645Z",
           "responder_id": "RESP-01",
           "signature": "2029885d3fda9c5faef0d7d0e1461092",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-1fd346a3e110",
@@ -3423,7 +3809,8 @@
           "scanned_at": "2026-08-26T05:28:11.693Z",
           "responder_id": "RESP-01",
           "signature": "65f4f41378d1921964858330770eb1eb",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -3447,7 +3834,8 @@
           "scanned_at": "2026-08-26T05:24:34.011Z",
           "responder_id": "RESP-01",
           "signature": "726aecb934cb8512040bfcafa71b87df",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-4f73882345ac",
@@ -3456,7 +3844,8 @@
           "scanned_at": "2026-08-26T05:24:37.870Z",
           "responder_id": "RESP-01",
           "signature": "693ef71c75dd4f83f1e776778c3ff9ad",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -3480,7 +3869,8 @@
           "scanned_at": "2026-08-26T05:28:16.418Z",
           "responder_id": "RESP-01",
           "signature": "3ee352cdfbf54487a321e7fda1dc1951",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-1b26c0263652",
@@ -3489,7 +3879,8 @@
           "scanned_at": "2026-08-26T05:28:20.688Z",
           "responder_id": "RESP-01",
           "signature": "cf4c8455936e76b003607096f0edf2a1",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -3513,7 +3904,8 @@
           "scanned_at": "2026-08-26T05:24:42.370Z",
           "responder_id": "RESP-01",
           "signature": "306fb070a7576446f5145daf86706308",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-988087d3ff45",
@@ -3522,7 +3914,8 @@
           "scanned_at": "2026-08-26T05:24:46.238Z",
           "responder_id": "RESP-01",
           "signature": "e85ae172feaf6de34cdc516978c75b2a",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -3546,7 +3939,8 @@
           "scanned_at": "2026-08-26T05:24:50.602Z",
           "responder_id": "RESP-01",
           "signature": "c6e4092694c693171d1b17c0f7ff0d98",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-d80afffca214",
@@ -3555,7 +3949,8 @@
           "scanned_at": "2026-08-26T05:24:54.546Z",
           "responder_id": "RESP-01",
           "signature": "848cf0fc68d5a9a01e937b921358d05d",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -3579,7 +3974,8 @@
           "scanned_at": "2026-08-26T05:26:40.703Z",
           "responder_id": "RESP-01",
           "signature": "0fd4d2f39629fe1a694f7882995d5afb",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-a3f371587fad",
@@ -3588,7 +3984,8 @@
           "scanned_at": "2026-08-26T05:26:45.270Z",
           "responder_id": "RESP-01",
           "signature": "38bbc784ba888ee727d532a2e6a7eccc",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T052911290Z",
         "destination_temp_c": -80.94,
@@ -6614,28 +7011,28 @@
     },
     "holds": {
       "F-17": {
-        "id": "HOLD-F-17-7d0f6dca",
-        "incident_id": "INC-ED9B367D69",
+        "id": "HOLD-F-17-d8b486c1",
+        "incident_id": "INC-0E7C54F8B5",
         "freezer_id": "F-17",
         "active": false,
-        "placed_at": "2026-08-26T05:16:16.407Z",
-        "released_at": "2026-08-26T05:35:22.204Z",
-        "release_evidence_ref": "51880a6a68c34af2"
+        "placed_at": "2026-08-26T11:44:48.074Z",
+        "released_at": "2026-08-26T12:21:55.207Z",
+        "release_evidence_ref": "8f69f83e2b3482cd"
       }
     },
     "readings": {}
   },
   "artifact_hashes": {
-    "state_snapshot": "337212f4b1378401d8d2804af7b42b976b24434c465cd10302add8069a5cc92b",
-    "invariant_results": "e1d35cd1a1f2c9f97f95ecd4f13af07b48463d52c360466a21d20fbc36210667",
+    "state_snapshot": "9006e5d61cb78a6a6250fce138425c7f5bcde70b16b8c8480285fb2d41fe772a",
+    "invariant_results": "4c9a346d6d53bf61db9ca9580e1e6d2cc51711623b12b9d5f638a258822cf239",
     "reconciliation": "13b10d107876472b9c87c048913db351391d0516f6f156a655cb69dfc6224a20"
   },
   "signature": {
     "algorithm": "EC_SIGN_P256_SHA256",
     "backend": "cloud-kms",
     "key_ref": "projects/project-2ac1d1fb-7da1-46b4-90e/locations/us-central1/keyRings/nightshift/cryptoKeys/evidence-signer/cryptoKeyVersions/1",
-    "signature_b64": "MEUCIG+2RJaf0Spq6XY+E415ie7jVXgtCeKn3FHbl4l11SBbAiEAkTEbDIdXu2YynBpxy5XVF9cEYo15bLFprSCA9CbIS0Q=",
+    "signature_b64": "MEQCIDaWi54zARYVsm+7G8EnE36a9QqvMBGNcBXWgopSuNtgAiBezgBR/7YnRSDLEy9AhGNKIwCW6kFJS016Tu/cSTz4iQ==",
     "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7zmdy0CR8Xwk5WlAERW95OR/ohBT\nJUGhskxKJDC7Pe47CI2gm2cTUcT0BW8qRIANGBkyss8aB5mUSQ0oo8X6Uw==\n-----END PUBLIC KEY-----\n",
-    "digest_sha256": "04ccffd17ee7fdeaf27fd42bafc36897362bbf8cd08bfcae5bb6250ddf7e59b9"
+    "digest_sha256": "ac95a0fb926058a23967642a012305209db3a1be86b9ee883a0cb637469dd48e"
   }
 }

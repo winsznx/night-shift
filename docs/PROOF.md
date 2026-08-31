@@ -243,7 +243,7 @@ uv run pytest tests/integration/test_domain_flow.py -q -k "forbidden or study_no
 
 - the Dispatch Agent reaching for `list_impacted_containers` gets a 403 naming N7 and the
   required domain
-- every one of the six operational agents is refused `get_study_notes` — a route that
+- every one of the six operational agents is refused `get_study_notes`, a route that
   returns real metadata, so the denial is worth something
 - an unauthenticated call holds no authority
 - a forged principal token is rejected
@@ -318,6 +318,27 @@ changing nothing about what any drill asserts, so a result that holds on one see
 another is variance rather than a property. The list is written into the campaign
 provenance, so a rerun lands on the same estate.
 
+## One manifest was withdrawn
+
+`INC-A569307BA4` used to ship here and no longer does. Recording that rather than quietly
+dropping it, because withdrawn evidence is still evidence about how this project handles
+its own mistakes.
+
+Two things were wrong with it. It carried a responder task token in plaintext inside the
+signed body, which is a live bearer credential against the pickup, receipt and exception
+routes, published in a public repository. And its incident record no longer exists in any
+namespace, so unlike the other two it could not be regenerated with the token redacted.
+A manifest that cannot be reissued and should not be distributed as it stands has to come
+out.
+
+The dispatch row that token addressed was already gone, so the credential was inert
+before removal. It was searched for in every namespace and confirmed absent.
+
+What is lost by withdrawing it: it was the one manifest signed mid-rescue, with 0 of 42
+containers committed, and it demonstrated that a manifest can be sealed over an
+incomplete rescue and still verify. `INC-ED9B367D69` still shows a non-terminal incident
+(RECONCILING) with a valid signature, so that property is still demonstrated.
+
 ## Why the manifests were re-signed
 
 If you kept an older copy of a published manifest and diff it against the one here, the
@@ -357,7 +378,7 @@ key rather than trusting the key carried inside the manifest, for reasons record
 
 The verifier proves the stored verdict follows from the stored state, and that the state
 was signed by the holder of the published key. It does not prove the state describes the
-physical world — the estate is synthetic and responder movements are simulated.
+physical world. The estate is synthetic and responder movements are simulated.
 
 It also says nothing about whether the agents made good decisions. The claim is narrower
 and deliberately so: **the deterministic rules held regardless of what the agents

@@ -5,7 +5,7 @@
 #
 # Creates one Cloud Run Job and two Cloud Scheduler jobs:
 #
-#   nightshift-tick-telemetry   every 10 minutes, no model calls
+#   nightshift-tick-telemetry   every 5 minutes, no model calls
 #   nightshift-tick-incident    every 6 hours, runs the real agent fleet
 #
 # Why two cadences. The N4 freshness window is 900 seconds, so telemetry written once at
@@ -100,9 +100,11 @@ schedule_job() {
   echo "  ${name}: ${cron} (${mode})"
 }
 
-# Faster than the 900s N4 freshness window, so a judge opening the console at any moment
-# in the judging month sees an estate that can actually be reserved against.
-schedule_job "nightshift-tick-telemetry" "*/10 * * * *" "telemetry" ""
+# Every five minutes against a 900 second freshness window. Ten minutes would also be
+# "faster than the window", but it leaves only 300 seconds of margin, so a single missed
+# or slow tick puts the estate over the threshold. A judge arriving at a random moment in
+# a month-long window is exactly the case that margin exists for.
+schedule_job "nightshift-tick-telemetry" "*/5 * * * *" "telemetry" ""
 
 # Four a day is the cap the job itself enforces, so this cadence and that cap agree.
 schedule_job "nightshift-tick-incident" "0 */6 * * *" "incident" ",\"--max-per-day\",\"4\",\"--max-total\",\"200\""

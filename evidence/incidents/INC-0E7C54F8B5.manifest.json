@@ -4,13 +4,13 @@
   "synthetic": true,
   "simulated_field_events": true,
   "namespace": "demo",
-  "evaluated_at": "2026-08-26T12:24:39.588Z",
+  "evaluated_at": "2026-08-31T07:37:29.274Z",
   "incident_state": "CLOSED",
   "severity": "SEV1",
   "opened_at": "2026-08-26T11:30:57.149Z",
   "closed_at": "2026-08-26T12:22:30.098Z",
   "failed_freezer_id": "F-17",
-  "estate_fixture_hash": "e4c2cc5237ebc485341bab22b0126d0a77860917c8428c80d4af90442dc02563",
+  "estate_fixture_hash": "d348b7b7bd286a997eccbb3a34fe71fb56a520e6a5aca74f3e436b22e35455cb",
   "opening_evidence": [
     {
       "event_id": "evt-sensor-primary",
@@ -329,9 +329,264 @@
     {
       "invariant": "N4",
       "title": "Fresh destination evidence",
-      "holds": true,
-      "detail": "every commit used fresh, in-bounds destination evidence",
-      "evidence": {}
+      "holds": false,
+      "detail": "42 commit(s) relied on unusable destination evidence",
+      "evidence": {
+        "violations": [
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0001",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0002",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0003",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.12
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0004",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.12
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0005",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0006",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0007",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.12
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0008",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0009",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0010",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0011",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0012",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.12
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0013",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0014",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0015",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.12
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0016",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0017",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.12
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0018",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0019",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0020",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0021",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.12
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0022",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.12
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0023",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0024",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.12
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0025",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0026",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.12
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0027",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.12
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0028",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.12
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0029",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0030",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.12
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0031",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0032",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0033",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0034",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.12
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0035",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0036",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.12
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0037",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0038",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.12
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0039",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0040",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.12
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0041",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.12
+          },
+          {
+            "transfer_id": "TR-INC-0E7C54F8B5-C-0042",
+            "reason": "destination reading is 415419s old, limit 900s",
+            "age_s": 415419.2,
+            "temp_c": -80.7
+          }
+        ]
+      }
     },
     {
       "invariant": "N5",
@@ -450,8 +705,10 @@
       "evidence": {}
     }
   ],
-  "invariants_all_hold": true,
-  "failed_invariants": [],
+  "invariants_all_hold": false,
+  "failed_invariants": [
+    "N4"
+  ],
   "delivered_event_ids": [
     "evt-sensor-primary"
   ],
@@ -474,8 +731,8 @@
     "f5b7e4a233dbae12490968c9678e36cf",
     "ff4bf25f5f221a0a91845fdda5bac23b"
   ],
-  "source_commit": "bd38bdf",
-  "deployment_env": "local",
+  "source_commit": "6b52e0e",
+  "deployment_env": "cloud-run",
   "model_id": "gemini-3.5-flash",
   "adk_version": "2.7.1",
   "corpus_version": "1.0.0",
@@ -713,9 +970,9 @@
         "STUDY-EMBER"
       ],
       "priority_breakdown": {
+        "2": 13,
         "1": 18,
-        "3": 11,
-        "2": 13
+        "3": 11
       },
       "placement_groups": [
         {
@@ -815,8 +1072,8 @@
         "total_slots": 144,
         "occupied_slots": 122,
         "state": "HEALTHY",
-        "current_temp_c": -80.12,
-        "last_reading_at": "2026-08-26T12:21:39.656Z",
+        "current_temp_c": -79.92,
+        "last_reading_at": "2026-08-31T06:58:09.463Z",
         "is_backup_qualified": true,
         "maintenance": [
           {
@@ -847,8 +1104,8 @@
         "total_slots": 120,
         "occupied_slots": 109,
         "state": "HEALTHY",
-        "current_temp_c": -80.42,
-        "last_reading_at": "2026-08-26T12:21:39.656Z",
+        "current_temp_c": -80.62,
+        "last_reading_at": "2026-08-31T06:58:09.463Z",
         "is_backup_qualified": true,
         "maintenance": [
           {
@@ -879,8 +1136,8 @@
         "total_slots": 96,
         "occupied_slots": 53,
         "state": "HEALTHY",
-        "current_temp_c": -79.08,
-        "last_reading_at": "2026-08-26T12:21:39.656Z",
+        "current_temp_c": -78.98,
+        "last_reading_at": "2026-08-31T06:58:09.463Z",
         "is_backup_qualified": true,
         "maintenance": [
           {
@@ -911,8 +1168,8 @@
         "total_slots": 144,
         "occupied_slots": 78,
         "state": "VALIDATED",
-        "current_temp_c": -79.9,
-        "last_reading_at": "2026-08-26T12:21:49.839Z",
+        "current_temp_c": -79.78,
+        "last_reading_at": "2026-08-31T06:58:09.463Z",
         "is_backup_qualified": false,
         "maintenance": [
           {
@@ -943,8 +1200,8 @@
         "total_slots": 144,
         "occupied_slots": 138,
         "state": "HEALTHY",
-        "current_temp_c": -79.04,
-        "last_reading_at": "2026-08-26T12:21:39.656Z",
+        "current_temp_c": -78.96,
+        "last_reading_at": "2026-08-31T06:58:09.463Z",
         "is_backup_qualified": true,
         "maintenance": [
           {
@@ -968,8 +1225,8 @@
         "total_slots": 96,
         "occupied_slots": 33,
         "state": "HEALTHY",
-        "current_temp_c": -68.08,
-        "last_reading_at": "2026-08-26T12:21:39.656Z",
+        "current_temp_c": -68.22,
+        "last_reading_at": "2026-08-31T06:58:09.463Z",
         "is_backup_qualified": false,
         "maintenance": [
           {
@@ -1000,8 +1257,8 @@
         "total_slots": 120,
         "occupied_slots": 97,
         "state": "HEALTHY",
-        "current_temp_c": -80.64,
-        "last_reading_at": "2026-08-26T12:21:39.656Z",
+        "current_temp_c": -80.78,
+        "last_reading_at": "2026-08-31T06:58:09.463Z",
         "is_backup_qualified": true,
         "maintenance": [
           {
@@ -1039,8 +1296,8 @@
         "total_slots": 72,
         "occupied_slots": 63,
         "state": "HEALTHY",
-        "current_temp_c": -79.86,
-        "last_reading_at": "2026-08-26T12:21:39.656Z",
+        "current_temp_c": -80.06,
+        "last_reading_at": "2026-08-31T06:58:09.463Z",
         "is_backup_qualified": true,
         "maintenance": [
           {
@@ -2438,7 +2695,7 @@
         "responder_id": "RESP-01",
         "responder_role": "LAB_TECH",
         "response_phase": "TRANSFER",
-        "task_token": "-xX6MpTXma_N6X3ceeG6NCsIKcmube3b",
+        "task_token": "sha256:6703b894524a55fe",
         "status": "SENT",
         "created_at": "2026-08-26T12:03:52.330Z",
         "container_ids": []
@@ -2460,7 +2717,8 @@
           "scanned_at": "2026-08-26T12:08:19.154Z",
           "responder_id": "RESP-01",
           "signature": "84c627ef4b1ce6858879331afe16bcc1",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-946618dd3555",
@@ -2469,7 +2727,8 @@
           "scanned_at": "2026-08-26T12:08:24.567Z",
           "responder_id": "RESP-01",
           "signature": "3668c1fdc35beb8ea57d2613e90998f2",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -2493,7 +2752,8 @@
           "scanned_at": "2026-08-26T12:08:30.677Z",
           "responder_id": "RESP-01",
           "signature": "83a324d067f70f3c032222912c4d6a0a",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-3136b381d077",
@@ -2502,7 +2762,8 @@
           "scanned_at": "2026-08-26T12:08:35.652Z",
           "responder_id": "RESP-01",
           "signature": "f114b6113a7c149c63aa028c9a001868",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -2526,7 +2787,8 @@
           "scanned_at": "2026-08-26T12:04:54.778Z",
           "responder_id": "RESP-01",
           "signature": "0b5d6fcc07362b260d68a2c38bd0fa2f",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-3f799a038da1",
@@ -2535,7 +2797,8 @@
           "scanned_at": "2026-08-26T12:05:00.463Z",
           "responder_id": "RESP-01",
           "signature": "d4e3d6d4bf7540deee81daa39685a523",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-03-TICK-20260826T121350114Z",
         "destination_temp_c": -80.12,
@@ -2559,7 +2822,8 @@
           "scanned_at": "2026-08-26T12:05:05.996Z",
           "responder_id": "RESP-01",
           "signature": "1400e2fd2261b643c6f6aea315da86ad",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-5fbd64c07b29",
@@ -2568,7 +2832,8 @@
           "scanned_at": "2026-08-26T12:05:11.018Z",
           "responder_id": "RESP-01",
           "signature": "7058a7a993f23a74f4f098a4877d2132",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-03-TICK-20260826T121350114Z",
         "destination_temp_c": -80.12,
@@ -2592,7 +2857,8 @@
           "scanned_at": "2026-08-26T12:10:43.681Z",
           "responder_id": "RESP-01",
           "signature": "86ad50cea9fa281fdd09c32cb9eb5c3d",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-0a60483c4cb9",
@@ -2601,7 +2867,8 @@
           "scanned_at": "2026-08-26T12:10:49.011Z",
           "responder_id": "RESP-01",
           "signature": "6ec1db83aa7b3c19e8920ba36554ccaf",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -2625,7 +2892,8 @@
           "scanned_at": "2026-08-26T12:08:42.139Z",
           "responder_id": "RESP-01",
           "signature": "e134499ab6858554ebe0eb4dbfa8cbd4",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-c6fa506dd3ce",
@@ -2634,7 +2902,8 @@
           "scanned_at": "2026-08-26T12:08:46.753Z",
           "responder_id": "RESP-01",
           "signature": "f594bd3075b52732677c46667dfee1e3",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -2658,7 +2927,8 @@
           "scanned_at": "2026-08-26T12:05:16.287Z",
           "responder_id": "RESP-01",
           "signature": "c5e85fa4f202b97f115e3659d8a2e2af",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-394ed1cf9092",
@@ -2667,7 +2937,8 @@
           "scanned_at": "2026-08-26T12:05:21.988Z",
           "responder_id": "RESP-01",
           "signature": "8c6ab82af0f96873037576c09729fe62",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-03-TICK-20260826T121350114Z",
         "destination_temp_c": -80.12,
@@ -2691,7 +2962,8 @@
           "scanned_at": "2026-08-26T12:10:54.843Z",
           "responder_id": "RESP-01",
           "signature": "6a6131ac40adfc8e8c4fd1359d39286a",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-38870c4d6f98",
@@ -2700,7 +2972,8 @@
           "scanned_at": "2026-08-26T12:11:00.698Z",
           "responder_id": "RESP-01",
           "signature": "0f5b7c842c68bc3b9f6377348d66108e",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -2724,7 +2997,8 @@
           "scanned_at": "2026-08-26T12:08:51.982Z",
           "responder_id": "RESP-01",
           "signature": "87b9007cce86115fe95e5b4d5a636e4f",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-86b66b92e16d",
@@ -2733,7 +3007,8 @@
           "scanned_at": "2026-08-26T12:08:58.248Z",
           "responder_id": "RESP-01",
           "signature": "774187728b83b01581dbd38611003b1c",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -2757,7 +3032,8 @@
           "scanned_at": "2026-08-26T12:09:03.979Z",
           "responder_id": "RESP-01",
           "signature": "8c8391a2ea0c68474d4c87803d98785f",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-10b2cda786b9",
@@ -2766,7 +3042,8 @@
           "scanned_at": "2026-08-26T12:09:08.885Z",
           "responder_id": "RESP-01",
           "signature": "f98dc5a332fa5f03f9b78d4ef7174357",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -2790,7 +3067,8 @@
           "scanned_at": "2026-08-26T12:11:06.735Z",
           "responder_id": "RESP-01",
           "signature": "8321a7bf3818d7cca7bb3edb61f9e836",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-2445f12e435d",
@@ -2799,7 +3077,8 @@
           "scanned_at": "2026-08-26T12:11:11.953Z",
           "responder_id": "RESP-01",
           "signature": "76a592b1f713a0a679155b7738d96ecc",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -2823,7 +3102,8 @@
           "scanned_at": "2026-08-26T12:05:27.758Z",
           "responder_id": "RESP-01",
           "signature": "571f54285cf92c96586fbaa46bbfc9cc",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-ca1f71b8420b",
@@ -2832,7 +3112,8 @@
           "scanned_at": "2026-08-26T12:05:32.836Z",
           "responder_id": "RESP-01",
           "signature": "0bd08d632f1019edd0354f9336658d5d",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-03-TICK-20260826T121350114Z",
         "destination_temp_c": -80.12,
@@ -2856,7 +3137,8 @@
           "scanned_at": "2026-08-26T12:11:17.504Z",
           "responder_id": "RESP-01",
           "signature": "a7db6fba0bed6abbb942f144903b67c7",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-e7364bf7141e",
@@ -2865,7 +3147,8 @@
           "scanned_at": "2026-08-26T12:11:23.123Z",
           "responder_id": "RESP-01",
           "signature": "fbc27a3c2009fb9b09848c4387edf5e0",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -2889,7 +3172,8 @@
           "scanned_at": "2026-08-26T12:09:14.955Z",
           "responder_id": "RESP-01",
           "signature": "c115b5c6ea690b7ae7fd6a4521f135d0",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-49fed74a70e9",
@@ -2898,7 +3182,8 @@
           "scanned_at": "2026-08-26T12:09:20.291Z",
           "responder_id": "RESP-01",
           "signature": "47791abd47a938e7c9156541b6e61b85",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -2922,7 +3207,8 @@
           "scanned_at": "2026-08-26T12:05:38.273Z",
           "responder_id": "RESP-01",
           "signature": "31a180daa418d5376e576cec3bfedf0e",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-b5fdccc87101",
@@ -2931,7 +3217,8 @@
           "scanned_at": "2026-08-26T12:05:43.426Z",
           "responder_id": "RESP-01",
           "signature": "819c07f52e6ece4041a2ea3a23a16b6f",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-03-TICK-20260826T121350114Z",
         "destination_temp_c": -80.12,
@@ -2955,7 +3242,8 @@
           "scanned_at": "2026-08-26T12:09:25.878Z",
           "responder_id": "RESP-01",
           "signature": "411778440838853b204733ed729cada1",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-5ca21d6f35e6",
@@ -2964,7 +3252,8 @@
           "scanned_at": "2026-08-26T12:09:31.254Z",
           "responder_id": "RESP-01",
           "signature": "1e43ded2cc49f359e3dae28c9df997af",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -2988,7 +3277,8 @@
           "scanned_at": "2026-08-26T12:05:48.678Z",
           "responder_id": "RESP-01",
           "signature": "42224d045acdfadebffbd11a1423e6bc",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-56961a973c82",
@@ -2997,7 +3287,8 @@
           "scanned_at": "2026-08-26T12:05:53.714Z",
           "responder_id": "RESP-01",
           "signature": "c70661dddea7f8a787bd7490cdfd34e8",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-03-TICK-20260826T121350114Z",
         "destination_temp_c": -80.12,
@@ -3021,7 +3312,8 @@
           "scanned_at": "2026-08-26T12:11:28.426Z",
           "responder_id": "RESP-01",
           "signature": "aa0aa693d2af8da4652f6da2dd1b2439",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-e13413eb4ed4",
@@ -3030,7 +3322,8 @@
           "scanned_at": "2026-08-26T12:11:33.554Z",
           "responder_id": "RESP-01",
           "signature": "f929cc453d1a04d5a341bb6607164552",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -3054,7 +3347,8 @@
           "scanned_at": "2026-08-26T12:09:36.930Z",
           "responder_id": "RESP-01",
           "signature": "e489a99abcf5984f620079976833903a",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-240dd2aa37ea",
@@ -3063,7 +3357,8 @@
           "scanned_at": "2026-08-26T12:09:42.171Z",
           "responder_id": "RESP-01",
           "signature": "669c8a8a7b8e2cb99077bd27b9cde775",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -3087,7 +3382,8 @@
           "scanned_at": "2026-08-26T12:11:38.764Z",
           "responder_id": "RESP-01",
           "signature": "3c4dbd3c8459d97f63fa9dc54fec67b3",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-7b0848a0a81b",
@@ -3096,7 +3392,8 @@
           "scanned_at": "2026-08-26T12:11:43.812Z",
           "responder_id": "RESP-01",
           "signature": "ed5024f7dafea50debc519e1330eed0f",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -3120,7 +3417,8 @@
           "scanned_at": "2026-08-26T12:05:59.348Z",
           "responder_id": "RESP-01",
           "signature": "c9cf212192e4e3ab0b2dfd5bf1ff53c5",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-833bda744713",
@@ -3129,7 +3427,8 @@
           "scanned_at": "2026-08-26T12:06:04.043Z",
           "responder_id": "RESP-01",
           "signature": "76af54bd32353131ec5afe6bf5f3247b",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-03-TICK-20260826T121350114Z",
         "destination_temp_c": -80.12,
@@ -3153,7 +3452,8 @@
           "scanned_at": "2026-08-26T12:06:10.244Z",
           "responder_id": "RESP-01",
           "signature": "da7382444022db78aa5bb9cd2fb03da4",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-a775f2c2850a",
@@ -3162,7 +3462,8 @@
           "scanned_at": "2026-08-26T12:06:15.881Z",
           "responder_id": "RESP-01",
           "signature": "523f7f5d21e828f28d410f305b2905e2",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-03-TICK-20260826T121350114Z",
         "destination_temp_c": -80.12,
@@ -3186,7 +3487,8 @@
           "scanned_at": "2026-08-26T12:09:47.760Z",
           "responder_id": "RESP-01",
           "signature": "792408cbcca5d39f6f7ecbcdb219ebfb",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-f53ab84db6cc",
@@ -3195,7 +3497,8 @@
           "scanned_at": "2026-08-26T12:09:52.959Z",
           "responder_id": "RESP-01",
           "signature": "3ba39b2f09f1f23b7a63618d81397586",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -3219,7 +3522,8 @@
           "scanned_at": "2026-08-26T12:06:21.517Z",
           "responder_id": "RESP-01",
           "signature": "dff4a19f33ef1e8cfdab73f17191c46e",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-105386290518",
@@ -3228,7 +3532,8 @@
           "scanned_at": "2026-08-26T12:06:26.510Z",
           "responder_id": "RESP-01",
           "signature": "7f6beeabde32e6f76484e2c6291603e6",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-03-TICK-20260826T121350114Z",
         "destination_temp_c": -80.12,
@@ -3252,7 +3557,8 @@
           "scanned_at": "2026-08-26T12:09:58.707Z",
           "responder_id": "RESP-01",
           "signature": "1049381743197429987e8a8e61974572",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-09f3191c928f",
@@ -3261,7 +3567,8 @@
           "scanned_at": "2026-08-26T12:10:03.648Z",
           "responder_id": "RESP-01",
           "signature": "b9a334e7111bd0283c4acd33e6c55d4b",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -3285,7 +3592,8 @@
           "scanned_at": "2026-08-26T12:06:32.998Z",
           "responder_id": "RESP-01",
           "signature": "d3d5b001b3eb8ebc2d35c1c9e137394c",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-9b9bbc00fc7e",
@@ -3294,7 +3602,8 @@
           "scanned_at": "2026-08-26T12:06:39.046Z",
           "responder_id": "RESP-01",
           "signature": "a4515c82d3eedbd10db604699397110b",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-03-TICK-20260826T121350114Z",
         "destination_temp_c": -80.12,
@@ -3318,7 +3627,8 @@
           "scanned_at": "2026-08-26T12:06:46.379Z",
           "responder_id": "RESP-01",
           "signature": "ce638d06ff907ca32f1976a7ca4a67f0",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-849dd861b1e7",
@@ -3327,7 +3637,8 @@
           "scanned_at": "2026-08-26T12:06:52.412Z",
           "responder_id": "RESP-01",
           "signature": "93593a360cbf376b961d8b16194c93ff",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-03-TICK-20260826T121350114Z",
         "destination_temp_c": -80.12,
@@ -3351,7 +3662,8 @@
           "scanned_at": "2026-08-26T12:06:58.656Z",
           "responder_id": "RESP-01",
           "signature": "d797a452f7e598f33870b07c5eb12767",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-2dc63d790fa7",
@@ -3360,7 +3672,8 @@
           "scanned_at": "2026-08-26T12:07:04.047Z",
           "responder_id": "RESP-01",
           "signature": "b1f6506890c19c33767a1f2dba0e77e4",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-03-TICK-20260826T121350114Z",
         "destination_temp_c": -80.12,
@@ -3384,7 +3697,8 @@
           "scanned_at": "2026-08-26T12:11:49.158Z",
           "responder_id": "RESP-01",
           "signature": "2847328343a3beb4580e743a240b04da",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-b1e6b048f21d",
@@ -3393,7 +3707,8 @@
           "scanned_at": "2026-08-26T12:11:54.314Z",
           "responder_id": "RESP-01",
           "signature": "d83077dc228967b1ccf989c99261dcca",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -3417,7 +3732,8 @@
           "scanned_at": "2026-08-26T12:07:10.113Z",
           "responder_id": "RESP-01",
           "signature": "314495049e96f09ce6a197aea39fa4be",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-2721fbb485c0",
@@ -3426,7 +3742,8 @@
           "scanned_at": "2026-08-26T12:07:15.010Z",
           "responder_id": "RESP-01",
           "signature": "9d4dfb40e18a87d6eb268ca6af654816",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-03-TICK-20260826T121350114Z",
         "destination_temp_c": -80.12,
@@ -3450,7 +3767,8 @@
           "scanned_at": "2026-08-26T12:11:59.860Z",
           "responder_id": "RESP-01",
           "signature": "77743e486873bd4de3f3b6dabe4a6154",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-cebf6d7327f0",
@@ -3459,7 +3777,8 @@
           "scanned_at": "2026-08-26T12:12:05.455Z",
           "responder_id": "RESP-01",
           "signature": "a4b22c9bc730059616dd1c4e59c1bbae",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -3483,7 +3802,8 @@
           "scanned_at": "2026-08-26T12:10:09.384Z",
           "responder_id": "RESP-01",
           "signature": "1c316569348f5e34ad93b97f770bfdf2",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-aa6b2e820d08",
@@ -3492,7 +3812,8 @@
           "scanned_at": "2026-08-26T12:10:15.273Z",
           "responder_id": "RESP-01",
           "signature": "8e29229b0d16f17e6d629937782a4916",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -3516,7 +3837,8 @@
           "scanned_at": "2026-08-26T12:10:21.475Z",
           "responder_id": "RESP-01",
           "signature": "36f89792ac0caff484b986a54a0db9a3",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-9bb380bc0ee5",
@@ -3525,7 +3847,8 @@
           "scanned_at": "2026-08-26T12:10:26.682Z",
           "responder_id": "RESP-01",
           "signature": "6094d5c4fba04c6d1d376c658c6779c0",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -3549,7 +3872,8 @@
           "scanned_at": "2026-08-26T12:07:21.559Z",
           "responder_id": "RESP-01",
           "signature": "8c37396ed42e1ea6504895edbf30828d",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-80a1ca4b05f1",
@@ -3558,7 +3882,8 @@
           "scanned_at": "2026-08-26T12:07:26.739Z",
           "responder_id": "RESP-01",
           "signature": "31219dee4931067e86d97db7a1085b32",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-03-TICK-20260826T121350114Z",
         "destination_temp_c": -80.12,
@@ -3582,7 +3907,8 @@
           "scanned_at": "2026-08-26T12:12:11.846Z",
           "responder_id": "RESP-01",
           "signature": "7273e1aeae7b89c547c56b2572a67c85",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-ef1d66847e2c",
@@ -3591,7 +3917,8 @@
           "scanned_at": "2026-08-26T12:12:17.220Z",
           "responder_id": "RESP-01",
           "signature": "a4472f6598d7348a3b74ae7023fa6298",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -3615,7 +3942,8 @@
           "scanned_at": "2026-08-26T12:07:32.514Z",
           "responder_id": "RESP-01",
           "signature": "e428772b0e4330d72c02cf2611a40c70",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-493f7e4d59f8",
@@ -3624,7 +3952,8 @@
           "scanned_at": "2026-08-26T12:07:37.857Z",
           "responder_id": "RESP-01",
           "signature": "d30197b2150ec677273e61786f1702d6",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-03-TICK-20260826T121350114Z",
         "destination_temp_c": -80.12,
@@ -3648,7 +3977,8 @@
           "scanned_at": "2026-08-26T12:12:23.028Z",
           "responder_id": "RESP-01",
           "signature": "2bad40d35a81b5a1492f355b387804f5",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-1701cf2601d6",
@@ -3657,7 +3987,8 @@
           "scanned_at": "2026-08-26T12:12:28.014Z",
           "responder_id": "RESP-01",
           "signature": "e7bec781480cbbcf7d844e7d9b7238f5",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -3681,7 +4012,8 @@
           "scanned_at": "2026-08-26T12:07:43.390Z",
           "responder_id": "RESP-01",
           "signature": "e1175084b3f466da5296abf70a38e394",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-9806f72ad6df",
@@ -3690,7 +4022,8 @@
           "scanned_at": "2026-08-26T12:07:49.459Z",
           "responder_id": "RESP-01",
           "signature": "821574d2264ce078aff542413c326f04",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-03-TICK-20260826T121350114Z",
         "destination_temp_c": -80.12,
@@ -3714,7 +4047,8 @@
           "scanned_at": "2026-08-26T12:12:34.639Z",
           "responder_id": "RESP-01",
           "signature": "77ad353c003a64878c5a56027ac91ce2",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-8cbed4ced1e8",
@@ -3723,7 +4057,8 @@
           "scanned_at": "2026-08-26T12:12:40.011Z",
           "responder_id": "RESP-01",
           "signature": "76a391b9896143e949ef32e48c77160d",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -3747,7 +4082,8 @@
           "scanned_at": "2026-08-26T12:07:55.274Z",
           "responder_id": "RESP-01",
           "signature": "0812671d2c463e4d7d839468940f3d0d",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-a526a167b227",
@@ -3756,7 +4092,8 @@
           "scanned_at": "2026-08-26T12:08:01.058Z",
           "responder_id": "RESP-01",
           "signature": "57bb2a7e59ac4b66ace60a541f54fcdb",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-03-TICK-20260826T121350114Z",
         "destination_temp_c": -80.12,
@@ -3780,7 +4117,8 @@
           "scanned_at": "2026-08-26T12:08:07.111Z",
           "responder_id": "RESP-01",
           "signature": "eb9b82a5576d9781544158b1545f7620",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-25f106f2dbc4",
@@ -3789,7 +4127,8 @@
           "scanned_at": "2026-08-26T12:08:12.879Z",
           "responder_id": "RESP-01",
           "signature": "fa11a1751fea6d52884ec793b143f806",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-03-TICK-20260826T121350114Z",
         "destination_temp_c": -80.12,
@@ -3813,7 +4152,8 @@
           "scanned_at": "2026-08-26T12:10:32.405Z",
           "responder_id": "RESP-01",
           "signature": "9d14001f6542e857518602aa24e14263",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_evidence": {
           "scan_id": "SCN-ee3f98fdacfb",
@@ -3822,7 +4162,8 @@
           "scanned_at": "2026-08-26T12:10:37.404Z",
           "responder_id": "RESP-01",
           "signature": "3cceca5d424c1073620e54f3abbf0f9b",
-          "simulated": true
+          "simulated": true,
+          "corroboration": []
         },
         "destination_temp_reading_id": "R-F-31-TICK-20260826T121350114Z",
         "destination_temp_c": -80.7,
@@ -7138,16 +7479,16 @@
     "readings": {}
   },
   "artifact_hashes": {
-    "state_snapshot": "8cd9c413f255ed751accc29144ac5b9b2debffe8b7855fbb26d0f10e65086438",
-    "invariant_results": "6e491611542dbda6032b78efc485c66324eee33e4e2317d000ab09a679dd98d1",
+    "state_snapshot": "4225a8260a7aa0320031e159e43a19939449397262dd1080ced71e08c0641821",
+    "invariant_results": "acd6cc72c58927a47c394415e56c0dec3729fde6b4e341731c972223efde9998",
     "reconciliation": "f0d112b1685dd6c7e797b0292354ba80c079835aa8ae8269e0e2dc2869709d46"
   },
   "signature": {
     "algorithm": "EC_SIGN_P256_SHA256",
     "backend": "cloud-kms",
     "key_ref": "projects/project-2ac1d1fb-7da1-46b4-90e/locations/us-central1/keyRings/nightshift/cryptoKeys/evidence-signer/cryptoKeyVersions/1",
-    "signature_b64": "MEUCIQDvleITkUWnW4Zq4JVNIRzb2UT+xfQhYLbu+3C2JGeLCgIgPjhx+NZF4QMooB6UdSszOlxLBSgzIHRKPaTDxUdUUl4=",
+    "signature_b64": "MEQCIAYnl0W6kc79Ao3YzsM2znEdce32aePOZwR3tZcD86JOAiAp8ikF3Z7DQhHaPOoI7KbGpz1vG8CNToqWmhtx+8AR7A==",
     "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7zmdy0CR8Xwk5WlAERW95OR/ohBT\nJUGhskxKJDC7Pe47CI2gm2cTUcT0BW8qRIANGBkyss8aB5mUSQ0oo8X6Uw==\n-----END PUBLIC KEY-----\n",
-    "digest_sha256": "3ce14b9a2c1bfad9d6dc2ce356159c44b69c1f509b36d6b6cb7cf8456b7e565a"
+    "digest_sha256": "3e344df35f6e297483d22ec2fb60b973fd04a3395b6100cd532b48e381f52ff2"
   }
 }
