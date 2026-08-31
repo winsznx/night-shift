@@ -24,6 +24,21 @@ say() { printf '\n\033[1m%s\033[0m\n' "$*"; }
 
 [[ -n "${PROJECT}" && "${PROJECT}" != "(unset)" ]] || { echo "ERROR: no project" >&2; exit 1; }
 
+# The image is tagged with HEAD but built from the working directory, so a dirty tree
+# ships code that the commit label does not name. On a project whose thesis is verifiable
+# provenance that is the worst possible drift, and it is invisible once deployed.
+if [[ "${NIGHTSHIFT_ALLOW_DIRTY:-0}" != "1" ]] && [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
+  echo >&2
+  echo "Deployment refused: the working tree is dirty." >&2
+  echo "The image would be tagged ${TAG} but built from uncommitted files, so" >&2
+  echo "/api/meta's source_commit would not name the running code." >&2
+  echo >&2
+  git status --short >&2
+  echo >&2
+  echo "Commit first, or set NIGHTSHIFT_ALLOW_DIRTY=1 to deploy a knowingly unlabelled build." >&2
+  exit 1
+fi
+
 # PRD §23.5 traffic gate. Managed Runtime revision traffic splitting is not delivered on
 # this project, so the documented fallback applies: qualification state is authoritative
 # and deployment code must refuse an unqualified revision. This runs the drill corpus and
@@ -63,10 +78,22 @@ COMMON_ENV="${COMMON_ENV},NIGHTSHIFT_MODEL_ARMOR_TEMPLATE=projects/${PROJECT}/lo
 # Live screening is opt-in, so the deployment is the thing that asks for it. Local runs
 # and the drill corpus stay deterministic and credential-free even with a populated .env.
 COMMON_ENV="${COMMON_ENV},NIGHTSHIFT_LIVE_CONTENT_SCREEN=1"
+# Gemma is the semantic half of content screening. Without this the service falls back to
+# the regex layer alone and LIMITATIONS.md's "delivered: yes" row would be false. Only
+# gemma-4-26b-a4b-it-maas answers on this project, and only at the global endpoint.
+COMMON_ENV="${COMMON_ENV},NIGHTSHIFT_GEMMA_MODEL=${NIGHTSHIFT_GEMMA_MODEL:-gemma-4-26b-a4b-it-maas}"
 
-if [[ -n "${NIGHTSHIFT_AGENT_SECRET:-}" ]]; then
-  COMMON_ENV="${COMMON_ENV},NIGHTSHIFT_AGENT_SECRET=${NIGHTSHIFT_AGENT_SECRET}"
+# The agent principal token secret has a development default in config.py. Shipping that
+# default to Cloud Run is a real weakness, and it is silent, so refuse rather than warn.
+if [[ -z "${NIGHTSHIFT_AGENT_SECRET:-}" ]]; then
+  echo >&2
+  echo "Deployment refused: NIGHTSHIFT_AGENT_SECRET is not set, so the deployed layer-3" >&2
+  echo "principal token would fall back to the development default in config.py." >&2
+  echo "Generate one and re-run:" >&2
+  echo "  export NIGHTSHIFT_AGENT_SECRET=\$(openssl rand -base64 32)" >&2
+  exit 1
 fi
+COMMON_ENV="${COMMON_ENV},NIGHTSHIFT_AGENT_SECRET=${NIGHTSHIFT_AGENT_SECRET}"
 
 deploy() {
   local name="$1" service="$2" sa="$3" auth="$4"
