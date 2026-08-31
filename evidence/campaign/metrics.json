@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-26T07:23:55.053Z",
+  "generated_at": "2026-08-31T07:42:46.470Z",
   "corpus_version": "1.0.0",
   "total_runs": 126,
   "by_driver": {
@@ -31,8 +31,8 @@
       "containers_committed_total": 3252,
       "containers_unresolved_total": 252,
       "model_calls_total": 0,
-      "wall_clock_median_s": 0.54,
-      "wall_clock_p95_s": 0.86,
+      "wall_clock_median_s": 0.6,
+      "wall_clock_p95_s": 0.95,
       "per_drill": {
         "D1": {
           "runs": 6,

@@ -207,6 +207,7 @@ def main() -> int:
         envelope=envelope,
         links=" · ".join(links),
         manifests_cell=manifests_cell,
+        manifest_count=len(manifests),
         denials=denials_cell,
         reconciled=scripted.get("runs_fully_reconciled", 0),
         scored=scored,
@@ -512,7 +513,7 @@ Recomputes every invariant and every hash for each published manifest with no mo
 network, and checks the Cloud KMS signature against the pinned public key. Prints a full
 PASS/FAIL line per check, then:
 ```
-3/3 manifest(s) verified PASS.
+{manifest_count}/{manifest_count} manifest(s) verified PASS.
 ```
 
 ### Cloud

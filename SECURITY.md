@@ -45,22 +45,21 @@ records its misses alongside its catches.
 The §11.3 permission matrix is applied independently at four points. Skipping any one
 changes only *where* the refusal happens, never whether it happens.
 
-1. **Toolset construction** — an agent's tools are derived from its authority domains, so
+1. **Toolset construction**. An agent's tools are derived from its authority domains, so
    a forbidden tool never appears in the schema the model sees.
-2. **Tool broker** — deny by default. Unregistered tools are unreachable; the calling
+2. **Tool broker**. Deny by default. Unregistered tools are unreachable; the calling
    identity must hold the tool's domain.
-3. **Domain service route guard** — the same kernel table, re-checked server-side.
-4. **Cloud Run IAM** — over HTTP, each call is made *as the calling agent's own service
+3. **Domain service route guard**. The same kernel table, re-checked server-side.
+4. **Cloud Run IAM**. Over HTTP, each call is made *as the calling agent's own service
    account* via IAM Credentials impersonation, and an identity with no business calling
    a service is not a `run.invoker` on it.
 
 Layer 4 is worth being precise about, because it is easy to overclaim. It applies when
 the transport is HTTP against deployed Cloud Run services **and** impersonation
-succeeds. Every call records whether it actually carried the agent's identity —
-successes included, not just failures — so an empty record can never be read as "all of
-them did". Layers 1 and 2 run in process in the agent runtime and depend on no
-configuration at all, so they hold everywhere the loop runs. Layer 3 needs its own
-paragraph.
+succeeds. Every call records whether it actually carried the agent's identity, successes
+as well as failures, so an empty record can never be read as "all of them did". Layers 1
+and 2 run in process in the agent runtime and depend on no configuration at all, so they
+hold everywhere the loop runs. Layer 3 needs its own paragraph.
 
 An earlier version of this document claimed layer 4 applied generally. It did not: the
 transport used the container's ambient identity for every call, so the per-agent grants
@@ -111,14 +110,14 @@ calls deployed Cloud Run directly. Raw result in
 | Calling identity | Service | Matrix says | Result | Refused by |
 |---|---|---|---|---|
 | `ns-dispatch` | inventory | forbidden | **HTTP 403** | Cloud Run edge |
-| `ns-impact` | inventory | permitted | HTTP 200 | — |
-| `ns-dispatch` | facilities | permitted | HTTP 200 | — |
+| `ns-impact` | inventory | permitted | HTTP 200 | - |
+| `ns-dispatch` | facilities | permitted | HTTP 200 | - |
 
 The first row is the claim. The Dispatch Agent's own identity is refused by Google
 before any Night Shift code runs, and the response body is Cloud Run's HTML error page
 rather than one of our JSON refusals, which is how you can tell which layer answered.
 
-The other two rows exist because a denial on its own proves nothing — an unreachable
+The other two rows exist because a denial on its own proves nothing. An unreachable
 service also returns errors. A permitted identity calling the *same* route succeeds, so
 the 403 is authorization and not breakage.
 
@@ -131,7 +130,7 @@ have made this table meaningless.
 
 Only `ns-svc-bff`, the account the agent loop actually runs as, holds
 `serviceAccountTokenCreator` on the agent accounts. An earlier revision of the
-provisioning script granted it to every domain service — 49 bindings — which meant a
+provisioning script granted it to every domain service across 49 bindings, which meant a
 compromised Custody service could mint a token as the Dispatch Agent and call its peers
 with borrowed authority. That is precisely the lateral movement the per-agent identity
 model exists to prevent, so the grant now goes to one runtime and the provisioning
@@ -142,12 +141,12 @@ project.
 
 | Agent | Telemetry | Inventory | Capacity | Facilities | Custody |
 |---|---|---|---|---|---|
-| incident-commander | summary | — | — | — | — |
-| signal-investigator | read, equipment | — | — | — | — |
-| impact-analyst | summary | scoped read | — | — | — |
-| capacity-broker | backup read | placement view | read, **write** | — | — |
-| dispatch-agent | equipment | — | — | read, **write** | — |
-| custody-agent | destination | incident read | read | — | read, **write** |
+| incident-commander | summary | - | - | - | - |
+| signal-investigator | read, equipment | - | - | - | - |
+| impact-analyst | summary | scoped read | - | - | - |
+| capacity-broker | backup read | placement view | read, **write** | - | - |
+| dispatch-agent | equipment | - | - | read, **write** | - |
+| custody-agent | destination | incident read | read | - | read, **write** |
 
 The Commander cannot move anything. The Dispatch Agent has no inventory access whatsoever.
 The Capacity Broker cannot commit custody. The Custody Agent cannot create reservations or
@@ -156,7 +155,7 @@ work orders. Exactly one agent holds each write domain.
 ## The sensitive route exists on purpose
 
 `GET /v1/study-notes/{container_id}` returns real study metadata and is gated behind
-`inventory.write` — a domain no operational agent holds. It exists so the forbidden-tool
+`inventory.write`, a domain no operational agent holds. It exists so the forbidden-tool
 drill targets a route that genuinely returns something worth having. A denial against a
 stub proves nothing.
 
@@ -229,7 +228,7 @@ degradation is recorded. Night Shift never claims Model Armor alone secures it.
 ### How untrusted content actually reaches an agent
 
 A vendor reply is written into its work order through `POST /v1/vendor-replies`, which
-is deliberately not agent-callable — replies arrive from outside. The Dispatch Agent
+is deliberately not agent-callable. Replies arrive from outside. The Dispatch Agent
 then reads it through the ordinary `get_work_order` tool, and the broker screens the
 response on the way back.
 

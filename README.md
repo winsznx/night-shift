@@ -236,7 +236,7 @@ Recomputes every invariant and every hash for each published manifest with no mo
 network, and checks the Cloud KMS signature against the pinned public key. Prints a full
 PASS/FAIL line per check, then:
 ```
-3/3 manifest(s) verified PASS.
+2/2 manifest(s) verified PASS.
 ```
 
 ### Cloud
@@ -292,8 +292,8 @@ A non-zero exit means the deployment and the repo disagree about something.
 |---|---|
 | Drill runs fully reconciled | 60 of 126 |
 | Authorization denials recorded | 24 broker denials across 12 of 126 runs, plus 1 Cloud Run IAM edge denial |
-| Published manifests | 3 (1 CLOSED, 84 of 126 containers committed) |
-| Median drill wall clock | 0.54s deterministic tier, 191.12s live-agent tier |
+| Published manifests | 2 (1 CLOSED, 84 of 84 containers committed) |
+| Median drill wall clock | 0.6s deterministic tier, 191.12s live-agent tier |
 
 Every number above is read from `evidence/campaign/results.json`,
 `evidence/campaign-agent/results.json`, `evidence/iam-denial.json`, and the published
