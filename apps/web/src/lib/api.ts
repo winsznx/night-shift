@@ -345,6 +345,8 @@ export interface EvidenceIndex {
     failed_invariants: string[];
     reconciliation: { total: number; committed: string[]; unresolved: string[] };
     verification_status: string;
+    /** "repository" for a copy a reader can verify from a clone, "sealed-by-this-deployment" for one produced since the build. */
+    origin?: string;
   }[];
   campaign_metrics: { total_runs: number; by_driver: Record<string, CampaignBlock> };
   campaign_provenance: Record<string, unknown>;

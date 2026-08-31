@@ -834,9 +834,33 @@ class IncidentOrchestrator:
         }[operation]
         response = client.post(route, json=payload, headers={PRINCIPAL_HEADER: token})
         try:
-            return dict(response.json())
+            body = dict(response.json())
         except ValueError:
-            return {"error": f"non-JSON response {response.status_code}"}
+            body = {"error": f"non-JSON response {response.status_code}"}
+
+        if response.status_code >= 400:
+            # A consequence that failed used to be discarded here, which is the worst
+            # available outcome: the agent's verdict was validated, the deterministic
+            # follow-through did not happen, and nothing anywhere said so. The Commander
+            # then sees the same missing snapshot every round and re-delegates forever,
+            # which reads as an agent looping when it is the system that dropped a write.
+            record_event(
+                self.repo,
+                self.incident_id,
+                kind="refusal",
+                source=AgentName.INGESTOR.value,
+                summary=(
+                    f"Deterministic consequence {operation} failed with HTTP "
+                    f"{response.status_code} and was not applied"
+                ),
+                detail={
+                    "operation": operation,
+                    "status": response.status_code,
+                    "response": str(body)[:800],
+                },
+                agent=AgentName.INGESTOR,
+            )
+        return body
 
     @property
     def repo_settings(self) -> Any:

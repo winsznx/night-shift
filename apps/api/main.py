@@ -588,11 +588,38 @@ async def drill_detail(drill_id: str) -> dict[str, Any]:
     return {"drill": spec.as_dict(), "runs": runs, "run_count": len(runs)}
 
 
+def _manifest_row(body: dict[str, Any], origin: str) -> dict[str, Any]:
+    result = verify_manifest(body)
+    return {
+        "incident_id": body.get("incident_id"),
+        "incident_state": body.get("incident_state"),
+        "evaluated_at": body.get("evaluated_at"),
+        "signer_backend": body.get("signer_backend"),
+        "invariants_all_hold": body.get("invariants_all_hold"),
+        "failed_invariants": body.get("failed_invariants", []),
+        "reconciliation": body.get("reconciliation", {}),
+        "verification_status": result.status.value,
+        "origin": origin,
+    }
+
+
 @app.get("/api/evidence")
-async def evidence() -> dict[str, Any]:
-    """Published manifests and the campaign summary."""
+async def evidence(namespace: str | None = None) -> dict[str, Any]:
+    """Published manifests and the campaign summary.
+
+    Two sources, because they answer different questions. The repository copies are the
+    ones a reader can verify offline from a clone, and they are fixed at the commit the
+    image was built from. The store copies are every manifest this deployment has sealed
+    since, including ones the scheduled fleet produces while judging is open.
+
+    Reading only the image would mean a month of unattended rescues left no trace on the
+    surface that exists to show them. Each row says which source it came from, so nobody
+    has to guess whether a manifest is in the repo.
+    """
+    manifests: list[dict[str, Any]] = []
+    seen: set[str] = set()
+
     directory = settings.evidence_dir / "incidents"
-    manifests = []
     if directory.exists():
         for path in sorted(directory.glob("*.manifest.json")):
             try:
@@ -600,19 +627,24 @@ async def evidence() -> dict[str, Any]:
             except (OSError, ValueError) as exc:
                 log.warning("skipping unreadable manifest %s: %s", path.name, exc)
                 continue
-            result = verify_manifest(body)
-            manifests.append(
-                {
-                    "incident_id": body.get("incident_id"),
-                    "incident_state": body.get("incident_state"),
-                    "evaluated_at": body.get("evaluated_at"),
-                    "signer_backend": body.get("signer_backend"),
-                    "invariants_all_hold": body.get("invariants_all_hold"),
-                    "failed_invariants": body.get("failed_invariants", []),
-                    "reconciliation": body.get("reconciliation", {}),
-                    "verification_status": result.status.value,
-                }
-            )
+            manifests.append(_manifest_row(body, "repository"))
+            seen.add(str(body.get("incident_id")))
+
+    try:
+        for record in repo(namespace).store.query("manifests"):
+            body = record.get("manifest")
+            if not isinstance(body, dict):
+                continue
+            incident_id = str(body.get("incident_id"))
+            if incident_id in seen:
+                continue
+            manifests.append(_manifest_row(body, "sealed-by-this-deployment"))
+            seen.add(incident_id)
+    except Exception as exc:
+        # A store outage must degrade this page, never blank it.
+        log.warning("could not read sealed manifests from the store: %s", exc)
+
+    manifests.sort(key=lambda row: str(row.get("evaluated_at") or ""), reverse=True)
     campaign = _load_campaign()
     return {
         "manifests": manifests,
