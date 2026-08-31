@@ -35,16 +35,19 @@ export default async function VerifyPage() {
         <div className="mt-8 space-y-4">
           <Card>
             <h2 className="text-[14px] font-semibold text-[#171717]">Run the verifier</h2>
-            <pre className="mono scroll-x mt-2.5 rounded-[8px] border border-[#e5e5e5] bg-[#f5f5f5] px-3 py-2.5 text-[12px] leading-relaxed text-[#171717]">{`git clone <repo> && cd night-shift
+            <pre className="mono scroll-x mt-2.5 rounded-[8px] border border-[#e5e5e5] bg-[#f5f5f5] px-3 py-2.5 text-[12px] leading-relaxed text-[#171717]">{`git clone https://github.com/winsznx/night-shift.git && cd night-shift
 make setup
 make verify-demo
 
-# or point it at any manifest, local or remote
-python -m nightshift.verify --manifest evidence/incidents/<id>.manifest.json
-python -m nightshift.verify --manifest https://storage.googleapis.com/<bucket>/incidents/<id>/manifest.json`}</pre>
+# or point it at any single manifest in the clone
+python -m nightshift.verify --manifest evidence/incidents/INC-0E7C54F8B5.manifest.json`}</pre>
             <p className="mt-3 text-[13px] leading-relaxed text-[#525252]">
-              No model, no network beyond fetching the manifest itself, and no Google Cloud
-              credentials. The deterministic reference proof runs on a clean clone.
+              No model, no network, and no Google Cloud credentials. The manifests are
+              committed to the repository, so the deterministic reference proof runs on a
+              clean clone with nothing configured. The deployment also writes each sealed
+              copy to <Mono>gs://nightshift-evidence-project-2ac1d1fb-7da1-46b4-90e</Mono>,
+              but those objects are not public, so verifying from Cloud Storage needs
+              project access. The local path above is the one that works for everyone.
             </p>
           </Card>
 

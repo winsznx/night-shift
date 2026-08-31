@@ -22,17 +22,64 @@ import { getIncident, getTimeline } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * N4 asks how old a telemetry reading is at some instant, and which instant that is
+ * changes the answer. The API picks it and says why; the panel has to repeat both or it
+ * reads as a live sensor check on an incident that stopped moving days ago.
+ */
+const EVALUATION_BASIS: Record<string, string> = {
+  "incident closed_at":
+    "This incident is terminal, so the invariants were asked about the moment it closed. Asking about now would keep ageing evidence that stopped changing, and every settled incident would drift into a failing freshness check and stay there.",
+  "sealed manifest evaluated_at":
+    "This incident is terminal with no recorded close time, so the instant sealed into its published manifest was used. The offline verifier asks the same question against the same instant.",
+  "wall clock":
+    "This rescue is still running, so the invariants were asked about right now. A stale telemetry reading here is a live finding.",
+};
+
+/**
+ * Transcribed from evidence/traces.json, which scripts/verify_traces.py wrote by reading
+ * the Cloud Trace API back. The console link below only opens for someone holding IAM on
+ * the project, so the numbers it would show belong on the page instead of behind it.
+ */
+const RECORDED_TRACES = {
+  generated_at: "2026-08-26T12:25:33.392Z",
+  window_hours: 4,
+  traces_examined: 118,
+  nightshift_traces: 25,
+  total_spans: 496,
+  distinct_span_names: 44,
+  top_spans: [
+    { name: "tool.get_incident", count: 45 },
+    { name: "tool.record_pickup", count: 42 },
+    { name: "effect.custody_pickup", count: 42 },
+    { name: "tool.record_destination_scan", count: 42 },
+    { name: "effect.custody_destination_scan", count: 42 },
+    { name: "effect.custody_commit", count: 42 },
+    { name: "invocation", count: 39 },
+    { name: "tool.get_incident_timeline", count: 33 },
+    { name: "tool.request_incident_transition", count: 29 },
+    { name: "effect.incident_transition", count: 28 },
+    { name: "effect.release_hold", count: 21 },
+  ],
+};
+
 export default async function IncidentDetail({
   params,
 }: {
   params: Promise<{ incidentId: string }>;
 }) {
   const { incidentId } = await params;
-  const [detail, timeline] = await Promise.all([
+  const [result, timeline] = await Promise.all([
     getIncident(incidentId),
     getTimeline(incidentId),
   ]);
-  if (!detail) notFound();
+  if (result.missing) notFound();
+  // An API that fell over is not an incident that never existed, and saying otherwise
+  // here is exactly the claim this product refuses to make. error.tsx takes it from here.
+  if (!result.data) {
+    throw result.failure ?? new Error(`Incident ${incidentId} could not be loaded.`);
+  }
+  const detail = result.data;
 
   const { incident, reconciliation: recon, freezer, invariants } = detail;
   const failedInvariants = invariants.filter((i) => !i.holds);

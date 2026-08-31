@@ -93,13 +93,25 @@ def build_runtime(
         namespace=namespace,
     )
 
+    # Live screening stays keyed on the explicit opt-in, not on whether a template or a
+    # Gemma model happens to be configured. A populated .env must not quietly turn the
+    # credential-free drill corpus into something that calls two live Google APIs.
     live_screen = (
         use_live_content_screen
         if use_live_content_screen is not None
-        else (settings.live_content_screen and bool(settings.model_armor_template))
+        else (
+            settings.live_content_screen
+            and bool(settings.model_armor_template or settings.gemma_screen_model)
+        )
     )
     content_screen = (
-        build_content_screen(settings.model_armor_template, settings.region)
+        build_content_screen(
+            settings.model_armor_template,
+            settings.region,
+            project=settings.project_id,
+            gemma_model=settings.gemma_screen_model,
+            model_location=settings.model_location,
+        )
         if live_screen
         else HeuristicScreen()
     )

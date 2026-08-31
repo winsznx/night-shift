@@ -1,10 +1,52 @@
 import { AppShell, ApiDown, PageHeader } from "@/components/shell";
 import { Badge, Card, CardHeader, Mono, Table, Td } from "@/components/ui";
-import { getFleet } from "@/lib/api";
+import { type FleetAgent, getFleet } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
 const DOMAIN_COLUMNS = ["telemetry", "inventory", "capacity", "facilities", "custody"];
+
+/** `/api/fleet` reports where each identity came from, but the shared `FleetAgent` type
+ * has not picked the field up yet. Widening it here keeps the page honest without
+ * loosening the type for every other caller. */
+function identitySource(
+  agent: FleetAgent & { identity_source?: string | null },
+): string | null {
+  return agent.identity_source ?? null;
+}
+
+/** Identity is shown exactly as reported and never reconstructed from the agent name.
+ * A guessed principal renders identically to a real one, which is the confusion this
+ * page exists to prevent. */
+function IdentityCell({ agent }: { agent: FleetAgent }) {
+  if (!agent.identity) {
+    return (
+      <span className="flex flex-col gap-0.5">
+        <span className="mono text-[11px] text-[#a3a3a3]">no identity reported</span>
+        <span className="text-[11px] leading-snug text-[#737373]">
+          The fleet API returned none for this agent.
+        </span>
+      </span>
+    );
+  }
+  const source = identitySource(agent);
+  const caption =
+    source === "provisioned-service-account"
+      ? "Provisioned Google service account. The gateway mints this agent's outbound OIDC token as it."
+      : source === "agent-registry-snapshot"
+        ? "Recorded in infra/registry-snapshot.json when the fleet was deployed."
+        : null;
+  return (
+    <span className="flex flex-col gap-0.5">
+      <Mono className="text-[11px]">{agent.identity}</Mono>
+      {caption ? (
+        <span className="max-w-[38ch] text-[11px] leading-snug text-[#737373]">
+          {caption}
+        </span>
+      ) : null}
+    </span>
+  );
+}
 
 export default async function FleetPage() {
   const fleet = await getFleet();
@@ -73,13 +115,7 @@ export default async function FleetPage() {
                     )}
                   </Td>
                   <Td>
-                    {a.identity ? (
-                      <Mono className="text-[11px]">{a.identity}</Mono>
-                    ) : (
-                      <Mono className="text-[11px]">
-                        {`ns-${a.agent.split("-").pop()}@…iam`}
-                      </Mono>
-                    )}
+                    <IdentityCell agent={a} />
                   </Td>
                   <Td>
                     {a.latest_drill ? (
@@ -115,19 +151,30 @@ export default async function FleetPage() {
             <h2 className="text-[14px] font-semibold text-[#171717]">
               What &ldquo;identity&rdquo; means here
             </h2>
+            {/* 24 is the scripted tier's authorization_denials_total in
+                evidence/campaign/metrics.json, restated in LIMITATIONS.md. The fleet
+                endpoint carries no campaign counts, so the figure is stated as a literal
+                here rather than derived from data this page has. */}
             <p className="mt-1.5 max-w-[80ch] text-[13px] leading-relaxed text-[#525252]">
-              Each agent runs under its own Google service account, and the permission
-              matrix below is enforced as Cloud Run IAM: an identity with no business
-              calling a service is not a <Mono>run.invoker</Mono> on it, so the refusal
-              happens at Google&rsquo;s edge before any Night Shift code runs. The same
-              matrix is checked again by the tool broker and a third time inside each
-              domain service.
+              Each agent has its own provisioned Google service account, and the gateway
+              mints that agent&rsquo;s outbound OIDC token as it. The permission matrix
+              below is enforced twice in our own code: the tool broker checks it on every
+              call, and each domain service checks it again before it acts. All 24
+              authorization denials recorded in the drill corpus are ours, because the
+              corpus runs in-process where there is no network hop for Cloud Run to
+              refuse.
             </p>
             <p className="mt-2 max-w-[80ch] text-[13px] leading-relaxed text-[#525252]">
-              Agents are <span className="font-medium">not</span> registered as managed
-              Agent Registry or Agent Runtime resources on this deployment. That is
-              recorded on the specific claims it affects rather than glossed over — see{" "}
-              <Mono>LIMITATIONS.md</Mono>.
+              One denial is Google&rsquo;s. <Mono>evidence/iam-denial.json</Mono> records{" "}
+              <Mono>ns-dispatch</Mono> taking an HTTP 403 from the Cloud Run edge on the
+              Inventory service while <Mono>ns-impact</Mono> gets 200 on the same route. A
+              broken endpoint would have refused both. That single platform denial is
+              reported on its own and is never pooled into the corpus counts.
+            </p>
+            <p className="mt-2 max-w-[80ch] text-[13px] leading-relaxed text-[#525252]">
+              Agents are not registered as managed Agent Registry or Agent Runtime
+              resources on this deployment. That is recorded on the specific claims it
+              affects rather than glossed over. See <Mono>LIMITATIONS.md</Mono>.
             </p>
           </Card>
 

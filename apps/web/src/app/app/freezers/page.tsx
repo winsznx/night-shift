@@ -4,8 +4,32 @@ import { getOverview } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
+/** Mirrors `KernelConfig.destination_temp_ceiling_c` and
+ * `destination_temp_max_age_s` in `nightshift/safety_kernel/config.py`. The API
+ * publishes no kernel thresholds, so the page restates them rather than implying a
+ * rule of its own. */
+const CEILING_C = -60;
+const FRESHNESS_WINDOW_S = 900;
+
 export default async function FreezersPage() {
   const overview = await getOverview();
+
+  /* The roomiest unit is read off the live rows. A named winner written into the copy
+     goes wrong the moment the estate changes, and this page is the one that argues free
+     space and availability are different things. */
+  const roomiest = overview?.freezers.length
+    ? overview.freezers.reduce((best, f) => (f.free_slots > best.free_slots ? f : best))
+    : null;
+  const roomiestBlockers = roomiest
+    ? [
+        roomiest.is_backup_qualified ? null : "is not backup-qualified",
+        roomiest.current_temp_c > CEILING_C ? `sits above the ${CEILING_C}°C ceiling` : null,
+        roomiest.reading_age_s > FRESHNESS_WINDOW_S
+          ? `was last read ${Math.round(roomiest.reading_age_s)}s ago`
+          : null,
+        roomiest.hold_active ? "is under a containment hold" : null,
+      ].filter((reason): reason is string => reason !== null)
+    : [];
 
   return (
     <AppShell active="/app/freezers">
@@ -68,9 +92,17 @@ export default async function FreezersPage() {
             <h2 className="text-[14px] font-semibold text-[#171717]">Why a freezer with free slots may still be unusable</h2>
             <p className="mt-1.5 max-w-[78ch] text-[13px] leading-relaxed text-[#525252]">
               A destination has to be backup-qualified, currently below the ultra-low
-              ceiling, freshly read, and free of a containment hold. In this estate F-24
-              has the most free slots and is rejected on every reservation attempt because
-              it sits above the ceiling. Free space is not availability.
+              ceiling, freshly read, and free of a containment hold.{" "}
+              {roomiest ? (
+                <>
+                  Right now {roomiest.freezer_id} has the most free slots at{" "}
+                  {roomiest.free_slots}, and it{" "}
+                  {roomiestBlockers.length > 0
+                    ? `${roomiestBlockers.join(", ")}, so a reservation against it is refused.`
+                    : "clears all four gates, so it can take a reservation."}{" "}
+                </>
+              ) : null}
+              Free space is not availability.
             </p>
           </Card>
         </div>

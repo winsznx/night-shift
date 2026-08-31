@@ -430,7 +430,7 @@ def _manifest_from_disk(incident_id: str) -> dict[str, Any] | None:
 async def fleet(namespace: str | None = None) -> dict[str, Any]:
     r = repo(namespace)
     revisions = {row["agent"]: row for row in r.store.query("agentRevisions")}
-    registry = _load_registry_snapshot()
+    registry = _load_registry_snapshot(r)
     qualification = _load_qualification()
     matrix = permission_matrix()
 
@@ -483,8 +483,17 @@ async def fleet(namespace: str | None = None) -> dict[str, Any]:
     }
 
 
-def _load_registry_snapshot() -> dict[str, dict[str, Any]]:
-    """Live Agent Registry / Identity resources recorded by the deploy script."""
+def _load_registry_snapshot(r: Repository) -> dict[str, dict[str, Any]]:
+    """Agent Registry resources, from the store first and the image second.
+
+    The store is checked first so a registration performed after the image was built is
+    visible without a rebuild. Registering agents is a cloud operation with its own
+    failure modes, and tying it to a redeploy would mean the only way to correct a
+    partial registration is another redeploy.
+    """
+    record = r.store.get("registrySnapshot", "current")
+    if record and isinstance(record.get("agents"), dict):
+        return record["agents"]
     path = settings.repo_root / "infra" / "registry-snapshot.json"
     if not path.exists():
         return {}

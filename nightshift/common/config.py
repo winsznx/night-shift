@@ -55,6 +55,16 @@ class Settings:
     asking for it, so the suite's headline property was true only on a machine that
     happened to be unconfigured. The deployment sets this; local runs and CI do not.
     """
+    gemma_screen_model: str = field(default_factory=lambda: _env("NIGHTSHIFT_GEMMA_MODEL"))
+    """Gemma model id for the semantic content-screening layer, empty to disable it.
+
+    Served from the same Vertex ``global`` endpoint as the fleet's Gemini model. Only
+    ``gemma-4-26b-a4b-it-maas`` answers on this project: every conventional Gemma in
+    Model Garden here is deploy-only, and the regional endpoint refuses it with
+    FAILED_PRECONDITION, which is the same global-only trap ``model_location`` already
+    documents for Gemini.
+    """
+
     memory_bank_name: str = field(default_factory=lambda: _env("NIGHTSHIFT_MEMORY_BANK"))
     agent_registry_location: str = field(
         default_factory=lambda: _env("NIGHTSHIFT_REGISTRY_LOCATION", "us-central1")

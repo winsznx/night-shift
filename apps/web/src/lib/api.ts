@@ -32,13 +32,42 @@ async function get<T>(path: string, revalidate = 5): Promise<T> {
   return (await response.json()) as T;
 }
 
+/**
+ * The outcome of a request that must not throw.
+ *
+ * A 404 and a 502 are different facts about the world. Collapsing them makes a page
+ * announce "no such incident" when the truth is that the API fell over, which is the
+ * one thing this product claims never to do.
+ */
+export interface Fetched<T> {
+  data: T | null;
+  /** True only for a 404. An upstream or network failure leaves this false. */
+  missing: boolean;
+  /** Set when the request failed for any reason other than a 404. */
+  failure: ApiError | null;
+}
+
+export async function tryGetResult<T>(path: string, revalidate = 5): Promise<Fetched<T>> {
+  try {
+    return { data: await get<T>(path, revalidate), missing: false, failure: null };
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) {
+      return { data: null, missing: true, failure: null };
+    }
+    return {
+      data: null,
+      missing: false,
+      failure:
+        error instanceof ApiError
+          ? error
+          : new ApiError(error instanceof Error ? error.message : String(error), 0, path),
+    };
+  }
+}
+
 /** Returns null instead of throwing, for surfaces that must degrade rather than 500. */
 export async function tryGet<T>(path: string, revalidate = 5): Promise<T | null> {
-  try {
-    return await get<T>(path, revalidate);
-  } catch {
-    return null;
-  }
+  return (await tryGetResult<T>(path, revalidate)).data;
 }
 
 // --- types ---------------------------------------------------------------------------
@@ -159,6 +188,10 @@ export interface IncidentDetail {
     }[];
   };
   evaluated_at: string;
+  /** The instant the hard invariants were asked about, which is not always now. */
+  evaluated_as_of: string;
+  /** Why that instant: "incident closed_at", "sealed manifest evaluated_at", or "wall clock". */
+  evaluation_basis: string;
   trace: {
     root_trace_id: string | null;
     trace_ids: string[];
@@ -370,14 +403,14 @@ export interface ResponderView {
 
 export const getMeta = () => tryGet<Meta>("/api/meta", 60);
 export const getOverview = () => tryGet<Overview>("/api/overview", 3);
-export const getIncident = (id: string) => tryGet<IncidentDetail>(`/api/incidents/${id}`, 3);
+export const getIncident = (id: string) => tryGetResult<IncidentDetail>(`/api/incidents/${id}`, 3);
 export const getTimeline = (id: string) =>
   tryGet<{ events: TimelineEvent[]; count: number }>(`/api/incidents/${id}/timeline`, 3);
 export const getProof = (id: string) => tryGet<Proof>(`/api/incidents/${id}/proof`, 30);
 export const getFleet = () => tryGet<Fleet>("/api/fleet", 30);
 export const getDrills = () => tryGet<Drills>("/api/drills", 30);
 export const getDrill = (id: string) =>
-  tryGet<{ drill: DrillSummary; runs: Record<string, unknown>[]; run_count: number }>(
+  tryGetResult<{ drill: DrillSummary; runs: Record<string, unknown>[]; run_count: number }>(
     `/api/drills/${id}`,
     30,
   );

@@ -4,10 +4,17 @@ import { getOverview } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
+/** N4 refuses a destination whose newest reading is older than this. Mirrors
+ * `KernelConfig.destination_temp_max_age_s` in `nightshift/safety_kernel/config.py`;
+ * the API publishes no kernel thresholds, so the page restates the number rather than
+ * implying a rule of its own. */
+const FRESHNESS_WINDOW_S = 900;
+
 export default async function CapacityPage() {
   const overview = await getOverview();
   const backups = overview?.freezers.filter((f) => f.is_backup_qualified) ?? [];
   const ceiling = -60;
+  const staleCount = backups.filter((f) => f.reading_age_s > FRESHNESS_WINDOW_S).length;
 
   return (
     <AppShell active="/app/capacity">
@@ -36,12 +43,14 @@ export default async function CapacityPage() {
             <Table headers={["Freezer", "Temp", "Free slots", "Reading age", "Eligible", "Reason"]} minWidth={780}>
               {backups.map((f) => {
                 const tooWarm = f.current_temp_c > ceiling;
-                const stale = f.reading_age_s > 900;
+                const stale = f.reading_age_s > FRESHNESS_WINDOW_S;
                 const held = f.hold_active;
                 const noRoom = f.free_slots <= 0;
                 const reasons = [
                   tooWarm ? `above the ${ceiling}°C ceiling` : null,
-                  stale ? "reading is stale" : null,
+                  stale
+                    ? `last read ${Math.round(f.reading_age_s)}s ago, past the ${FRESHNESS_WINDOW_S}s N4 freshness window`
+                    : null,
                   held ? "under containment hold" : null,
                   noRoom ? "no free slots" : null,
                 ].filter(Boolean);
@@ -65,6 +74,20 @@ export default async function CapacityPage() {
                 );
               })}
             </Table>
+            <div className="border-t border-[#e5e5e5] px-4 py-3">
+              <p className="max-w-[80ch] text-[13px] leading-relaxed text-[#525252]">
+                A stale destination is refused by design. N4 will not accept temperature
+                evidence older than {FRESHNESS_WINDOW_S} seconds, because a reading that
+                old cannot show a freezer is cold right now.
+                {staleCount > 0
+                  ? ` ${staleCount} of ${backups.length} destinations sit past the window at this moment.`
+                  : ""}{" "}
+                Telemetry in this estate is seeded in batches, so between refreshes every
+                reading ages out together and the backup set turns ineligible at once.
+                That is the freshness check holding. A commit attempted against any of
+                them would be refused by the safety kernel.
+              </p>
+            </div>
           </Card>
         </div>
       )}
