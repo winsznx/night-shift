@@ -698,6 +698,14 @@ def _load_claims() -> list[dict[str, Any]]:
 class ScanRequest(BaseModel):
     container_id: str = Field(max_length=64)
     location_ref: str = Field(default="", max_length=64)
+    label_photo: str | None = Field(default=None, max_length=6_000_000)
+    """Base64 or data-URL photograph of the container label."""
+
+    display_photo: str | None = Field(default=None, max_length=6_000_000)
+    """Base64 or data-URL photograph of the destination freezer's display."""
+
+    voice_note: str | None = Field(default=None, max_length=6_000_000)
+    """Base64 or data-URL audio of the responder's spoken confirmation."""
 
 
 class ExceptionRequest(BaseModel):
@@ -857,8 +865,9 @@ async def responder_pickup(
             detail={"error": "no reserved destination exists for this container yet"},
         )
     slot = transfer.destination_slot if transfer else f"{destination}-SLOT-{body.container_id[-4:]}"
+    corroboration, reason = _corroborate(body, telemetry_celsius=None)
 
-    return _broker_call(
+    result = _broker_call(
         r,
         "record_pickup",
         {
@@ -871,8 +880,11 @@ async def responder_pickup(
             "reservation_id": reservation.id if reservation else None,
             "scan_signature": _signature(token, body.container_id, "pickup"),
             "simulated": False,
+            "corroboration": corroboration,
         },
     )
+    result["corroboration"] = {"records": corroboration, "reason": reason}
+    return result
 
 
 @app.post("/api/respond/{token}/receive")
@@ -888,6 +900,11 @@ async def responder_receive(
         raise HTTPException(status_code=409, detail={"error": "no pickup recorded yet"})
 
     scanned = body.location_ref or transfer.destination_freezer
+    readings = r.list_readings(scanned)
+    corroboration, reason = _corroborate(
+        body, telemetry_celsius=readings[-1].celsius if readings else None
+    )
+
     result = _broker_call(
         r,
         "record_destination_scan",
@@ -899,8 +916,10 @@ async def responder_receive(
             "destination_slot": transfer.destination_slot,
             "scan_signature": _signature(token, body.container_id, "destination"),
             "simulated": False,
+            "corroboration": corroboration,
         },
     )
+    result["corroboration"] = {"records": corroboration, "reason": reason}
     if result.get("receipt", {}).get("status") == "COMMITTED":
         # Attempt the authoritative commit immediately. It will be refused if the
         # destination reading is stale or out of bounds, and the responder sees why.
@@ -945,6 +964,83 @@ def _signature(token: str, container_id: str, phase: str) -> str:
     from services.common.identity import responder_task_signature
 
     return responder_task_signature(token, {"container_id": container_id, "phase": phase})
+
+
+def _capture_digest(data: bytes) -> str:
+    import hashlib
+
+    return hashlib.sha256(data).hexdigest()[:32]
+
+
+def _corroborate(
+    body: ScanRequest, *, telemetry_celsius: float | None
+) -> tuple[list[dict[str, Any]], str]:
+    """Read the responder's captures and adjudicate them against authoritative state.
+
+    Returns the records to store and a one-line reason. Raises 409 when a capture
+    contradicts the record, which is the only outcome that stops a scan.
+
+    The order matters. A model reads the capture and returns a claim, then deterministic
+    code in ``nightshift.safety_kernel.corroboration`` compares that claim to state we
+    already hold. Nothing the model returns can authorise anything: capture evidence can
+    only ever refuse a scan the task token would otherwise have allowed, never permit
+    one it would not. That asymmetry is why a forged photograph gains an attacker
+    nothing, and it is why this can run on an unauthenticated route at all.
+    """
+    from nightshift.multimodal.reader import build_reader, decode_capture
+    from nightshift.safety_kernel.corroboration import (
+        adjudicate,
+        corroborate_container_label,
+        corroborate_destination_display,
+        corroborate_voice_confirmation,
+    )
+
+    label = decode_capture(body.label_photo)
+    display = decode_capture(body.display_photo)
+    voice = decode_capture(body.voice_note)
+    if not any((label, display, voice)):
+        return [], "no capture evidence supplied; authorised by task token alone"
+
+    reader = build_reader(settings)
+    results = []
+    digests: dict[str, str] = {}
+
+    if label is not None:
+        observed = reader.read_container_label(label) or ""
+        results.append(corroborate_container_label(body.container_id, observed))
+        digests["container_label"] = _capture_digest(label)
+    if display is not None:
+        observed_c = reader.read_freezer_display(display)
+        results.append(corroborate_destination_display(telemetry_celsius, observed_c))
+        digests["destination_display"] = _capture_digest(display)
+    if voice is not None:
+        transcript = reader.transcribe_confirmation(voice) or ""
+        results.append(corroborate_voice_confirmation(transcript))
+        digests["voice_confirmation"] = _capture_digest(voice)
+
+    allowed, reason, _ = adjudicate(results)
+    records = [
+        {
+            **result.as_dict(),
+            "capture_sha256": digests.get(result.kind, ""),
+            "read_by_model": settings.model_id,
+        }
+        for result in results
+    ]
+    # Trim to what CorroborationRecord accepts. The adjudicator's evidence_sources are
+    # for the receipt, not for the stored record.
+    records = [{k: v for k, v in r.items() if k != "evidence_sources"} for r in records]
+
+    if not allowed:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error": "capture evidence contradicts the scan",
+                "reason": reason,
+                "corroboration": records,
+            },
+        )
+    return records, reason
 
 
 def _broker_call(

@@ -19,7 +19,7 @@ from nightshift.common.clock import now_iso
 from nightshift.common.ids import scan_action_id, transfer_action_id
 from nightshift.common.store import TxnContext
 from nightshift.safety_kernel import ActionRequest, KernelState, reconciliation_snapshot
-from nightshift.schemas.core import ScanEvidence, Transfer
+from nightshift.schemas.core import CorroborationRecord, ScanEvidence, Transfer
 from nightshift.schemas.enums import (
     ActionType,
     CustodyState,
@@ -48,6 +48,14 @@ class PickupRequest(BaseModel):
     scan_signature: str = ""
     simulated: bool = False
     trace_id: str | None = None
+    corroboration: list[CorroborationRecord] = Field(default_factory=list)
+    """Capture evidence already adjudicated by the caller.
+
+    Adjudication happens at the edge, where the captures arrive, and this service
+    records the verdict rather than repeating it. The records are inert here: they
+    travel into ScanEvidence and therefore into the signed manifest, and nothing in this
+    service grants authority based on them.
+    """
 
 
 class DestinationScanRequest(BaseModel):
@@ -59,6 +67,7 @@ class DestinationScanRequest(BaseModel):
     scan_signature: str = ""
     simulated: bool = False
     trace_id: str | None = None
+    corroboration: list[CorroborationRecord] = Field(default_factory=list)
 
 
 class CommitRequest(BaseModel):
@@ -154,6 +163,7 @@ async def record_pickup(
             responder_id=body.responder_id,
             signature=body.scan_signature or "unsigned-demo-scan",
             simulated=body.simulated,
+            corroboration=list(body.corroboration),
         )
         existing = state.transfers.get(f"TR-{body.incident_id}-{body.container_id}")
         transfer = Transfer(
@@ -224,6 +234,7 @@ async def record_destination_scan(
             responder_id=body.responder_id,
             signature=body.scan_signature or "unsigned-demo-scan",
             simulated=body.simulated,
+            corroboration=list(body.corroboration),
         )
         updated = transfer.model_copy(
             update={

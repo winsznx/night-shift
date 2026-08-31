@@ -234,6 +234,28 @@ class Dispatch(Strict):
     container_ids: list[str] = Field(default_factory=list)
 
 
+class CorroborationRecord(Strict):
+    """One capture, what was read from it, and whether it agreed with the record.
+
+    Written by the deterministic adjudicator in
+    ``nightshift.safety_kernel.corroboration``, never by the model that did the reading.
+    ``observed`` is the model's output and is treated as a claim; ``expected`` is
+    authoritative state; ``status`` is the arithmetic comparison of the two.
+
+    The capture itself is not stored. A digest of the bytes is, which is enough to prove
+    later that a specific photograph produced a specific reading, without putting an
+    image of a laboratory into a public evidence bucket.
+    """
+
+    kind: str
+    status: str
+    detail: str
+    observed: str = ""
+    expected: str = ""
+    capture_sha256: str = ""
+    read_by_model: str = ""
+
+
 class ScanEvidence(Strict):
     scan_id: str
     container_id: str
@@ -242,6 +264,12 @@ class ScanEvidence(Strict):
     responder_id: str
     signature: str = Field(description="HMAC over the scan body using the task token secret")
     simulated: bool = False
+    corroboration: list[CorroborationRecord] = Field(
+        default_factory=list,
+        description="Capture evidence adjudicated against authoritative state. Empty "
+        "means the scan rested on the task token alone, which is recorded rather than "
+        "hidden.",
+    )
 
 
 class Transfer(Strict):

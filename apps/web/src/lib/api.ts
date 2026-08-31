@@ -261,6 +261,12 @@ export interface FleetAgent {
   qualification: string;
   traffic_percent: number;
   identity: string | null;
+  /**
+   * Where `identity` came from, so the page can say it without overclaiming.
+   * "provisioned-service-account" is the account the gateway mints this agent's
+   * outbound OIDC token as. It is not a live Agent Registry read.
+   */
+  identity_source?: "agent-registry-snapshot" | "provisioned-service-account" | "none" | null;
   runtime_resource: string | null;
   registry_resource: string | null;
   latest_drill: {

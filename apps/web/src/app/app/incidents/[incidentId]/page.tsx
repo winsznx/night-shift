@@ -382,7 +382,7 @@ export default async function IncidentDetail({
           <Card padded={false}>
             <CardHeader
               title="Safety kernel"
-              subtitle="Recomputed from current state"
+              subtitle="Recomputed at this incident's evaluation instant"
               right={
                 <Badge tone={failedInvariants.length === 0 ? "green" : "red"} dot>
                   {invariants.length - failedInvariants.length}/{invariants.length}
@@ -394,6 +394,22 @@ export default async function IncidentDetail({
                 <InvariantRow key={i.invariant} result={i} />
               ))}
             </Table>
+            <div className="border-t border-[#e5e5e5] px-4 py-3">
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <span className="text-[11px] tracking-wide text-[#737373] uppercase">
+                  Evaluated as of
+                </span>
+                <Mono className="text-[12px] text-[#171717]">{detail.evaluated_as_of}</Mono>
+              </div>
+              <div className="mt-1 flex flex-wrap items-baseline justify-between gap-2">
+                <span className="text-[11px] tracking-wide text-[#737373] uppercase">Basis</span>
+                <Mono className="text-[11px]">{detail.evaluation_basis}</Mono>
+              </div>
+              <p className="mt-2 text-[12px] leading-relaxed text-[#737373]">
+                {EVALUATION_BASIS[detail.evaluation_basis] ??
+                  "The API reported an evaluation basis this page does not have a description for."}
+              </p>
+            </div>
           </Card>
 
           <Card padded={false}>
@@ -427,14 +443,21 @@ export default async function IncidentDetail({
                     {detail.trace.root_trace_id}
                   </Mono>
                   {detail.trace.console_url ? (
-                    <a
-                      href={detail.trace.console_url}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      className="mt-3 inline-block text-[13px] font-medium text-[#2563eb] hover:underline"
-                    >
-                      Open in Cloud Trace →
-                    </a>
+                    <div className="mt-3">
+                      <a
+                        href={detail.trace.console_url}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="inline-block text-[13px] font-medium text-[#2563eb] hover:underline"
+                      >
+                        Open in Cloud Trace (needs project access) →
+                      </a>
+                      <p className="mt-1 text-[12px] leading-relaxed text-[#737373]">
+                        That console only opens for someone holding IAM on the Google Cloud
+                        project this deployment runs in. The recorded span counts below need
+                        no access at all.
+                      </p>
+                    </div>
                   ) : null}
                   <p className="mt-3 text-[12px] leading-relaxed text-[#737373]">
                     {detail.trace.trace_ids.length} trace
@@ -451,6 +474,39 @@ export default async function IncidentDetail({
                   tracing failure can never affect a rescue.
                 </p>
               )}
+            </div>
+
+            <div className="border-t border-[#e5e5e5] px-4 py-3">
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <h3 className="text-[13px] font-semibold text-[#171717]">Recorded spans</h3>
+                <Mono className="text-[11px]">
+                  {RECORDED_TRACES.total_spans} spans · {RECORDED_TRACES.nightshift_traces} traces
+                </Mono>
+              </div>
+              <p className="mt-1 text-[12px] leading-relaxed text-[#737373]">
+                Read back from the Cloud Trace API over a {RECORDED_TRACES.window_hours} hour
+                window on {RECORDED_TRACES.generated_at.slice(0, 10)} and committed to{" "}
+                <Mono className="text-[11px]">evidence/traces.json</Mono>. It covers{" "}
+                {RECORDED_TRACES.nightshift_traces} Night Shift traces out of{" "}
+                {RECORDED_TRACES.traces_examined} examined, so these are campaign-wide
+                counts rather than this incident&apos;s own spans. Every name below is one
+                Night Shift creates itself, so their presence shows the instrumentation
+                reached Cloud Trace rather than that something served HTTP.
+              </p>
+              <ul className="mt-2.5 space-y-1">
+                {RECORDED_TRACES.top_spans.map((span) => (
+                  <li key={span.name} className="flex items-baseline justify-between gap-3">
+                    <Mono className="truncate text-[11px]">{span.name}</Mono>
+                    <Mono className="shrink-0 text-[11px] font-medium text-[#171717]">
+                      {span.count}
+                    </Mono>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2 text-[12px] text-[#737373]">
+                {RECORDED_TRACES.top_spans.length} of {RECORDED_TRACES.distinct_span_names}{" "}
+                distinct span names shown. The rest are in the committed file.
+              </p>
             </div>
           </Card>
 

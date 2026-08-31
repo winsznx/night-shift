@@ -25,11 +25,15 @@ export default async function FreezersPage() {
         roomiest.is_backup_qualified ? null : "is not backup-qualified",
         roomiest.current_temp_c > CEILING_C ? `sits above the ${CEILING_C}°C ceiling` : null,
         roomiest.reading_age_s > FRESHNESS_WINDOW_S
-          ? `was last read ${Math.round(roomiest.reading_age_s)}s ago`
+          ? `was last read ${Math.round(roomiest.reading_age_s)}s ago, past the ${FRESHNESS_WINDOW_S}s freshness window`
           : null,
         roomiest.hold_active ? "is under a containment hold" : null,
       ].filter((reason): reason is string => reason !== null)
     : [];
+  const roomiestRefusal =
+    roomiestBlockers.length > 1
+      ? `${roomiestBlockers.slice(0, -1).join(", ")} and ${roomiestBlockers[roomiestBlockers.length - 1]}`
+      : roomiestBlockers[0];
 
   return (
     <AppShell active="/app/freezers">
@@ -80,7 +84,7 @@ export default async function FreezersPage() {
                   <Td>{f.is_backup_qualified ? <Badge tone="blue">backup</Badge> : <span className="text-[#a3a3a3]">—</span>}</Td>
                   <Td>{f.hold_active ? <Badge tone="orange" dot>held</Badge> : <span className="text-[#a3a3a3]">—</span>}</Td>
                   <Td>
-                    <span className={`mono text-[12px] ${f.reading_age_s > 900 ? "text-[#dc2626]" : "text-[#737373]"}`}>
+                    <span className={`mono text-[12px] ${f.reading_age_s > FRESHNESS_WINDOW_S ? "text-[#dc2626]" : "text-[#737373]"}`}>
                       {Math.round(f.reading_age_s)}s
                     </span>
                   </Td>
@@ -96,10 +100,10 @@ export default async function FreezersPage() {
               {roomiest ? (
                 <>
                   Right now {roomiest.freezer_id} has the most free slots at{" "}
-                  {roomiest.free_slots}, and it{" "}
-                  {roomiestBlockers.length > 0
-                    ? `${roomiestBlockers.join(", ")}, so a reservation against it is refused.`
-                    : "clears all four gates, so it can take a reservation."}{" "}
+                  {roomiest.free_slots}.{" "}
+                  {roomiestRefusal
+                    ? `A reservation against it is still refused because it ${roomiestRefusal}.`
+                    : "It clears all four gates, so it can take a reservation."}{" "}
                 </>
               ) : null}
               Free space is not availability.

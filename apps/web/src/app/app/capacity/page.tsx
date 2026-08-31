@@ -78,14 +78,12 @@ export default async function CapacityPage() {
               <p className="max-w-[80ch] text-[13px] leading-relaxed text-[#525252]">
                 A stale destination is refused by design. N4 will not accept temperature
                 evidence older than {FRESHNESS_WINDOW_S} seconds, because a reading that
-                old cannot show a freezer is cold right now.
+                old cannot show a freezer is cold right now. Telemetry in this estate is
+                seeded in batches, so between refreshes every reading ages out together
+                and the whole backup set turns ineligible at once.
                 {staleCount > 0
-                  ? ` ${staleCount} of ${backups.length} destinations sit past the window at this moment.`
-                  : ""}{" "}
-                Telemetry in this estate is seeded in batches, so between refreshes every
-                reading ages out together and the backup set turns ineligible at once.
-                That is the freshness check holding. A commit attempted against any of
-                them would be refused by the safety kernel.
+                  ? ` ${staleCount} of ${backups.length} destinations sit past the window right now, and a commit against any of them is refused. That is the freshness check holding.`
+                  : ""}
               </p>
             </div>
           </Card>

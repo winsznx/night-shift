@@ -19,6 +19,24 @@ export default async function Landing() {
   const scripted = drills?.campaign?.by_driver?.scripted;
   const agent = drills?.campaign?.by_driver?.agent;
   const headline = overview?.incidents?.[0];
+  const corpusDrills = drills?.drills.length ?? 0;
+
+  /* The stamp is the headline incident's own record. Written by hand it keeps reporting
+     a verifier PASS long after the data behind it has moved, which is precisely the
+     habit the rest of this page argues against. */
+  const headlineManifest = headline
+    ? (evidence?.manifests?.find((m) => m.incident_id === headline.incident_id) ?? null)
+    : null;
+  const stamp = headline
+    ? [
+        headline.incident_id,
+        headline.state.replace(/_/g, " "),
+        `${headline.committed}/${headline.impacted_containers} reconciled`,
+        headlineManifest ? `verifier ${headlineManifest.verification_status}` : null,
+      ]
+        .filter(Boolean)
+        .join(" · ")
+    : null;
 
   return (
     <div className="min-h-screen bg-white">
@@ -39,8 +57,14 @@ export default async function Landing() {
         <div className="relative mx-auto max-w-[920px] px-6 pt-16 pb-9 text-center sm:pt-20 lg:pt-24">
           <div className="relative mx-auto max-w-[820px]">
             <div className="ns-stamp mb-7 inline-flex items-center gap-2 rounded-full bg-white/90 px-3 py-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#16a34a]" />
-              <span className="mono text-[11px] font-medium text-[#1e40af]">INC-0E7C54F8B5 · CLOSED · 42/42 RECONCILED · VERIFIER PASS</span>
+              <span
+                className={`h-1.5 w-1.5 rounded-full ${!stamp ? "bg-[#a3a3a3]" : headline?.complete ? "bg-[#16a34a]" : "bg-[#ea580c]"}`}
+              />
+              <span
+                className={`mono text-[11px] font-medium uppercase ${stamp ? "text-[#1e40af]" : "text-[#737373]"}`}
+              >
+                {stamp ?? "no incident record available"}
+              </span>
             </div>
 
             <h1 className="display mx-auto max-w-[15ch] text-[42px] text-[#171717] sm:text-[58px] lg:text-[68px]">
@@ -262,7 +286,7 @@ export default async function Landing() {
             <Stat
               value={`${scripted.passed}/${scripted.scored_runs}`}
               label="drill runs passed"
-              hint="deterministic tier"
+              hint={`deterministic tier, ${corpusDrills} distinct drills`}
             />
             <Stat
               value={String(scripted.capacity_overbooking_violations)}
@@ -292,9 +316,11 @@ export default async function Landing() {
         )}
         {agent ? (
           <p className="mt-3 text-[12px] text-[#737373]">
-            A separate live-agent tier ran {agent.scored_runs} drill
+            A separate live-agent tier ran {agent.scored_runs} drill run
             {agent.scored_runs === 1 ? "" : "s"} against the real Gemini fleet, passing{" "}
-            {agent.passed}. The two tiers are reported separately and never pooled.
+            {agent.passed}. Runs and drills are counted separately: one drill can be run
+            many times over different seeds. The two tiers are reported separately and
+            never pooled.
           </p>
         ) : null}
         <div className="mt-4">
@@ -366,32 +392,34 @@ export default async function Landing() {
       {/* Cloud */}
       <Section
         eyebrow="Google Cloud"
-        title="Running live, not described"
-        body="Gemini 3.5 Flash on Vertex AI drives six ADK specialists. Six domain services run on Cloud Run, each under its own service account, with Firestore transactions enforcing capacity conservation and Cloud KMS signing the evidence."
+        title="What runs, and what is only provisioned"
+        body="Gemini 3.5 Flash on Vertex AI drives six ADK specialists. Six domain services run on Cloud Run, each under its own service account, with Firestore transactions enforcing capacity conservation and Cloud KMS signing the evidence. Two enabled services have no code path behind them, and they are listed as such."
       >
-        <div className="scroll-x">
-          <div className="flex min-w-[640px] flex-wrap gap-2">
-            {[
-              "Gemini 3.5 Flash",
+        {/* The split is the point. Every name on the left was traced to a call site in the
+            Python source; the two on the right are enabled on the project and reached by
+            nothing, so pooling them into one row of logos would be the overclaim. */}
+        <div className="grid gap-3 lg:grid-cols-[1.6fr_1fr]">
+          <ServiceGroup
+            title="Exercised"
+            note="A code path calls it at runtime"
+            names={[
+              "Gemini 3.5 Flash on Vertex AI",
               "Google ADK",
               "Cloud Run",
               "Firestore",
-              "Pub/Sub",
               "Cloud KMS",
               "Cloud Storage",
-              "Model Armor",
-              "Agent Registry",
-              "Agent Identity",
               "Cloud Trace",
-            ].map((name) => (
-              <span
-                key={name}
-                className="rounded-full border border-[#e5e5e5] px-3 py-1.5 text-[13px] text-[#404040]"
-              >
-                {name}
-              </span>
-            ))}
-          </div>
+              "Model Armor",
+              "Per-agent service accounts",
+            ]}
+          />
+          <ServiceGroup
+            title="Provisioned"
+            note="Enabled on the project, called by nothing here"
+            names={["Pub/Sub", "Agent Registry", "Agent Identity"]}
+            muted
+          />
         </div>
       </Section>
 
@@ -516,6 +544,35 @@ function Pill({ color, label }: { color: string; label: string }) {
       <span className="h-2 w-2 rounded-full" style={{ background: color }} aria-hidden />
       {label}
     </span>
+  );
+}
+
+function ServiceGroup({
+  title,
+  note,
+  names,
+  muted,
+}: {
+  title: string;
+  note: string;
+  names: string[];
+  muted?: boolean;
+}) {
+  return (
+    <div className={`rounded-[12px] border border-[#e5e5e5] p-4 ${muted ? "bg-[#fafafa]" : "bg-white"}`}>
+      <p className="text-[13px] font-semibold text-[#171717]">{title}</p>
+      <p className="mt-0.5 text-[12px] text-[#737373]">{note}</p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {names.map((name) => (
+          <span
+            key={name}
+            className={`rounded-full border border-[#e5e5e5] px-3 py-1.5 text-[13px] ${muted ? "text-[#737373]" : "bg-white text-[#404040]"}`}
+          >
+            {name}
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -911,8 +968,12 @@ function PanelDrills({ drills }: { drills: NonNullable<Awaited<ReturnType<typeof
   return (
     <PanelShell eyebrow="Qualification" title="Disaster drill range" note={`corpus ${drills.corpus_version}`}>
       <div className="mb-5 grid grid-cols-2 gap-5 sm:grid-cols-4">
-        <MockStat label="Runs" value={String(scripted?.scored_runs ?? 0)} hint="scored" />
-        <MockStat label="Passed" value={String(scripted?.passed ?? 0)} hint="drills" />
+        <MockStat
+          label="Runs"
+          value={String(scripted?.scored_runs ?? 0)}
+          hint={`over ${drills.drills.length} drills`}
+        />
+        <MockStat label="Passed" value={String(scripted?.passed ?? 0)} hint="runs" />
         <MockStat
           label="N1"
           value={String(scripted?.capacity_overbooking_violations ?? 0)}
