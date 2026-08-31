@@ -65,7 +65,8 @@ self-contained apart from Vertex credentials.
 ### Status
 
 At the time of writing this has **not** been filed upstream. It is reproduced, recorded,
-and published here with a runnable script and exact versions. Filing it requires an
+and published here with a runnable script and exact versions, and written up in full at
+<https://medium.com/@winszn/i-tested-whether-a-resumable-adk-agent-runs-your-tool-twice-the-answer-depends-on-how-it-died-cda9920b42c2>. Filing it requires an
 account interaction outside this build, and manufacturing a token contribution to be able
 to claim one would be worse than saying plainly that it is ready to file and has not been.
 

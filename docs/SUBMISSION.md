@@ -178,5 +178,5 @@ whatever the screening concludes.
 | Verify it yourself | https://nightshift-web-xk6xxtobta-uc.a.run.app/verify |
 | Signed manifest, public and directly fetchable | https://storage.googleapis.com/nightshift-public-evidence-project-2ac1d1fb-7da1-46b4-90e/incidents/INC-0E7C54F8B5/manifest.json |
 | Permission matrix | https://nightshift-web-xk6xxtobta-uc.a.run.app/app/fleet |
-| Build writeup | *(fill in: public post URL)* |
-| Social post | *(fill in)* |
+| Build writeup | https://medium.com/@winszn/i-tested-whether-a-resumable-adk-agent-runs-your-tool-twice-the-answer-depends-on-how-it-died-cda9920b42c2 |
+| Social post | https://x.com/winsznlabs/status/2094490263175508372 |
