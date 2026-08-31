@@ -1,8 +1,8 @@
 """Generate docs/CLAIMS.json and the README metrics block from measured evidence.
 
 Every public claim is written here with its evidence artifact, its reproduction command,
-and its limitation. Numbers are read out of the campaign results — never typed — so a
-claim cannot drift away from what was actually measured.
+and its limitation. Numbers are read out of measured evidence artifacts — never typed —
+so a claim cannot drift away from what was actually measured.
 
     uv run python scripts/generate_claims.py
 """
@@ -370,7 +370,53 @@ def main() -> int:
                     "Six payloads is a demonstration, not a detection rate. The local "
                     "heuristic scores better only because its patterns were written "
                     "against these payloads. Neither layer is what protects the system: "
-                    "the Dispatch Agent holds no inventory authority to begin with."
+                    "the Dispatch Agent holds no inventory authority to begin with. The "
+                    "exact producing source commit was not captured; the artifact explains "
+                    "why its earlier commit anchor was removed."
+                ),
+            )
+        )
+
+    ablation = load(ROOT / "evidence" / "ablation" / "ablation.json")
+    control = (ablation.get("arms") or {}).get("control")
+    kernel_removed = (ablation.get("arms") or {}).get("kernel")
+    if control and kernel_removed:
+        failures = kernel_removed.get("failed_invariants") or {}
+        failure_parts = [
+            f"{count} {name}"
+            for name, count in sorted(
+                failures.items(),
+                key=lambda item: (
+                    int(item[0][1:])
+                    if item[0].startswith("N") and item[0][1:].isdigit()
+                    else sys.maxsize
+                ),
+            )
+        ]
+        failure_text = " and ".join(failure_parts)
+        claims.append(
+            claim(
+                "C-17",
+                f"On the same deterministic corpus and seeds, "
+                f"{control.get('passed', 0)} of {control.get('total_runs', 0)} runs "
+                f"passed with the Safety Kernel enabled, versus "
+                f"{kernel_removed.get('passed', 0)} of "
+                f"{kernel_removed.get('total_runs', 0)} with its precondition checks "
+                f"removed, exposing {failure_text} invariant violations.",
+                status="local",
+                evidence="evidence/ablation/ablation.json",
+                reproduce="make ablation",
+                denominator=(
+                    f"{control.get('total_runs', 0)} paired deterministic runs per arm "
+                    f"over {len(ablation.get('seeds') or [])} seeds"
+                ),
+                sample=control.get("total_runs", 0),
+                limitation=(
+                    "Deterministic tier only. The ablation removes the Safety Kernel's "
+                    "precondition checks while retaining authorization, transactions, "
+                    "receipt lookup, and writes; the live-agent tier was not ablated. The "
+                    "exact producing source commit was not captured; the artifact explains "
+                    "why its earlier commit anchor was removed."
                 ),
             )
         )
@@ -418,8 +464,10 @@ def main() -> int:
         "generated_at": now_iso(),
         "source_commit": commit(),
         "note": (
-            "Every number in this file is read from the campaign results, never typed. "
-            "Regenerate with: uv run python scripts/generate_claims.py"
+            "Every number in this file is read from measured evidence artifacts, never typed. "
+            "source_commit is the committed HEAD used as generator input; the commit that "
+            "adds this derived file necessarily follows it because Git commit hashes are "
+            "content-addressed. Regenerate with: uv run python scripts/generate_claims.py"
         ),
         "claims": claims,
     }

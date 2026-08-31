@@ -172,21 +172,24 @@ version, skill revisions by content hash, and source commit.
 
 ### Where provenance is currently incomplete
 
-One published artifact still carries `"source_commit": "unknown"`:
-`evidence/campaign-agent/results.json`, the live-agent tier.
+Three measured artifacts carry `"source_commit": "unknown"`:
+`evidence/campaign-agent/results.json`, `evidence/content-screening.json`, and
+`evidence/ablation/ablation.json`.
 
-The cause was mundane: `source_commit` was read from the `NIGHTSHIFT_COMMIT` environment
-variable with a literal `unknown` fallback, and the run that produced that file was
-launched without it set. Nothing about the run is less real than the ones that carry a
-commit. What was missing is the chain from a published row back to the code that produced
-it.
+For the live-agent campaign, the cause was mundane: `source_commit` was read from the
+`NIGHTSHIFT_COMMIT` environment variable with a literal `unknown` fallback, and the run
+was launched without it set. Nothing about the run is less real than the ones that carry
+a commit. What is missing is the chain from a published row back to the exact working tree
+that produced it.
 
-That chain is recoverable here, and the artifact is left as it was written rather than
-back-stamped, because a commit hash inserted after the fact is not a record of anything.
+The timing can narrow the likely tree, but cannot recover that chain, and the artifact is
+left as written rather than back-stamped because a commit hash inserted after the fact is
+not a record of anything.
 The run's own `generated_at` is `2026-08-26T05:00:12.789Z`. The last commit authored
 before that instant is `877a9f7`, and the next one after it is `5df2f03`, five minutes
-later. Both are ancestors of `main`. So the live-agent campaign ran at `877a9f7`, and
-`5df2f03` is the commit that recorded what it found: its message states the 17-of-18
+later. Both are ancestors of `main`. This strongly suggests a tree near `877a9f7`; it does
+not prove the checkout was clean or exact. `5df2f03` is the commit that recorded what it
+found: its message states the 17-of-18
 result, the zero N1/N2/N3/N6/N7/N8 violations, the 332 custody commits, and the D8
 quarantine failure that produced two new safety rules. The artifact and the commit that
 describes it are five minutes apart, which is a tighter binding than the missing field
@@ -205,8 +208,13 @@ The two `metrics.json` files and the two `results.csv` files carry no provenance
 all by design. They are derived views, and the `results.json` beside them is the artifact
 that carries provenance for the run.
 
-The published incident manifests and `evidence/qualification.json` and
-`evidence/content-screening.json` all name a real commit. See
+The screening and ablation artifacts originally named `6f7d4e8` and `25f0f37`,
+respectively. Git history shows those commits predate the implementations required to
+produce the current expanded screening rows and ablation provenance/raw rows. Their exact
+dirty working trees cannot be reconstructed, so both fields now read `unknown` and retain
+an explanatory `source_commit_note`; the measured rows remain published unchanged.
+
+The published incident manifests and `evidence/qualification.json` name a real commit. See
 [`README.md`](README.md) in this directory for the per-file breakdown.
 
 ## Reproduction

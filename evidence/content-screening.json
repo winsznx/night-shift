@@ -1,6 +1,7 @@
 {
   "generated_at": "2026-08-31T06:48:36.467Z",
-  "source_commit": "6f7d4e8",
+  "source_commit": "unknown",
+  "source_commit_note": "The exact producing tree was not captured. The previously recorded 6f7d4e8 predates the Gemma implementation and expanded nine-payload artifact, so it was removed rather than presented as provenance.",
   "model_armor_template": "projects/project-2ac1d1fb-7da1-46b4-90e/locations/us-central1/templates/nightshift-vendor-content",
   "gemma_model": "google/gemma-4-26b-a4b-it-maas",
   "region": "us-central1",

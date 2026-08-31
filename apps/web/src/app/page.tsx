@@ -175,6 +175,61 @@ export default async function Landing() {
       </section>
       </div>
 
+      {/* Who it is for. Five sections described the system and none of them said whose
+          problem it solves, so a reviewer landed in a control plane without knowing whose
+          seat they were sitting in. */}
+      <Section
+        eyebrow="Who this is for"
+        title="A lab manager, at 2am, who is not a developer"
+        body="Nobody logs into Night Shift to start a rescue. A freezer alarm starts it. Three people touch it afterwards, and each one sees only what their job needs."
+      >
+        <div className="grid gap-0 overflow-hidden rounded-[12px] border border-[#e5e5e5] sm:grid-cols-3">
+          {[
+            {
+              role: "The lab manager",
+              when: "Woken by the alarm",
+              body: "Opens the incident and reads what the fleet decided and, more usefully, what it refused. Every refusal names the invariant that caused it, so the question at 2am is never why did it stop.",
+              href: "/app/incidents",
+              cta: "Open a live incident",
+            },
+            {
+              role: "The responder",
+              when: "On the floor, in cryo gloves",
+              body: "Gets a scoped link to one batch and nothing else. No study names, no other incidents. Scan the box, photograph the label and the destination display, and custody commits or is refused.",
+              href: "/app/fleet",
+              cta: "See the authority boundaries",
+            },
+            {
+              role: "The auditor",
+              when: "Weeks later",
+              body: "Downloads the signed manifest and recomputes all thirteen invariants offline, with no credentials and no network. If a byte moved, the verdict says so and names which check failed.",
+              href: "/verify",
+              cta: "Verify a manifest",
+            },
+          ].map(({ role, when, body, href, cta }) => (
+            <div
+              key={role}
+              className="group relative border-r border-b border-[#e5e5e5] bg-white p-5 last:border-r-0 sm:border-b-0"
+            >
+              <p className="mono text-[11px] tracking-[0.08em] text-[#2563eb] uppercase">{when}</p>
+              <h3 className="mt-1.5 text-[14px] font-semibold text-[#171717]">{role}</h3>
+              <p className="mt-1.5 text-[13px] leading-relaxed text-[#525252]">{body}</p>
+              <Link
+                href={href}
+                className="mt-4 inline-flex items-center gap-1 text-[13px] font-medium text-[#2563eb] hover:underline"
+              >
+                {cta}
+                <span aria-hidden>&rarr;</span>
+              </Link>
+            </div>
+          ))}
+        </div>
+        <p className="mt-4 max-w-[68ch] text-[13px] leading-relaxed text-[#737373]">
+          There is no login. Everything here is readable, and the proof is verifiable, without an
+          account: a reviewer should be able to check the claim rather than take it.
+        </p>
+      </Section>
+
       {/* Mechanism */}
       <Section
         eyebrow="Mechanism"

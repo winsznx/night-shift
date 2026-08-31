@@ -2,7 +2,8 @@
   "provenance": {
     "command": "uv run python -m assurance.ablation --seeds 6",
     "generated_at": "2026-08-31T19:50:48.550Z",
-    "source_commit": "25f0f37",
+    "source_commit": "unknown",
+    "source_commit_note": "The exact producing tree was not captured. The previously recorded 25f0f37 predates the provenance and raw-row implementation used by this artifact, so it was removed rather than presented as provenance.",
     "corpus_version": "1.0.0",
     "seeds": [
       20260826,

@@ -9,7 +9,7 @@ known gaps are in [`methodology.md`](methodology.md).
 |---|---|
 | `campaign/results.json`, `results.csv`, `metrics.json` | the deterministic tier: provenance and every raw row, the same rows flat, and the derived numbers the README and `docs/CLAIMS.json` read from. Failures and refusals are retained |
 | `campaign-agent/` | the same three files for the live Gemini fleet, 18 runs across 9 drills. Holds the one run that failed, which is the most useful row in here |
-| `incidents/INC-*.manifest.json` and `.manifest.json.sig` | three signed incident manifests with detached signature sidecars. Each shows the recorded verdict follows from the recorded state, and that the body was signed by the published Cloud KMS key. Check all three with `make verify-demo` |
+| `incidents/INC-*.manifest.json` and `.manifest.json.sig` | two signed incident manifests with detached signature sidecars. Each shows the recorded verdict follows from the recorded state, and that the body was signed by the published Cloud KMS key. Check both with `make verify-demo` |
 | `incidents/verification-report.txt` | the verifier's own output, captured, so a disagreement with your run is visible rather than a matter of trust |
 | `qualification.json` | which agent and skill revisions were cleared for operational traffic, on which drills, at which commit |
 | `content-screening.json` | per-payload, per-layer verdicts for nine disclosed injection payloads across three screening layers, misses included |
@@ -24,17 +24,16 @@ output of `make drills`.
 
 ## Provenance
 
-Most artifacts carry a `source_commit` naming the tree that produced them. Three do not,
-and read `"source_commit": "unknown"`: `campaign/results.json`,
-`campaign-agent/results.json`, and `iam-denial.json`.
+Most artifacts carry a `source_commit` naming the tree that produced them. Three measured
+artifacts honestly read `"source_commit": "unknown"`: `campaign-agent/results.json`,
+`content-screening.json`, and `ablation/ablation.json`. The live-agent campaign did not
+record a commit. The other two originally named commits that predated the implementations
+needed to produce their current rows, so those anchors were removed rather than defended
+as false precision; each artifact retains a `source_commit_note` explaining the correction.
+`traces.json` has no source-commit field and is disclosed separately in `methodology.md`.
 
-The field was read from the `NIGHTSHIFT_COMMIT` environment variable with a literal
-fallback, and those runs were launched without it set. The rows are as real as any other.
-What is missing is the chain from a row back to the code that produced it. `Settings` now
-falls back to `git rev-parse --short HEAD`, so artifacts generated from here on carry a
-commit, but those three predate the fix and keep reading `unknown` until regenerated.
-
-Both manifests, `qualification.json` and `content-screening.json` all name a commit.
+`Settings` now falls back to `git rev-parse --short HEAD`, so newly generated artifacts
+normally carry a commit. Both manifests and `qualification.json` name a commit.
 `metrics.json` and `results.csv` carry no provenance block by design, because they are
 derived views of the `results.json` beside them. The manifests were re-signed once, after
 a history rewrite left their commit anchors pointing at nothing, which `docs/PROOF.md`
