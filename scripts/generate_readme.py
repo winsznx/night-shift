@@ -388,8 +388,10 @@ signing every evidence manifest, Cloud Storage holding the published evidence bu
 Cloud Trace carrying the spans, and Model Armor screening untrusted vendor content.
 
 Eleven Google services are in the deployed path: Vertex AI, Cloud Run, Cloud IAM,
-Firestore, Pub/Sub, Cloud KMS, Cloud Storage, Cloud Trace, Model Armor, Artifact Registry,
-and Cloud Build.
+Firestore, Cloud KMS, Cloud Storage, Cloud Trace, Model Armor, Cloud Scheduler, Artifact
+Registry, and Cloud Build. Pub/Sub topics are provisioned but nothing publishes to them,
+so it is listed under what is not delivered in [LIMITATIONS.md](LIMITATIONS.md) rather
+than here.
 
 Model access path: Gemini 3.5 Flash through Vertex AI, with
 `GOOGLE_GENAI_USE_VERTEXAI=TRUE` and the model served from the `global` endpoint. Regional

@@ -137,24 +137,34 @@ version, skill revisions by content hash, and source commit.
 
 ### Where provenance is currently incomplete
 
-Three published artifacts carry `"source_commit": "unknown"`:
+One published artifact still carries `"source_commit": "unknown"`:
+`evidence/campaign-agent/results.json`, the live-agent tier.
 
-- `evidence/campaign/results.json`
-- `evidence/campaign-agent/results.json`
-- `evidence/iam-denial.json`
+The cause was mundane: `source_commit` was read from the `NIGHTSHIFT_COMMIT` environment
+variable with a literal `unknown` fallback, and the run that produced that file was
+launched without it set. Nothing about the run is less real than the ones that carry a
+commit. What was missing is the chain from a published row back to the code that produced
+it.
 
-The field whose whole job is to name the tree an artifact came from names nothing in
-those three. The cause was mundane: `source_commit` was read from the `NIGHTSHIFT_COMMIT`
-environment variable with a literal `unknown` fallback, and the runs that produced those
-files were launched without it set. Nothing about those runs is less real than the ones
-that carry a commit. What is missing is the chain from a published row back to the code
-that produced it.
+That chain is recoverable here, and the artifact is left as it was written rather than
+back-stamped, because a commit hash inserted after the fact is not a record of anything.
+The run's own `generated_at` is `2026-08-26T05:00:12.789Z`. The last commit authored
+before that instant is `877a9f7`, and the next one after it is `5df2f03`, five minutes
+later. Both are ancestors of `main`. So the live-agent campaign ran at `877a9f7`, and
+`5df2f03` is the commit that recorded what it found: its message states the 17-of-18
+result, the zero N1/N2/N3/N6/N7/N8 violations, the 332 custody commits, and the D8
+quarantine failure that produced two new safety rules. The artifact and the commit that
+describes it are five minutes apart, which is a tighter binding than the missing field
+would have given.
 
-The generator no longer leaves that hole. `Settings.source_commit` falls back to
+`evidence/traces.json` carries no `source_commit` field at all rather than an `unknown`
+one, which is a different gap and is noted here so the count is right.
+
+The generator no longer leaves the hole. `Settings.source_commit` falls back to
 `git rev-parse --short HEAD` for the checkout, and reaches `unknown` only when there is no
 git repository at all, which is the clean-room case where a `git archive` export has no
-`.git` directory. Artifacts generated from now on carry a real commit. Those three predate
-the fix and will keep reading `unknown` until they are regenerated.
+`.git` directory. `evidence/campaign/results.json` and `evidence/iam-denial.json` have
+since been regenerated and now carry real commits.
 
 The two `metrics.json` files and the two `results.csv` files carry no provenance block at
 all by design. They are derived views, and the `results.json` beside them is the artifact
