@@ -10,7 +10,7 @@ import { Button, Card, Mono } from "@/components/ui";
  */
 export default function NotFound() {
   return (
-    <div className="thermal-trace min-h-screen bg-white">
+    <div className="min-h-screen bg-white">
       <header className="border-b border-[#e5e5e5]">
         <div className="mx-auto flex max-w-[1000px] items-center justify-between gap-4 px-6 py-3.5">
           <Link href="/">

@@ -15,7 +15,7 @@ export default async function RespondPage({
   if (!view) notFound();
 
   return (
-    <div className="thermal-trace min-h-screen bg-[#f5f5f5]">
+    <div className="min-h-screen bg-[#f5f5f5]">
       <header className="sticky top-0 z-10 border-b border-[#e5e5e5] bg-white px-4 py-3">
         <div className="mx-auto flex max-w-[560px] items-center justify-between gap-3">
           <span className="inline-flex items-center gap-2">

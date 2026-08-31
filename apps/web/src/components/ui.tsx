@@ -130,12 +130,16 @@ export function Metric({
           ? "text-[#16a34a]"
           : "text-[#171717]";
   return (
-    <div className="ns-route min-w-0 pl-3">
-      <div className="text-[11px] font-medium tracking-wide text-[#737373] uppercase">
+    <div className="min-w-0">
+      <div className="mono text-[10px] font-medium tracking-[0.12em] text-silver uppercase">
         {label}
       </div>
-      <div className={`mono mt-1 text-[24px] leading-none font-medium ${color}`}>{value}</div>
-      {hint ? <div className="mt-1 text-[12px] text-[#737373]">{hint}</div> : null}
+      <div
+        className={`mono mt-1.5 text-[26px] leading-none font-medium tabular-nums ${color}`}
+      >
+        {value}
+      </div>
+      {hint ? <div className="mt-1.5 text-[12px] leading-snug text-fog">{hint}</div> : null}
     </div>
   );
 }

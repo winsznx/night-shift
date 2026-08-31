@@ -7,16 +7,44 @@ import type { ReactNode } from "react";
 
 import { getMeta } from "@/lib/api";
 import { Mono } from "@/components/ui";
+import {
+  IconCapacity,
+  IconDrills,
+  IconEvidence,
+  IconFleet,
+  IconFreezer,
+  IconIncident,
+  IconOverview,
+} from "@/components/nav-icons";
 
-const NAV = [
-  { href: "/app", label: "Overview" },
-  { href: "/app/incidents", label: "Incidents" },
-  { href: "/app/freezers", label: "Freezers" },
-  { href: "/app/capacity", label: "Capacity" },
-  { href: "/app/fleet", label: "Fleet" },
-  { href: "/app/drills", label: "Drills" },
-  { href: "/app/evidence", label: "Evidence" },
+/**
+ * Two groups, because the product really does have two halves. Estate is the live world
+ * and what is happening in it. Assurance is who was allowed to act, whether the revision
+ * earned the right, and what can be proved afterwards. Grouping them this way is the
+ * navigation stating the thesis: agents act on the top half, deterministic code answers
+ * for it on the bottom.
+ */
+const NAV_GROUPS = [
+  {
+    label: "Estate",
+    items: [
+      { href: "/app", label: "Overview", Icon: IconOverview },
+      { href: "/app/incidents", label: "Incidents", Icon: IconIncident },
+      { href: "/app/freezers", label: "Freezers", Icon: IconFreezer },
+      { href: "/app/capacity", label: "Capacity", Icon: IconCapacity },
+    ],
+  },
+  {
+    label: "Assurance",
+    items: [
+      { href: "/app/fleet", label: "Fleet", Icon: IconFleet },
+      { href: "/app/drills", label: "Drills", Icon: IconDrills },
+      { href: "/app/evidence", label: "Evidence", Icon: IconEvidence },
+    ],
+  },
 ];
+
+const NAV = NAV_GROUPS.flatMap((g) => g.items);
 
 export function Logo({ size = 14 }: { size?: number }) {
   return (
@@ -52,25 +80,45 @@ export async function AppShell({
           <Link href="/" className="px-2 pb-4">
             <Logo />
           </Link>
-          <nav className="flex flex-col gap-0.5">
-            {NAV.map((item) => {
-              const isActive =
-                item.href === "/app" ? active === "/app" : active.startsWith(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  aria-current={isActive ? "page" : undefined}
-                  className={`relative rounded-[8px] px-2 py-[9px] text-[14px] transition-colors ${
-                    isActive
-                      ? "bg-[#dbeafe] font-medium text-[#171717] before:absolute before:top-1/2 before:left-[-13px] before:h-4 before:w-0.5 before:-translate-y-1/2 before:bg-[#2563eb]"
-                      : "text-[#404040] hover:bg-[#f5f5f5]"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
+          <nav className="flex flex-col gap-5" aria-label="Sections">
+            {NAV_GROUPS.map((group) => (
+              <div key={group.label}>
+                <p className="mono px-2 pb-1.5 text-[10px] tracking-[0.12em] text-silver uppercase">
+                  {group.label}
+                </p>
+                <div className="flex flex-col gap-0.5">
+                  {group.items.map(({ href, label, Icon }) => {
+                    const isActive = href === "/app" ? active === "/app" : active.startsWith(href);
+                    return (
+                      <Link
+                        key={href}
+                        href={href}
+                        aria-current={isActive ? "page" : undefined}
+                        className={`group relative flex items-center gap-2.5 rounded-lg py-2 pr-2 pl-3 text-body transition-colors outline-none focus-visible:ring-2 focus-visible:ring-electric-blue/40 ${
+                          isActive
+                            ? "bg-blue-wash font-medium text-charcoal"
+                            : "text-slate hover:bg-paper-mist hover:text-charcoal"
+                        }`}
+                      >
+                        {/* Inset, so the marker sits inside the item rather than
+                            hanging outside the sidebar padding. */}
+                        <span
+                          className={`absolute top-1/2 left-0 h-4 w-0.5 -translate-y-1/2 rounded-full transition-colors ${
+                            isActive ? "bg-electric-blue" : "bg-transparent"
+                          }`}
+                        />
+                        <Icon
+                          className={`h-4 w-4 shrink-0 transition-colors ${
+                            isActive ? "text-electric-blue" : "text-silver group-hover:text-steel"
+                          }`}
+                        />
+                        {label}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </nav>
 
           <div className="ns-route mt-5 px-3 py-2 pl-4">
@@ -138,7 +186,7 @@ export async function AppShell({
               simulated.
             </p>
           </div>
-          <main className="thermal-trace min-h-[calc(100vh-53px)] px-4 py-5 lg:px-6 lg:py-6">{children}</main>
+          <main className="min-h-[calc(100vh-53px)] px-4 py-5 lg:px-6 lg:py-6">{children}</main>
         </div>
       </div>
     </div>
