@@ -330,7 +330,7 @@ snapshot hash, and no kernel invariant reads the field, so redacting it cannot c
 recomputed verdict.
 
 Be precise about what that means today. The redaction is in the manifest builder, so any
-manifest generated from now on carries a digest. All three manifests currently in
+manifest generated from now on carries a digest. Both manifests currently in
 `evidence/incidents/` were signed before that change and still carry a plaintext token in
 their `state_snapshot.dispatches` entry. Their `deployment_env` is `local`, so those
 tokens were minted against an in-memory store rather than the deployed plane, and the

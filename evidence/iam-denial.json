@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-08-26T11:27:56.317Z",
+  "generated_at": "2026-08-31T08:16:11.218Z",
   "project": "project-2ac1d1fb-7da1-46b4-90e",
   "region": "us-central1",
-  "source_commit": "unknown",
+  "source_commit": "bfd32aa",
   "claim": "An agent identity calling a service it holds no authority on is refused by Cloud Run IAM before the request reaches Night Shift code.",
   "platform_denial_proven": true,
   "contrasted_with_permitted_call": true,
@@ -35,7 +35,7 @@
       "status": 200,
       "denied_by_platform": false,
       "responder": "nightshift-service",
-      "body_snippet": "{\"freezer_id\":\"F-17\",\"incident_id\":null,\"evaluated_at\":\"2026-08-26T11:27:53.993Z\",\"enumeration_complete\":true,\"container_count\":0,\"specimen_total\":0,\"study_ids\":[],\"priority_breakdown\":{},\"containers\":[]}",
+      "body_snippet": "{\"freezer_id\":\"F-17\",\"incident_id\":null,\"evaluated_at\":\"2026-08-31T08:16:02.785Z\",\"enumeration_complete\":true,\"container_count\":0,\"specimen_total\":0,\"study_ids\":[],\"priority_breakdown\":{},\"containers\":[]}",
       "result": "ALLOWED"
     },
     {

@@ -2,8 +2,8 @@ Night Shift verifier — incident INC-0E7C54F8B5
 
   PASS manifest version                        version=1
   PASS state snapshot present                  14 collections
-  PASS artifact hash: state_snapshot           8cd9c413f255ed75… vs stored 8cd9c413f255ed75…
-  PASS artifact hash: invariant_results        6e491611542dbda6… vs stored 6e491611542dbda6…
+  PASS artifact hash: state_snapshot           4225a8260a7aa032… vs stored 4225a8260a7aa032…
+  PASS artifact hash: invariant_results        acd6cc72c58927a4… vs stored acd6cc72c58927a4…
   PASS artifact hash: reconciliation           f0d112b1685dd6c7… vs stored f0d112b1685dd6c7…
   PASS signing key (embedded)                  pinned to the published Cloud KMS evidence-signer v1 public key
   PASS signature (embedded)                    verified against cloud-kms public key
@@ -19,32 +19,12 @@ Night Shift verifier — incident INC-0E7C54F8B5
 
 RESULT: PASS
 
-Night Shift verifier — incident INC-A569307BA4
-
-  PASS manifest version                        version=1
-  PASS state snapshot present                  14 collections
-  PASS artifact hash: state_snapshot           624052bda243563e… vs stored 624052bda243563e…
-  PASS artifact hash: invariant_results        0efeb51a287493d2… vs stored 0efeb51a287493d2…
-  PASS artifact hash: reconciliation           b1184bc8c54bcbb8… vs stored b1184bc8c54bcbb8…
-  PASS signing key (embedded)                  pinned to the published Cloud KMS evidence-signer v1 public key
-  PASS signature (embedded)                    verified against cloud-kms public key
-  PASS signing key (detached)                  pinned to the published Cloud KMS evidence-signer v1 public key
-  PASS signature (detached)                    verified against cloud-kms public key
-  PASS embedded and detached signatures agree  identical
-  PASS state snapshot parses                   rebuilt KernelState
-  PASS invariant verdict matches               13 invariants recomputed
-  PASS reconciliation hash                     b1184bc8c54bcbb8… vs stored b1184bc8c54bcbb8…
-  PASS declared incident state                 manifest says RECONCILING, snapshot says RECONCILING
-  PASS synthetic data declared                 manifest declares synthetic/simulated provenance
-
-RESULT: PASS
-
 Night Shift verifier — incident INC-ED9B367D69
 
   PASS manifest version                        version=1
   PASS state snapshot present                  14 collections
-  PASS artifact hash: state_snapshot           337212f4b1378401… vs stored 337212f4b1378401…
-  PASS artifact hash: invariant_results        e1d35cd1a1f2c9f9… vs stored e1d35cd1a1f2c9f9…
+  PASS artifact hash: state_snapshot           9006e5d61cb78a6a… vs stored 9006e5d61cb78a6a…
+  PASS artifact hash: invariant_results        4c9a346d6d53bf61… vs stored 4c9a346d6d53bf61…
   PASS artifact hash: reconciliation           13b10d107876472b… vs stored 13b10d107876472b…
   PASS signing key (embedded)                  pinned to the published Cloud KMS evidence-signer v1 public key
   PASS signature (embedded)                    verified against cloud-kms public key
@@ -59,4 +39,4 @@ Night Shift verifier — incident INC-ED9B367D69
 
 RESULT: PASS
 
-3/3 manifest(s) verified PASS.
+2/2 manifest(s) verified PASS.

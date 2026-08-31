@@ -34,7 +34,7 @@ What is missing is the chain from a row back to the code that produced it. `Sett
 falls back to `git rev-parse --short HEAD`, so artifacts generated from here on carry a
 commit, but those three predate the fix and keep reading `unknown` until regenerated.
 
-The three manifests, `qualification.json` and `content-screening.json` all name a commit.
+Both manifests, `qualification.json` and `content-screening.json` all name a commit.
 `metrics.json` and `results.csv` carry no provenance block by design, because they are
 derived views of the `results.json` beside them. The manifests were re-signed once, after
 a history rewrite left their commit anchors pointing at nothing, which `docs/PROOF.md`

@@ -21,7 +21,7 @@ outbound network.
 
 What each one printed the last time this page was checked:
 
-- `make verify-demo` ends with `3/3 manifest(s) verified PASS.` and exits 0.
+- `make verify-demo` ends with `2/2 manifest(s) verified PASS.` and exits 0.
 - the tamper sequence prints three `FAIL` lines and ends with `RESULT: MISMATCH`, exit 1.
   Which three is the interesting part: the state snapshot hash catches the edit, the
   signature catches it again independently, and the declared incident state no longer
@@ -351,7 +351,7 @@ into a dead reference. A reader following provenance from a signed artifact back
 tree that produced it landed on a commit that no longer existed.
 
 `source_commit` sits inside the signed body, so rewriting the field on its own would have
-made all three manifests verify as tampered, which is exactly what the verifier is for.
+made every manifest verify as tampered, which is exactly what the verifier is for.
 Each one was re-signed with the same Cloud KMS key instead, and the sidecar signature and
 the exported public key were rewritten alongside it so all three artifacts still describe
 the same body.

@@ -19,7 +19,13 @@ set -euo pipefail
 
 PROJECT="${1:-${GOOGLE_CLOUD_PROJECT:-$(gcloud config get-value project 2>/dev/null)}}"
 REGION="${2:-${NIGHTSHIFT_REGION:-us-central1}}"
-NAMESPACE="${NIGHTSHIFT_NAMESPACE:-demo2}"
+SHOWCASE_NAMESPACE="${NIGHTSHIFT_NAMESPACE:-demo}"
+AUTONOMOUS_NAMESPACE="${NIGHTSHIFT_AUTONOMOUS_NAMESPACE:-demo2}"
+# Two namespaces, because an incident run re-seeds the estate from the fixture and that
+# resets container custody. Running one in the namespace the console serves would reset
+# the containers of an already-closed incident, so a settled rescue would start rendering
+# as unreconciled. The showcase namespace is never re-seeded; the autonomous stream gets
+# its own.
 JOB="nightshift-tick"
 SA="ns-scheduler@${PROJECT}.iam.gserviceaccount.com"
 BUCKET="nightshift-evidence-${PROJECT}"
@@ -44,7 +50,7 @@ ENV_VARS="${ENV_VARS},NIGHTSHIFT_REGION=${REGION}"
 ENV_VARS="${ENV_VARS},NIGHTSHIFT_MODEL_LOCATION=global"
 ENV_VARS="${ENV_VARS},NIGHTSHIFT_MODEL=${NIGHTSHIFT_MODEL:-gemini-3.5-flash}"
 ENV_VARS="${ENV_VARS},NIGHTSHIFT_STORE=firestore"
-ENV_VARS="${ENV_VARS},NIGHTSHIFT_NAMESPACE=${NAMESPACE}"
+ENV_VARS="${ENV_VARS},NIGHTSHIFT_NAMESPACE=${SHOWCASE_NAMESPACE}"
 ENV_VARS="${ENV_VARS},NIGHTSHIFT_ENV=cloud-run"
 ENV_VARS="${ENV_VARS},NIGHTSHIFT_TRACING=1"
 ENV_VARS="${ENV_VARS},NIGHTSHIFT_EVIDENCE_BUCKET=${BUCKET}"
@@ -77,10 +83,24 @@ gcloud run jobs "${ACTION}" "${JOB}" \
   --args "scripts/scheduled_tick.py,--mode,telemetry" \
   --quiet
 
+# Cloud Scheduler needs more than run.invoker to start a job with argument overrides.
+# roles/run.invoker returns PERMISSION_DENIED on :run with an overrides body, at project
+# level and on the job, on both the v1 namespaces path and the v2 path. The role that
+# actually carries it is run.jobsExecutorWithOverrides, which exists for this exact case.
+say "Scheduler invoke permission"
+gcloud run jobs add-iam-policy-binding "${JOB}" \
+  --region "${REGION}" --project "${PROJECT}" \
+  --member "serviceAccount:${SA}" \
+  --role roles/run.jobsExecutorWithOverrides --quiet >/dev/null 2>&1 \
+  && echo "  ${SA} may run ${JOB} with overrides" || true
+
 say "Scheduler jobs"
 schedule_job() {
   local name="$1" cron="$2" mode="$3" extra="$4"
-  local uri="https://${REGION}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${PROJECT}/jobs/${JOB}:run"
+  # The v2 jobs endpoint. The v1 namespaces path answers PERMISSION_DENIED for a
+  # scheduler identity even with run.invoker on the job, and v2 is the surface the
+  # overrides field is actually documented on.
+  local uri="https://run.googleapis.com/v2/projects/${PROJECT}/locations/${REGION}/jobs/${JOB}:run"
   local body
   body="{\"overrides\":{\"containerOverrides\":[{\"args\":[\"scripts/scheduled_tick.py\",\"--mode\",\"${mode}\"${extra}]}]}}"
   local action=create
@@ -104,10 +124,18 @@ schedule_job() {
 # "faster than the window", but it leaves only 300 seconds of margin, so a single missed
 # or slow tick puts the estate over the threshold. A judge arriving at a random moment in
 # a month-long window is exactly the case that margin exists for.
-schedule_job "nightshift-tick-telemetry" "*/5 * * * *" "telemetry" ""
+schedule_job "nightshift-tick-telemetry" "*/5 * * * *" "telemetry" \
+  ",\"--namespace\",\"${SHOWCASE_NAMESPACE}\""
 
 # Four a day is the cap the job itself enforces, so this cadence and that cap agree.
-schedule_job "nightshift-tick-incident" "0 */6 * * *" "incident" ",\"--max-per-day\",\"4\",\"--max-total\",\"200\""
+schedule_job "nightshift-tick-incident" "0 */6 * * *" "incident" \
+  ",\"--namespace\",\"${AUTONOMOUS_NAMESPACE}\",\"--max-per-day\",\"4\",\"--max-total\",\"200\""
+
+# The autonomous namespace needs its own freshness tick too, or a rescue that starts six
+# hours after the last one finds every destination past the N4 window and refuses,
+# correctly, to place anything.
+schedule_job "nightshift-tick-autonomous-telemetry" "*/5 * * * *" "telemetry" \
+  ",\"--namespace\",\"${AUTONOMOUS_NAMESPACE}\""
 
 say "Scheduled"
 gcloud scheduler jobs list --location "${REGION}" --project "${PROJECT}" \
