@@ -1,18 +1,18 @@
 {
-  "run_id": "qual-0826259-2026-08-31T10:38:53.826Z",
+  "run_id": "qual-f37b568-2026-08-31T22:43:13.354Z",
   "qualified": true,
   "agent_revisions": {
-    "incident-commander": "0826259",
-    "signal-investigator": "0826259",
-    "impact-analyst": "0826259",
-    "capacity-broker": "0826259",
-    "dispatch-agent": "0826259",
-    "custody-agent": "0826259",
-    "incident-ingestor": "0826259",
-    "responder-app": "0826259",
-    "drill-controller": "0826259"
+    "incident-commander": "f37b568",
+    "signal-investigator": "f37b568",
+    "impact-analyst": "f37b568",
+    "capacity-broker": "f37b568",
+    "dispatch-agent": "f37b568",
+    "custody-agent": "f37b568",
+    "incident-ingestor": "f37b568",
+    "responder-app": "f37b568",
+    "drill-controller": "f37b568"
   },
-  "source_commit": "0826259",
+  "source_commit": "f37b568",
   "adk_version": "2.7.1",
   "model_id": "gemini-3.5-flash",
   "skill_revisions": {
@@ -32,8 +32,8 @@
   "seeds": [
     20260826
   ],
-  "started_at": "2026-08-31T10:38:53.826Z",
-  "finished_at": "2026-08-31T10:38:53.826Z",
+  "started_at": "2026-08-31T22:43:13.354Z",
+  "finished_at": "2026-08-31T22:43:13.354Z",
   "totals": {
     "drills": 21,
     "scored": 21,
@@ -78,7 +78,7 @@
       "fault_log": [],
       "final_state": "OBSERVING",
       "reconciliation": {
-        "incident_id": "INC-2E9652892B",
+        "incident_id": "INC-38B7B9DCB6",
         "total": 0,
         "committed": [],
         "quarantined": [],
@@ -142,7 +142,7 @@
       "fault_log": [],
       "final_state": "CLOSED",
       "reconciliation": {
-        "incident_id": "INC-2E9652892B",
+        "incident_id": "INC-38B7B9DCB6",
         "total": 42,
         "committed": [
           "C-0001",
@@ -197,7 +197,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.54,
+      "wall_clock_s": 0.73,
       "notes": [
         "F-17 repair simulated; 9 validation readings written"
       ],
@@ -233,7 +233,7 @@
       "fault_log": [],
       "final_state": "CAPACITY_RESERVED",
       "reconciliation": {
-        "incident_id": "INC-2E9652892B",
+        "incident_id": "INC-38B7B9DCB6",
         "total": 42,
         "committed": [],
         "quarantined": [],
@@ -318,7 +318,7 @@
       "fault_log": [],
       "final_state": "CLOSED",
       "reconciliation": {
-        "incident_id": "INC-2E9652892B",
+        "incident_id": "INC-38B7B9DCB6",
         "total": 42,
         "committed": [
           "C-0001",
@@ -373,9 +373,9 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.52,
+      "wall_clock_s": 0.53,
       "notes": [
-        "competing incident INC-8D94370135 opened on F-35",
+        "competing incident INC-A8EE5BF612 opened on F-35",
         "competing incident holds 45 slot(s) in F-31",
         "F-17 repair simulated; 9 validation readings written"
       ],
@@ -417,7 +417,7 @@
       "fault_log": [
         {
           "tool": "reserve_capacity",
-          "action_id": "PG-INC-2E9652892B-P1-T80",
+          "action_id": "PG-INC-38B7B9DCB6-P1-T80",
           "call_number": 1,
           "kind": "commit_loss",
           "spec_index": 0
@@ -425,7 +425,7 @@
       ],
       "final_state": "CLOSED",
       "reconciliation": {
-        "incident_id": "INC-2E9652892B",
+        "incident_id": "INC-38B7B9DCB6",
         "total": 42,
         "committed": [
           "C-0001",
@@ -480,7 +480,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.53,
+      "wall_clock_s": 0.67,
       "notes": [
         "F-17 repair simulated; 9 validation readings written"
       ],
@@ -530,295 +530,7 @@
       ],
       "final_state": "CLOSED",
       "reconciliation": {
-        "incident_id": "INC-2E9652892B",
-        "total": 42,
-        "committed": [
-          "C-0001",
-          "C-0002",
-          "C-0003",
-          "C-0004",
-          "C-0005",
-          "C-0006",
-          "C-0007",
-          "C-0008",
-          "C-0009",
-          "C-0010",
-          "C-0011",
-          "C-0012",
-          "C-0013",
-          "C-0014",
-          "C-0015",
-          "C-0016",
-          "C-0017",
-          "C-0018",
-          "C-0019",
-          "C-0020",
-          "C-0021",
-          "C-0022",
-          "C-0023",
-          "C-0024",
-          "C-0025",
-          "C-0026",
-          "C-0027",
-          "C-0028",
-          "C-0029",
-          "C-0030",
-          "C-0031",
-          "C-0032",
-          "C-0033",
-          "C-0034",
-          "C-0035",
-          "C-0036",
-          "C-0037",
-          "C-0038",
-          "C-0039",
-          "C-0040",
-          "C-0041",
-          "C-0042"
-        ],
-        "quarantined": [],
-        "unresolved": [],
-        "in_flight": [],
-        "complete": true
-      },
-      "tool_calls": 105,
-      "tool_denials": 0,
-      "duplicate_receipts": 0,
-      "model_calls": 0,
-      "wall_clock_s": 0.52,
-      "notes": [
-        "F-17 repair simulated; 9 validation readings written"
-      ],
-      "error": null
-    },
-    {
-      "drill_id": "D7",
-      "family": "recovery",
-      "passed": true,
-      "infrastructure_error": false,
-      "failed_invariants": [],
-      "expectations": [
-        {
-          "key": "all_invariants_hold",
-          "description": "Every hard invariant N1-N13 holds in the final snapshot",
-          "met": true,
-          "detail": "all hold"
-        },
-        {
-          "key": "no_duplicate_effect",
-          "description": "No semantic action produced more than one committed effect",
-          "met": true,
-          "detail": "every semantic action maps to at most one committed effect"
-        },
-        {
-          "key": "fault_actually_fired",
-          "description": "The injected fault fired",
-          "met": true,
-          "detail": "1 fault(s) injected"
-        },
-        {
-          "key": "no_duplicate_committed_transfer",
-          "description": "No container has two committed transfers",
-          "met": true,
-          "detail": "one per container"
-        }
-      ],
-      "unmet_expectations": [],
-      "fault_log": [
-        {
-          "tool": "commit_ready_transfers",
-          "action_id": "",
-          "call_number": 1,
-          "kind": "commit_loss",
-          "spec_index": 0
-        }
-      ],
-      "final_state": "CLOSED",
-      "reconciliation": {
-        "incident_id": "INC-2E9652892B",
-        "total": 42,
-        "committed": [
-          "C-0001",
-          "C-0002",
-          "C-0003",
-          "C-0004",
-          "C-0005",
-          "C-0006",
-          "C-0007",
-          "C-0008",
-          "C-0009",
-          "C-0010",
-          "C-0011",
-          "C-0012",
-          "C-0013",
-          "C-0014",
-          "C-0015",
-          "C-0016",
-          "C-0017",
-          "C-0018",
-          "C-0019",
-          "C-0020",
-          "C-0021",
-          "C-0022",
-          "C-0023",
-          "C-0024",
-          "C-0025",
-          "C-0026",
-          "C-0027",
-          "C-0028",
-          "C-0029",
-          "C-0030",
-          "C-0031",
-          "C-0032",
-          "C-0033",
-          "C-0034",
-          "C-0035",
-          "C-0036",
-          "C-0037",
-          "C-0038",
-          "C-0039",
-          "C-0040",
-          "C-0041",
-          "C-0042"
-        ],
-        "quarantined": [],
-        "unresolved": [],
-        "in_flight": [],
-        "complete": true
-      },
-      "tool_calls": 105,
-      "tool_denials": 0,
-      "duplicate_receipts": 0,
-      "model_calls": 0,
-      "wall_clock_s": 0.53,
-      "notes": [
-        "F-17 repair simulated; 9 validation readings written"
-      ],
-      "error": null
-    },
-    {
-      "drill_id": "D8",
-      "family": "safety",
-      "passed": true,
-      "infrastructure_error": false,
-      "failed_invariants": [],
-      "expectations": [
-        {
-          "key": "all_invariants_hold",
-          "description": "Every hard invariant N1-N13 holds in the final snapshot",
-          "met": true,
-          "detail": "all hold"
-        },
-        {
-          "key": "unsafe_destination_refused",
-          "description": "At least one commit was refused on N4",
-          "met": true,
-          "detail": "42 custody commit refusal(s)"
-        },
-        {
-          "key": "incident_not_closed",
-          "description": "The incident does not close with material unplaced",
-          "met": true,
-          "detail": "incident is RECONCILING"
-        }
-      ],
-      "unmet_expectations": [],
-      "fault_log": [],
-      "final_state": "RECONCILING",
-      "reconciliation": {
-        "incident_id": "INC-2E9652892B",
-        "total": 42,
-        "committed": [],
-        "quarantined": [],
-        "unresolved": [
-          "C-0001",
-          "C-0002",
-          "C-0003",
-          "C-0004",
-          "C-0005",
-          "C-0006",
-          "C-0007",
-          "C-0008",
-          "C-0009",
-          "C-0010",
-          "C-0011",
-          "C-0012",
-          "C-0013",
-          "C-0014",
-          "C-0015",
-          "C-0016",
-          "C-0017",
-          "C-0018",
-          "C-0019",
-          "C-0020",
-          "C-0021",
-          "C-0022",
-          "C-0023",
-          "C-0024",
-          "C-0025",
-          "C-0026",
-          "C-0027",
-          "C-0028",
-          "C-0029",
-          "C-0030",
-          "C-0031",
-          "C-0032",
-          "C-0033",
-          "C-0034",
-          "C-0035",
-          "C-0036",
-          "C-0037",
-          "C-0038",
-          "C-0039",
-          "C-0040",
-          "C-0041",
-          "C-0042"
-        ],
-        "in_flight": [],
-        "complete": false
-      },
-      "tool_calls": 146,
-      "tool_denials": 0,
-      "duplicate_receipts": 0,
-      "model_calls": 0,
-      "wall_clock_s": 0.68,
-      "notes": [
-        "F-31 warmed after reservation",
-        "0 container(s) were not moved in this run (transfer cap 50). The incident correctly remains open."
-      ],
-      "error": null
-    },
-    {
-      "drill_id": "D9",
-      "family": "memory",
-      "passed": true,
-      "infrastructure_error": false,
-      "failed_invariants": [],
-      "expectations": [
-        {
-          "key": "all_invariants_hold",
-          "description": "Every hard invariant N1-N13 holds in the final snapshot",
-          "met": true,
-          "detail": "all hold"
-        },
-        {
-          "key": "no_memory_only_effect",
-          "description": "No effect cites Memory Bank as its sole evidence",
-          "met": true,
-          "detail": "no effect was authorized from memory alone"
-        },
-        {
-          "key": "capacity_conserved",
-          "description": "N1 holds",
-          "met": true,
-          "detail": "no destination exceeds verified available slots"
-        }
-      ],
-      "unmet_expectations": [],
-      "fault_log": [],
-      "final_state": "CLOSED",
-      "reconciliation": {
-        "incident_id": "INC-2E9652892B",
+        "incident_id": "INC-38B7B9DCB6",
         "total": 42,
         "committed": [
           "C-0001",
@@ -875,6 +587,294 @@
       "model_calls": 0,
       "wall_clock_s": 0.59,
       "notes": [
+        "F-17 repair simulated; 9 validation readings written"
+      ],
+      "error": null
+    },
+    {
+      "drill_id": "D7",
+      "family": "recovery",
+      "passed": true,
+      "infrastructure_error": false,
+      "failed_invariants": [],
+      "expectations": [
+        {
+          "key": "all_invariants_hold",
+          "description": "Every hard invariant N1-N13 holds in the final snapshot",
+          "met": true,
+          "detail": "all hold"
+        },
+        {
+          "key": "no_duplicate_effect",
+          "description": "No semantic action produced more than one committed effect",
+          "met": true,
+          "detail": "every semantic action maps to at most one committed effect"
+        },
+        {
+          "key": "fault_actually_fired",
+          "description": "The injected fault fired",
+          "met": true,
+          "detail": "1 fault(s) injected"
+        },
+        {
+          "key": "no_duplicate_committed_transfer",
+          "description": "No container has two committed transfers",
+          "met": true,
+          "detail": "one per container"
+        }
+      ],
+      "unmet_expectations": [],
+      "fault_log": [
+        {
+          "tool": "commit_ready_transfers",
+          "action_id": "",
+          "call_number": 1,
+          "kind": "commit_loss",
+          "spec_index": 0
+        }
+      ],
+      "final_state": "CLOSED",
+      "reconciliation": {
+        "incident_id": "INC-38B7B9DCB6",
+        "total": 42,
+        "committed": [
+          "C-0001",
+          "C-0002",
+          "C-0003",
+          "C-0004",
+          "C-0005",
+          "C-0006",
+          "C-0007",
+          "C-0008",
+          "C-0009",
+          "C-0010",
+          "C-0011",
+          "C-0012",
+          "C-0013",
+          "C-0014",
+          "C-0015",
+          "C-0016",
+          "C-0017",
+          "C-0018",
+          "C-0019",
+          "C-0020",
+          "C-0021",
+          "C-0022",
+          "C-0023",
+          "C-0024",
+          "C-0025",
+          "C-0026",
+          "C-0027",
+          "C-0028",
+          "C-0029",
+          "C-0030",
+          "C-0031",
+          "C-0032",
+          "C-0033",
+          "C-0034",
+          "C-0035",
+          "C-0036",
+          "C-0037",
+          "C-0038",
+          "C-0039",
+          "C-0040",
+          "C-0041",
+          "C-0042"
+        ],
+        "quarantined": [],
+        "unresolved": [],
+        "in_flight": [],
+        "complete": true
+      },
+      "tool_calls": 105,
+      "tool_denials": 0,
+      "duplicate_receipts": 0,
+      "model_calls": 0,
+      "wall_clock_s": 0.55,
+      "notes": [
+        "F-17 repair simulated; 9 validation readings written"
+      ],
+      "error": null
+    },
+    {
+      "drill_id": "D8",
+      "family": "safety",
+      "passed": true,
+      "infrastructure_error": false,
+      "failed_invariants": [],
+      "expectations": [
+        {
+          "key": "all_invariants_hold",
+          "description": "Every hard invariant N1-N13 holds in the final snapshot",
+          "met": true,
+          "detail": "all hold"
+        },
+        {
+          "key": "unsafe_destination_refused",
+          "description": "At least one commit was refused on N4",
+          "met": true,
+          "detail": "42 custody commit refusal(s)"
+        },
+        {
+          "key": "incident_not_closed",
+          "description": "The incident does not close with material unplaced",
+          "met": true,
+          "detail": "incident is RECONCILING"
+        }
+      ],
+      "unmet_expectations": [],
+      "fault_log": [],
+      "final_state": "RECONCILING",
+      "reconciliation": {
+        "incident_id": "INC-38B7B9DCB6",
+        "total": 42,
+        "committed": [],
+        "quarantined": [],
+        "unresolved": [
+          "C-0001",
+          "C-0002",
+          "C-0003",
+          "C-0004",
+          "C-0005",
+          "C-0006",
+          "C-0007",
+          "C-0008",
+          "C-0009",
+          "C-0010",
+          "C-0011",
+          "C-0012",
+          "C-0013",
+          "C-0014",
+          "C-0015",
+          "C-0016",
+          "C-0017",
+          "C-0018",
+          "C-0019",
+          "C-0020",
+          "C-0021",
+          "C-0022",
+          "C-0023",
+          "C-0024",
+          "C-0025",
+          "C-0026",
+          "C-0027",
+          "C-0028",
+          "C-0029",
+          "C-0030",
+          "C-0031",
+          "C-0032",
+          "C-0033",
+          "C-0034",
+          "C-0035",
+          "C-0036",
+          "C-0037",
+          "C-0038",
+          "C-0039",
+          "C-0040",
+          "C-0041",
+          "C-0042"
+        ],
+        "in_flight": [],
+        "complete": false
+      },
+      "tool_calls": 146,
+      "tool_denials": 0,
+      "duplicate_receipts": 0,
+      "model_calls": 0,
+      "wall_clock_s": 0.75,
+      "notes": [
+        "F-31 warmed after reservation",
+        "0 container(s) were not moved in this run (transfer cap 50). The incident correctly remains open."
+      ],
+      "error": null
+    },
+    {
+      "drill_id": "D9",
+      "family": "memory",
+      "passed": true,
+      "infrastructure_error": false,
+      "failed_invariants": [],
+      "expectations": [
+        {
+          "key": "all_invariants_hold",
+          "description": "Every hard invariant N1-N13 holds in the final snapshot",
+          "met": true,
+          "detail": "all hold"
+        },
+        {
+          "key": "no_memory_only_effect",
+          "description": "No effect cites Memory Bank as its sole evidence",
+          "met": true,
+          "detail": "no effect was authorized from memory alone"
+        },
+        {
+          "key": "capacity_conserved",
+          "description": "N1 holds",
+          "met": true,
+          "detail": "no destination exceeds verified available slots"
+        }
+      ],
+      "unmet_expectations": [],
+      "fault_log": [],
+      "final_state": "CLOSED",
+      "reconciliation": {
+        "incident_id": "INC-38B7B9DCB6",
+        "total": 42,
+        "committed": [
+          "C-0001",
+          "C-0002",
+          "C-0003",
+          "C-0004",
+          "C-0005",
+          "C-0006",
+          "C-0007",
+          "C-0008",
+          "C-0009",
+          "C-0010",
+          "C-0011",
+          "C-0012",
+          "C-0013",
+          "C-0014",
+          "C-0015",
+          "C-0016",
+          "C-0017",
+          "C-0018",
+          "C-0019",
+          "C-0020",
+          "C-0021",
+          "C-0022",
+          "C-0023",
+          "C-0024",
+          "C-0025",
+          "C-0026",
+          "C-0027",
+          "C-0028",
+          "C-0029",
+          "C-0030",
+          "C-0031",
+          "C-0032",
+          "C-0033",
+          "C-0034",
+          "C-0035",
+          "C-0036",
+          "C-0037",
+          "C-0038",
+          "C-0039",
+          "C-0040",
+          "C-0041",
+          "C-0042"
+        ],
+        "quarantined": [],
+        "unresolved": [],
+        "in_flight": [],
+        "complete": true
+      },
+      "tool_calls": 105,
+      "tool_denials": 0,
+      "duplicate_receipts": 0,
+      "model_calls": 0,
+      "wall_clock_s": 0.62,
+      "notes": [
         "stale memory note injected",
         "F-17 repair simulated; 9 validation readings written"
       ],
@@ -910,7 +910,7 @@
       "fault_log": [],
       "final_state": "RECONCILING",
       "reconciliation": {
-        "incident_id": "INC-2E9652892B",
+        "incident_id": "INC-38B7B9DCB6",
         "total": 42,
         "committed": [],
         "quarantined": [],
@@ -965,7 +965,7 @@
       "tool_denials": 2,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.35,
+      "wall_clock_s": 0.42,
       "notes": [
         "0 container(s) were not moved in this run (transfer cap 50). The incident correctly remains open."
       ],
@@ -995,7 +995,7 @@
       "fault_log": [],
       "final_state": "CAPACITY_RESERVED",
       "reconciliation": {
-        "incident_id": "INC-2E9652892B",
+        "incident_id": "INC-38B7B9DCB6",
         "total": 42,
         "committed": [],
         "quarantined": [],
@@ -1050,7 +1050,7 @@
       "tool_denials": 2,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.05,
+      "wall_clock_s": 0.07,
       "notes": [
         "42 container(s) were not moved in this run (transfer cap 50). The incident correctly remains open."
       ],
@@ -1086,7 +1086,7 @@
       "fault_log": [],
       "final_state": "CLOSED",
       "reconciliation": {
-        "incident_id": "INC-2E9652892B",
+        "incident_id": "INC-38B7B9DCB6",
         "total": 42,
         "committed": [
           "C-0001",
@@ -1141,7 +1141,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 1,
       "model_calls": 0,
-      "wall_clock_s": 0.52,
+      "wall_clock_s": 0.66,
       "notes": [
         "F-17 repair simulated; 9 validation readings written"
       ],
@@ -1177,7 +1177,7 @@
       "fault_log": [],
       "final_state": "RECONCILING",
       "reconciliation": {
-        "incident_id": "INC-2E9652892B",
+        "incident_id": "INC-38B7B9DCB6",
         "total": 42,
         "committed": [
           "C-0003",
@@ -1233,7 +1233,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.6,
+      "wall_clock_s": 0.66,
       "notes": [
         "2 container(s) were not moved in this run (transfer cap 50, 2 deliberately skipped). The incident correctly remains open."
       ],
@@ -1269,7 +1269,7 @@
       "fault_log": [],
       "final_state": "RECONCILING",
       "reconciliation": {
-        "incident_id": "INC-2E9652892B",
+        "incident_id": "INC-38B7B9DCB6",
         "total": 42,
         "committed": [
           "C-0001",
@@ -1325,7 +1325,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.67,
+      "wall_clock_s": 0.61,
       "notes": [
         "0 container(s) were not moved in this run (transfer cap 50). The incident correctly remains open."
       ],
@@ -1389,7 +1389,7 @@
       ],
       "final_state": "CONTAINED",
       "reconciliation": {
-        "incident_id": "INC-2E9652892B",
+        "incident_id": "INC-38B7B9DCB6",
         "total": 42,
         "committed": [],
         "quarantined": [],
@@ -1480,7 +1480,7 @@
       "fault_log": [],
       "final_state": "RESCUE_PLANNING",
       "reconciliation": {
-        "incident_id": "INC-2E9652892B",
+        "incident_id": "INC-38B7B9DCB6",
         "total": 42,
         "committed": [],
         "quarantined": [],
@@ -1535,7 +1535,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.09,
+      "wall_clock_s": 0.12,
       "notes": [
         "capacity-broker@rev-1 set to BLOCKED",
         "42 container(s) were not moved in this run (transfer cap 50). The incident correctly remains open."
@@ -1587,7 +1587,7 @@
       ],
       "final_state": "RESCUE_PLANNING",
       "reconciliation": {
-        "incident_id": "INC-2E9652892B",
+        "incident_id": "INC-38B7B9DCB6",
         "total": 42,
         "committed": [],
         "quarantined": [],
@@ -1642,7 +1642,7 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.05,
+      "wall_clock_s": 0.06,
       "notes": [
         "42 container(s) were not moved in this run (transfer cap 50). The incident correctly remains open."
       ],
@@ -1672,7 +1672,100 @@
       "fault_log": [],
       "final_state": "CLOSED",
       "reconciliation": {
-        "incident_id": "INC-2E9652892B",
+        "incident_id": "INC-38B7B9DCB6",
+        "total": 42,
+        "committed": [
+          "C-0001",
+          "C-0002",
+          "C-0003",
+          "C-0004",
+          "C-0005",
+          "C-0006",
+          "C-0007",
+          "C-0008",
+          "C-0009",
+          "C-0010",
+          "C-0011",
+          "C-0012",
+          "C-0013",
+          "C-0014",
+          "C-0015",
+          "C-0016",
+          "C-0017",
+          "C-0018",
+          "C-0019",
+          "C-0020",
+          "C-0021",
+          "C-0022",
+          "C-0023",
+          "C-0024",
+          "C-0025",
+          "C-0026",
+          "C-0027",
+          "C-0028",
+          "C-0029",
+          "C-0030",
+          "C-0031",
+          "C-0032",
+          "C-0033",
+          "C-0034",
+          "C-0035",
+          "C-0036",
+          "C-0037",
+          "C-0038",
+          "C-0039",
+          "C-0040",
+          "C-0041",
+          "C-0042"
+        ],
+        "quarantined": [],
+        "unresolved": [],
+        "in_flight": [],
+        "complete": true
+      },
+      "tool_calls": 105,
+      "tool_denials": 0,
+      "duplicate_receipts": 0,
+      "model_calls": 0,
+      "wall_clock_s": 0.65,
+      "notes": [
+        "F-17 repair simulated; 9 validation readings written"
+      ],
+      "error": null
+    },
+    {
+      "drill_id": "H1",
+      "family": "idempotency",
+      "passed": true,
+      "infrastructure_error": false,
+      "failed_invariants": [],
+      "expectations": [
+        {
+          "key": "all_invariants_hold",
+          "description": "Every hard invariant N1-N13 holds in the final snapshot",
+          "met": true,
+          "detail": "all hold"
+        },
+        {
+          "key": "no_duplicate_effect",
+          "description": "No semantic action produced more than one committed effect",
+          "met": true,
+          "detail": "every semantic action maps to at most one committed effect"
+        }
+      ],
+      "unmet_expectations": [],
+      "fault_log": [
+        {
+          "tool": "dispatch_responder",
+          "action_id": "",
+          "call_number": 1,
+          "kind": "commit_loss",
+          "spec_index": 0
+        }
+      ],
+      "final_state": "CLOSED",
+      "reconciliation": {
+        "incident_id": "INC-38B7B9DCB6",
         "total": 42,
         "committed": [
           "C-0001",
@@ -1734,99 +1827,6 @@
       "error": null
     },
     {
-      "drill_id": "H1",
-      "family": "idempotency",
-      "passed": true,
-      "infrastructure_error": false,
-      "failed_invariants": [],
-      "expectations": [
-        {
-          "key": "all_invariants_hold",
-          "description": "Every hard invariant N1-N13 holds in the final snapshot",
-          "met": true,
-          "detail": "all hold"
-        },
-        {
-          "key": "no_duplicate_effect",
-          "description": "No semantic action produced more than one committed effect",
-          "met": true,
-          "detail": "every semantic action maps to at most one committed effect"
-        }
-      ],
-      "unmet_expectations": [],
-      "fault_log": [
-        {
-          "tool": "dispatch_responder",
-          "action_id": "",
-          "call_number": 1,
-          "kind": "commit_loss",
-          "spec_index": 0
-        }
-      ],
-      "final_state": "CLOSED",
-      "reconciliation": {
-        "incident_id": "INC-2E9652892B",
-        "total": 42,
-        "committed": [
-          "C-0001",
-          "C-0002",
-          "C-0003",
-          "C-0004",
-          "C-0005",
-          "C-0006",
-          "C-0007",
-          "C-0008",
-          "C-0009",
-          "C-0010",
-          "C-0011",
-          "C-0012",
-          "C-0013",
-          "C-0014",
-          "C-0015",
-          "C-0016",
-          "C-0017",
-          "C-0018",
-          "C-0019",
-          "C-0020",
-          "C-0021",
-          "C-0022",
-          "C-0023",
-          "C-0024",
-          "C-0025",
-          "C-0026",
-          "C-0027",
-          "C-0028",
-          "C-0029",
-          "C-0030",
-          "C-0031",
-          "C-0032",
-          "C-0033",
-          "C-0034",
-          "C-0035",
-          "C-0036",
-          "C-0037",
-          "C-0038",
-          "C-0039",
-          "C-0040",
-          "C-0041",
-          "C-0042"
-        ],
-        "quarantined": [],
-        "unresolved": [],
-        "in_flight": [],
-        "complete": true
-      },
-      "tool_calls": 105,
-      "tool_denials": 0,
-      "duplicate_receipts": 0,
-      "model_calls": 0,
-      "wall_clock_s": 0.68,
-      "notes": [
-        "F-17 repair simulated; 9 validation readings written"
-      ],
-      "error": null
-    },
-    {
       "drill_id": "H2",
       "family": "safety",
       "passed": true,
@@ -1856,7 +1856,7 @@
       "fault_log": [],
       "final_state": "CLOSED",
       "reconciliation": {
-        "incident_id": "INC-2E9652892B",
+        "incident_id": "INC-38B7B9DCB6",
         "total": 42,
         "committed": [
           "C-0001",
@@ -1911,9 +1911,9 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.83,
+      "wall_clock_s": 0.6,
       "notes": [
-        "competing incident INC-8D94370135 opened on F-35",
+        "competing incident INC-A8EE5BF612 opened on F-35",
         "competing incident holds 45 slot(s) in F-31",
         "F-17 repair simulated; 9 validation readings written"
       ],
@@ -1943,7 +1943,7 @@
       "fault_log": [],
       "final_state": "RECONCILING",
       "reconciliation": {
-        "incident_id": "INC-2E9652892B",
+        "incident_id": "INC-38B7B9DCB6",
         "total": 42,
         "committed": [
           "C-0001",
@@ -1999,9 +1999,9 @@
       "tool_denials": 0,
       "duplicate_receipts": 0,
       "model_calls": 0,
-      "wall_clock_s": 0.83,
+      "wall_clock_s": 0.65,
       "notes": [
-        "competing incident INC-8D94370135 opened on F-35",
+        "competing incident INC-A8EE5BF612 opened on F-35",
         "competing incident holds 45 slot(s) in F-31",
         "0 container(s) were not moved in this run (transfer cap 50). The incident correctly remains open."
       ],
@@ -2009,7 +2009,7 @@
     }
   ],
   "decision": {
-    "run_id": "qual-0826259-2026-08-31T10:38:53.826Z",
+    "run_id": "qual-f37b568-2026-08-31T22:43:13.354Z",
     "decision": "QUALIFIED",
     "failing_drills": [],
     "reason": "survived the full corpus"

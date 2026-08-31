@@ -137,6 +137,17 @@ CUSTODY_URL=$(url nightshift-custody)
 INCIDENT_URL=$(url nightshift-incident)
 API_URL=$(url nightshift-api)
 
+# The BFF is deployed before these URLs can be resolved, so it comes up without them and
+# nightshift/runtime.py falls back to InProcessTransport. That is the difference between
+# every agent tool call being minted as that agent's own service account and enforced by
+# Cloud Run IAM, and it all happening in one process under the container's identity. It
+# reverts silently on every deploy unless the BFF is updated once the URLs exist.
+say "Pointing the BFF at the domain services"
+gcloud run services update nightshift-api \
+  --region="${REGION}" --project="${PROJECT}" --quiet \
+  --update-env-vars "NIGHTSHIFT_TELEMETRY_URL=${TELEMETRY_URL},NIGHTSHIFT_INVENTORY_URL=${INVENTORY_URL},NIGHTSHIFT_CAPACITY_URL=${CAPACITY_URL},NIGHTSHIFT_FACILITIES_URL=${FACILITIES_URL},NIGHTSHIFT_CUSTODY_URL=${CUSTODY_URL},NIGHTSHIFT_INCIDENT_URL=${INCIDENT_URL}" \
+  >/dev/null && echo "  six domain service URLs set on nightshift-api"
+
 say "Granting cross-service invoke, by agent identity"
 # This is where the §11.3 matrix becomes Cloud Run IAM. An agent identity that has no
 # business calling a service simply is not a run.invoker on it, so the denial happens at
