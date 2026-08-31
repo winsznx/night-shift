@@ -385,6 +385,50 @@ export interface ResponderTask {
   exception_reason: string | null;
 }
 
+/**
+ * One capture, as the API returns it after a scan.
+ *
+ * A model read the bytes and `observed` is what it claims to have seen. `expected` is
+ * what this system already held. The comparison between them happened in the safety
+ * kernel, not in the model and not here.
+ */
+export interface CorroborationRecord {
+  /** container_label, destination_display, or voice_confirmation. */
+  kind: string;
+  /** CONFIRMED, MISMATCH, or ABSENT. */
+  status: string;
+  detail: string;
+  observed: string;
+  expected: string;
+  capture_sha256: string;
+  read_by_model: string;
+}
+
+/** What a successful scan reports about the captures that came with it. */
+export interface CorroborationOutcome {
+  records: CorroborationRecord[];
+  reason: string;
+}
+
+/**
+ * The 409 body when a capture contradicts the scan.
+ *
+ * Nothing was written, so the responder can clear the capture that disagreed and post
+ * again without losing the ones that held.
+ */
+export interface CorroborationRefusal {
+  error: string;
+  reason: string;
+  corroboration: CorroborationRecord[];
+}
+
+/** The three optional captures a scan may carry, as base64 data URLs from the browser. */
+export interface ScanCaptures {
+  label_photo: string | null;
+  display_photo: string | null;
+  voice_note: string | null;
+}
+
 export interface ResponderView {
   incident_id: string;
   incident_state: string;

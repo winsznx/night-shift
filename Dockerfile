@@ -45,7 +45,9 @@ ENV PATH="/app/.venv/bin:$PATH" \
     NIGHTSHIFT_ENV=cloud-run
 
 # Cloud Run sets PORT; the entrypoint resolves NIGHTSHIFT_SERVICE to an ASGI app.
-COPY scripts/serve.py ./scripts/serve.py
+# The rest of scripts/ ships too, because the scheduled Cloud Run Job runs
+# scripts/scheduled_tick.py out of this same image.
+COPY scripts ./scripts
 
 EXPOSE 8080
 CMD ["python", "scripts/serve.py"]

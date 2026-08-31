@@ -92,22 +92,48 @@ async def main() -> int:
     args = parse_args()
     settings = get_settings()
     namespace = args.namespace or settings.namespace
+    return await publish_run(
+        namespace=namespace,
+        seed=args.seed,
+        rounds=args.rounds,
+        driver=args.driver,
+        store_backend=args.store,
+        upload=not args.no_upload,
+        publish_only=args.publish_only,
+    )
 
-    runtime = build_runtime(namespace=namespace, store_backend=args.store)
+
+async def publish_run(
+    *,
+    namespace: str,
+    seed: int = 20260826,
+    rounds: int = 8,
+    driver: str = "agent",
+    store_backend: str | None = None,
+    upload: bool = True,
+    publish_only: str | None = None,
+) -> int:
+    """Run one incident and publish its signed evidence bundle.
+
+    Split out of ``main`` so the scheduled job can reach it without shelling out to this
+    script and re-parsing its own arguments.
+    """
+    settings = get_settings()
+    runtime = build_runtime(namespace=namespace, store_backend=store_backend)
     print(
         f"store={runtime.repo.store.backend} namespace={namespace} "
-        f"driver={args.driver} model={settings.model_id}",
+        f"driver={driver} model={settings.model_id}",
         flush=True,
     )
 
-    if args.publish_only:
-        run = _AlreadyRan(incident_id=args.publish_only, repo=runtime.repo)
+    if publish_only:
+        run = _AlreadyRan(incident_id=publish_only, repo=runtime.repo)
     else:
         runtime, run = await run_incident(
             runtime=runtime,
-            scenario=ScenarioConfig(seed=args.seed, max_rounds=args.rounds, max_transfers=50),
+            scenario=ScenarioConfig(seed=seed, max_rounds=rounds, max_transfers=50),
             namespace=namespace,
-            driver=args.driver,
+            driver=driver,
         )
 
     state = runtime.repo.load_kernel_state(run.incident_id)
@@ -124,7 +150,7 @@ async def main() -> int:
     bundle = write_evidence(
         state,
         settings=settings,
-        upload=not args.no_upload,
+        upload=upload,
         evaluated_at=now_iso(),
         estate_fixture_hash=run.estate_hash,
         opening_evidence=[{"event_id": eid, "kind": "sensor"} for eid in run.delivered_event_ids],
@@ -171,6 +197,14 @@ async def main() -> int:
         ],
     )
     record_manifest_in_store(runtime.repo, bundle)
+
+    # The responder interface is reachable only through its task token, and the token is
+    # deliberately stripped from every read route. That left the whole responder flow
+    # with no discoverable entry point, so the run that mints the token prints it.
+    for dispatch in runtime.repo.list_dispatches(run.incident_id):
+        if dispatch.task_token:
+            print(f"\nresponder interface: /respond/{dispatch.task_token}", flush=True)
+            break
 
     print(json.dumps(bundle.as_dict(), indent=2), flush=True)
 
