@@ -25,6 +25,7 @@ from nightshift.common.config import Settings, get_settings
 from nightshift.evidence.manifest import build_manifest
 from nightshift.evidence.signing import Signer, get_signer
 from nightshift.safety_kernel.world import KernelState
+from nightshift.schemas.enums import IncidentState
 
 
 @dataclass
@@ -50,6 +51,27 @@ class EvidenceBundle:
         }
 
 
+def _sealing_instant(state: KernelState) -> str | None:
+    """The instant a manifest's invariants are evaluated at.
+
+    N4 asks how old a destination reading is *now*. For an incident that has already
+    reached a terminal state, the only ``now`` that yields a stable answer is the one
+    the incident closed at: evaluating a finished rescue against wall clock re-asks the
+    freshness question against readings that were current then and are not current now,
+    so a manifest regenerated a week later seals an N4 failure that never happened.
+
+    ``apps/api/main.py`` applies the same rule to the live read path. Returning ``None``
+    for an open incident lets :func:`build_manifest` fall back to wall clock, which is
+    correct while the rescue is still running.
+    """
+    incident = state.incident
+    if incident is None:
+        return None
+    if incident.state in {IncidentState.CLOSED, IncidentState.ABORTED_SAFE}:
+        return str(incident.closed_at) if incident.closed_at else None
+    return None
+
+
 def write_evidence(
     state: KernelState,
     *,
@@ -69,6 +91,7 @@ def write_evidence(
     manifest_kwargs.setdefault("deployment_env", settings.deployment_env)
     manifest_kwargs.setdefault("model_id", settings.model_id)
     manifest_kwargs.setdefault("model_armor_template", settings.model_armor_template)
+    manifest_kwargs.setdefault("evaluated_at", _sealing_instant(state))
     manifest_kwargs["signer_backend"] = signer.backend
 
     body = build_manifest(state, **manifest_kwargs)

@@ -10,6 +10,7 @@ import pytest
 from nightshift.evidence.manifest import build_manifest, restore_state, snapshot_state
 from nightshift.evidence.signing import LocalSigner, NullSigner, verify_signature
 from nightshift.evidence.store import write_evidence
+from nightshift.schemas.enums import IncidentState
 from nightshift.verify.verifier import VerificationStatus, verify_manifest_file
 from tests import builders as b
 
@@ -256,3 +257,54 @@ def test_kms_and_local_signatures_verify_identically(closed_state, tmp_path):
     sig = signer.sign(payload)
     assert verify_signature(payload, sig) == (True, "")
     assert verify_signature(b"different", sig)[0] is False
+
+
+# --------------------------------------------------------------------------------------
+# Sealing instant
+#
+# Regression: the manifest writer stamped wall clock, so re-sealing a finished rescue
+# days later re-asked N4 against readings that were fresh when it closed. That sealed a
+# failing invariant into a signed document while the live incident page, which pins to
+# closed_at, still called the same incident PASS.
+# --------------------------------------------------------------------------------------
+
+
+def _closed_at(state, when):
+    assert state.incident is not None
+    state.incident.state = IncidentState.CLOSED
+    state.incident.closed_at = when
+    return state
+
+
+def test_a_terminal_incident_seals_at_its_closed_at_not_wall_clock(closed_state, tmp_path):
+    closed = _closed_at(closed_state, NOW)
+    bundle = write_evidence(
+        closed, signer=NullSigner(), out_dir=tmp_path, upload=False, delivered_event_ids=[]
+    )
+    assert bundle.manifest["evaluated_at"] == NOW
+
+
+def test_re_sealing_a_finished_rescue_does_not_invent_an_n4_failure(closed_state, tmp_path):
+    """Seal the same closed incident twice, far apart. The verdict must not move."""
+    closed = _closed_at(closed_state, NOW)
+    first = write_evidence(
+        closed, signer=NullSigner(), out_dir=tmp_path / "a", upload=False, delivered_event_ids=[]
+    ).manifest
+    second = write_evidence(
+        closed, signer=NullSigner(), out_dir=tmp_path / "b", upload=False, delivered_event_ids=[]
+    ).manifest
+
+    assert first["evaluated_at"] == second["evaluated_at"] == NOW
+    assert first["invariants_all_hold"] == second["invariants_all_hold"]
+    assert first.get("failed_invariants", []) == second.get("failed_invariants", [])
+
+
+def test_an_open_incident_still_seals_at_wall_clock(closed_state, tmp_path):
+    """While a rescue is running, 'now' really is now."""
+    assert closed_state.incident is not None
+    closed_state.incident.state = IncidentState.RECONCILING
+    closed_state.incident.closed_at = None
+    bundle = write_evidence(
+        closed_state, signer=NullSigner(), out_dir=tmp_path, upload=False, delivered_event_ids=[]
+    )
+    assert bundle.manifest["evaluated_at"] != NOW

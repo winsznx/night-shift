@@ -4,7 +4,7 @@
   "synthetic": true,
   "simulated_field_events": true,
   "namespace": "demo",
-  "evaluated_at": "2026-08-31T07:38:17.642Z",
+  "evaluated_at": "2026-08-31T10:33:49.512Z",
   "incident_state": "RECONCILING",
   "severity": "SEV1",
   "opened_at": "2026-08-26T05:14:11.776Z",
@@ -255,254 +255,254 @@
         "violations": [
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0001",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0002",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0003",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0004",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0005",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0006",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0007",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0008",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0009",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0010",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0011",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0012",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0013",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0014",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0015",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0016",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0017",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0018",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0019",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0020",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0021",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0022",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0023",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0024",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0025",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0026",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0027",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0028",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0029",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0030",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0031",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0032",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0033",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0034",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0035",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0036",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0037",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0038",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0039",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0040",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0041",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           },
           {
             "transfer_id": "TR-INC-ED9B367D69-C-0042",
-            "reason": "destination reading is 439746s old, limit 900s",
-            "age_s": 439746.4,
+            "reason": "destination reading is 450278s old, limit 900s",
+            "age_s": 450278.2,
             "temp_c": -80.94
           }
         ]
@@ -633,8 +633,8 @@
     "evt-sensor-primary"
   ],
   "trace_ids": [],
-  "source_commit": "6b52e0e",
-  "deployment_env": "cloud-run",
+  "source_commit": "ef4ac40",
+  "deployment_env": "local",
   "model_id": "gemini-3.5-flash",
   "adk_version": "2.7.1",
   "corpus_version": "1.0.0",
@@ -2517,7 +2517,7 @@
         "responder_id": "RESP-01",
         "responder_role": "LAB_TECH",
         "response_phase": "TRANSFER",
-        "task_token": "sha256:d918806923281cda",
+        "task_token": "sha256:142ba0a65def06f6",
         "status": "SENT",
         "created_at": "2026-08-26T05:21:44.369Z",
         "container_ids": []
@@ -7023,16 +7023,16 @@
     "readings": {}
   },
   "artifact_hashes": {
-    "state_snapshot": "9006e5d61cb78a6a6250fce138425c7f5bcde70b16b8c8480285fb2d41fe772a",
-    "invariant_results": "4c9a346d6d53bf61db9ca9580e1e6d2cc51711623b12b9d5f638a258822cf239",
+    "state_snapshot": "8a5b15f424754fcca34bac64c948abfa4225b4cdb42f972b3510c02fec999812",
+    "invariant_results": "d5b8e52323ad3a8344c51d4199c17a99d478262c782fa1b7da284b4bc09eab94",
     "reconciliation": "13b10d107876472b9c87c048913db351391d0516f6f156a655cb69dfc6224a20"
   },
   "signature": {
     "algorithm": "EC_SIGN_P256_SHA256",
     "backend": "cloud-kms",
     "key_ref": "projects/project-2ac1d1fb-7da1-46b4-90e/locations/us-central1/keyRings/nightshift/cryptoKeys/evidence-signer/cryptoKeyVersions/1",
-    "signature_b64": "MEQCIDaWi54zARYVsm+7G8EnE36a9QqvMBGNcBXWgopSuNtgAiBezgBR/7YnRSDLEy9AhGNKIwCW6kFJS016Tu/cSTz4iQ==",
+    "signature_b64": "MEUCIHzkq3ECkbC87hNipDFypvlfdDctalRD8/lqXXy6adXBAiEA8KoKANWx9eLZ8yOv7te0eY0XSf1Az3uWnjReAT/G1nk=",
     "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7zmdy0CR8Xwk5WlAERW95OR/ohBT\nJUGhskxKJDC7Pe47CI2gm2cTUcT0BW8qRIANGBkyss8aB5mUSQ0oo8X6Uw==\n-----END PUBLIC KEY-----\n",
-    "digest_sha256": "ac95a0fb926058a23967642a012305209db3a1be86b9ee883a0cb637469dd48e"
+    "digest_sha256": "0864c43e42d709549e1b869b63f872e3ad663094e96210e99d4cf3af44da695e"
   }
 }

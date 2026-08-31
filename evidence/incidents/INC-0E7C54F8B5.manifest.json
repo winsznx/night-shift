@@ -4,7 +4,7 @@
   "synthetic": true,
   "simulated_field_events": true,
   "namespace": "demo",
-  "evaluated_at": "2026-08-31T07:37:29.274Z",
+  "evaluated_at": "2026-08-26T12:22:30.098Z",
   "incident_state": "CLOSED",
   "severity": "SEV1",
   "opened_at": "2026-08-26T11:30:57.149Z",
@@ -329,264 +329,9 @@
     {
       "invariant": "N4",
       "title": "Fresh destination evidence",
-      "holds": false,
-      "detail": "42 commit(s) relied on unusable destination evidence",
-      "evidence": {
-        "violations": [
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0001",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0002",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0003",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.12
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0004",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.12
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0005",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0006",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0007",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.12
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0008",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0009",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0010",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0011",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0012",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.12
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0013",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0014",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0015",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.12
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0016",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0017",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.12
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0018",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0019",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0020",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0021",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.12
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0022",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.12
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0023",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0024",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.12
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0025",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0026",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.12
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0027",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.12
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0028",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.12
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0029",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0030",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.12
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0031",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0032",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0033",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0034",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.12
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0035",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0036",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.12
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0037",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0038",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.12
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0039",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0040",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.12
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0041",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.12
-          },
-          {
-            "transfer_id": "TR-INC-0E7C54F8B5-C-0042",
-            "reason": "destination reading is 415419s old, limit 900s",
-            "age_s": 415419.2,
-            "temp_c": -80.7
-          }
-        ]
-      }
+      "holds": true,
+      "detail": "every commit used fresh, in-bounds destination evidence",
+      "evidence": {}
     },
     {
       "invariant": "N5",
@@ -705,10 +450,8 @@
       "evidence": {}
     }
   ],
-  "invariants_all_hold": false,
-  "failed_invariants": [
-    "N4"
-  ],
+  "invariants_all_hold": true,
+  "failed_invariants": [],
   "delivered_event_ids": [
     "evt-sensor-primary"
   ],
@@ -731,8 +474,8 @@
     "f5b7e4a233dbae12490968c9678e36cf",
     "ff4bf25f5f221a0a91845fdda5bac23b"
   ],
-  "source_commit": "6b52e0e",
-  "deployment_env": "cloud-run",
+  "source_commit": "ef4ac40",
+  "deployment_env": "local",
   "model_id": "gemini-3.5-flash",
   "adk_version": "2.7.1",
   "corpus_version": "1.0.0",
@@ -2695,7 +2438,7 @@
         "responder_id": "RESP-01",
         "responder_role": "LAB_TECH",
         "response_phase": "TRANSFER",
-        "task_token": "sha256:6703b894524a55fe",
+        "task_token": "sha256:e5fc4aa2fcd8f753",
         "status": "SENT",
         "created_at": "2026-08-26T12:03:52.330Z",
         "container_ids": []
@@ -7479,16 +7222,16 @@
     "readings": {}
   },
   "artifact_hashes": {
-    "state_snapshot": "4225a8260a7aa0320031e159e43a19939449397262dd1080ced71e08c0641821",
-    "invariant_results": "acd6cc72c58927a47c394415e56c0dec3729fde6b4e341731c972223efde9998",
+    "state_snapshot": "91c3e98e0cc9b0cf805b3e3e32aad072f379c5cfc3fe8016cabc9f4bfe57e751",
+    "invariant_results": "6e491611542dbda6032b78efc485c66324eee33e4e2317d000ab09a679dd98d1",
     "reconciliation": "f0d112b1685dd6c7e797b0292354ba80c079835aa8ae8269e0e2dc2869709d46"
   },
   "signature": {
     "algorithm": "EC_SIGN_P256_SHA256",
     "backend": "cloud-kms",
     "key_ref": "projects/project-2ac1d1fb-7da1-46b4-90e/locations/us-central1/keyRings/nightshift/cryptoKeys/evidence-signer/cryptoKeyVersions/1",
-    "signature_b64": "MEQCIAYnl0W6kc79Ao3YzsM2znEdce32aePOZwR3tZcD86JOAiAp8ikF3Z7DQhHaPOoI7KbGpz1vG8CNToqWmhtx+8AR7A==",
+    "signature_b64": "MEUCIQCS91zGE0z6w5hmme4w0TvTtMEAK61MB9+yF1QTjIWCeAIgNS15UGed9SFooLeQ/1vtHKSSbIfgLIo94ZbDvhg6kcc=",
     "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7zmdy0CR8Xwk5WlAERW95OR/ohBT\nJUGhskxKJDC7Pe47CI2gm2cTUcT0BW8qRIANGBkyss8aB5mUSQ0oo8X6Uw==\n-----END PUBLIC KEY-----\n",
-    "digest_sha256": "3e344df35f6e297483d22ec2fb60b973fd04a3395b6100cd532b48e381f52ff2"
+    "digest_sha256": "49aa73a681448ae864ccb137cf81ea0d27166356240bb7d5e8a397d04c404bc7"
   }
 }
