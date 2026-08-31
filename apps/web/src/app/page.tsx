@@ -395,19 +395,68 @@ export default async function Landing() {
         body="Canonical JSON, hashed with SHA-256, signed with a Cloud KMS asymmetric key. The manifest carries the full state snapshot, so a verifier rebuilds the world and recomputes the verdict rather than taking ours."
         alt
       >
-        <figure className="mb-4 overflow-hidden rounded-[12px] border border-[#dbeafe] bg-[#fbfdff] px-3 py-4 sm:px-6">
-          <Image
-            src="/brand/verified-route.webp"
-            sizes="(max-width: 1024px) 100vw, 1100px"
-            alt="A visual map of multiple response paths converging on a verified completion."
-            width={1586}
-            height={992}
-            className="h-auto w-full"
-          />
-          <figcaption className="px-2 pt-2 text-[12px] text-[#525252]">
-            Every path ends in a checked, signed state, not an assertion in a dashboard.
-          </figcaption>
-        </figure>
+        {/* This is the artifact, not a picture of one. Both columns are literal output
+            from `python -m nightshift.verify` against the published manifest: the left is
+            the file as shipped, the right is the same file with one container's custody
+            state changed. A drawing of a verification proves nothing; the verification
+            proves itself. */}
+        <div className="mb-4 grid gap-3 lg:grid-cols-2">
+          <figure className="overflow-hidden rounded-2xl border border-ash bg-canvas-white">
+            <figcaption className="flex items-center justify-between gap-3 px-4 py-2.5">
+              <span className="mono text-[11px] tracking-[0.08em] text-fog uppercase">
+                the published manifest
+              </span>
+              <Badge tone="green" dot>
+                PASS
+              </Badge>
+            </figcaption>
+            <pre className="scroll-x mono px-4 pb-4 text-[11.5px] leading-[1.75] text-steel">
+{`$ python -m nightshift.verify \\
+    --manifest evidence/incidents/INC-0E7C54F8B5.manifest.json
+
+  PASS artifact hash: state_snapshot     91c3e98e0cc9b0cf… vs stored 91c3e98e0cc9b0cf…
+  PASS signing key (embedded)            pinned to the published Cloud KMS key
+  PASS signature (embedded)              verified against cloud-kms public key
+  PASS signature (detached)              verified against cloud-kms public key
+  PASS state snapshot parses             rebuilt KernelState
+  PASS invariant verdict matches         13 invariants recomputed
+  PASS closed incident fully reconciled  0 unresolved, 0 in flight
+
+RESULT: PASS`}
+            </pre>
+          </figure>
+
+          <figure className="overflow-hidden rounded-2xl border border-ash bg-canvas-white">
+            <figcaption className="flex items-center justify-between gap-3 px-4 py-2.5">
+              <span className="mono text-[11px] tracking-[0.08em] text-fog uppercase">
+                one container&rsquo;s custody changed
+              </span>
+              <Badge tone="red" dot>
+                MISMATCH
+              </Badge>
+            </figcaption>
+            <pre className="scroll-x mono px-4 pb-4 text-[11.5px] leading-[1.75] text-steel">
+{`$ python -m nightshift.verify --manifest /tmp/tampered.json
+
+  FAIL artifact hash: state_snapshot     d34198d96398768c… vs stored 91c3e98e0cc9b0cf…
+  FAIL signature (embedded)              payload digest does not match the signed digest
+  FAIL signature (detached)              payload digest does not match the signed digest
+  FAIL invariant verdict matches         13 invariants recomputed, 2 divergent
+  FAIL reconciliation hash               e0e7af1a548609ac… vs stored f0d112b1685dd6c7…
+  FAIL closed incident fully reconciled  0 unresolved, 1 in flight
+
+RESULT: MISMATCH   exit=1`}
+            </pre>
+          </figure>
+        </div>
+        <p className="mb-6 max-w-[68ch] text-[13px] leading-relaxed text-fog">
+          The signature says nobody edited the bytes. The fourth line says something
+          harder: the verifier recomputed all thirteen invariants from the state itself
+          rather than trusting what the document claimed about its own verdict, and two of
+          them now disagree. Reproduce either column with{" "}
+          <span className="mono text-[12px] text-steel">make verify-demo</span>, no
+          credentials and no network.
+        </p>
         <Card padded={false}>
           <div className="border-b border-[#e5e5e5] px-4 py-3">
             <h3 className="text-[14px] font-semibold text-[#171717]">
