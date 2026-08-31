@@ -265,6 +265,30 @@ export default async function IncidentDetail({
                     ))}
                   </div>
                 ) : null}
+                {detail.dispatches.length > 0 ? (
+                  <div className="p-4">
+                    <h3 className="text-[13px] font-semibold text-[#171717]">
+                      Responder interface
+                    </h3>
+                    <p className="mt-1 max-w-[70ch] text-[13px] text-[#525252]">
+                      The field screen for these dispatches lives at{" "}
+                      <Mono className="text-[12px] font-medium text-[#171717]">
+                        /respond/&lt;task_token&gt;
+                      </Mono>
+                      . Photo and voice capture happen there, and a capture that disagrees
+                      with the record refuses the custody commit.
+                    </p>
+                    <p className="mt-1.5 max-w-[70ch] text-[13px] text-[#525252]">
+                      The token is minted with the dispatch and handed back exactly once, as{" "}
+                      <Mono className="text-[12px]">responder_path</Mono> in the{" "}
+                      <Mono className="text-[12px]">dispatch_responder</Mono> result. This
+                      read route strips it, so no page can rebuild the link.{" "}
+                      <Mono className="text-[12px]">scripts/seed_demo.py</Mono> creates a
+                      dispatch and prints the responder path it minted, which is how you
+                      get one.
+                    </p>
+                  </div>
+                ) : null}
               </div>
             )}
           </Card>
