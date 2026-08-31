@@ -987,7 +987,7 @@ def _corroborate(
     one it would not. That asymmetry is why a forged photograph gains an attacker
     nothing, and it is why this can run on an unauthenticated route at all.
     """
-    from nightshift.multimodal.reader import build_reader, decode_capture
+    from nightshift.multimodal.reader import build_reader, capture_mime, decode_capture
     from nightshift.safety_kernel.corroboration import (
         adjudicate,
         corroborate_container_label,
@@ -1006,15 +1006,21 @@ def _corroborate(
     digests: dict[str, str] = {}
 
     if label is not None:
-        observed = reader.read_container_label(label) or ""
+        observed = (
+            reader.read_container_label(label, capture_mime(body.label_photo, "image/jpeg")) or ""
+        )
         results.append(corroborate_container_label(body.container_id, observed))
         digests["container_label"] = _capture_digest(label)
     if display is not None:
-        observed_c = reader.read_freezer_display(display)
+        observed_c = reader.read_freezer_display(
+            display, capture_mime(body.display_photo, "image/jpeg")
+        )
         results.append(corroborate_destination_display(telemetry_celsius, observed_c))
         digests["destination_display"] = _capture_digest(display)
     if voice is not None:
-        transcript = reader.transcribe_confirmation(voice) or ""
+        transcript = (
+            reader.transcribe_confirmation(voice, capture_mime(body.voice_note, "audio/webm")) or ""
+        )
         results.append(corroborate_voice_confirmation(transcript))
         digests["voice_confirmation"] = _capture_digest(voice)
 

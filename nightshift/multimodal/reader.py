@@ -126,6 +126,22 @@ class CaptureReader:
         return self._generate(_VOICE_PROMPT, audio, mime_type)
 
 
+def capture_mime(value: str | None, fallback: str) -> str:
+    """The MIME type the browser stamped on a data URL, or ``fallback``.
+
+    Worth reading rather than assuming. Safari's ``MediaRecorder`` produces mp4 while
+    Chrome and Firefox produce webm, so hardcoding one label means the model is handed
+    bytes that contradict their declared type on whichever browser lost the coin toss.
+    That degrades to an unreadable capture, which is safe but is also a capability
+    silently missing on an entire browser.
+    """
+    if not value or not value.startswith("data:"):
+        return fallback
+    header = value.split(",", 1)[0]
+    mime = header[5:].split(";", 1)[0].strip()
+    return mime or fallback
+
+
 def decode_capture(value: str | None) -> bytes | None:
     """Decode a base64 capture from an untrusted request body.
 
