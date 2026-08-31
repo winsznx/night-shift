@@ -19,6 +19,11 @@ PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("Slack token", re.compile(r"xox[baprs]-[0-9A-Za-z-]{10,}")),
     ("AWS access key", re.compile(r"AKIA[0-9A-Z]{16}")),
     ("bearer token literal", re.compile(r"Bearer\s+ya29\.[A-Za-z0-9._\-]{20,}")),
+    # A responder dispatch token is a live bearer credential against the deployed
+    # pickup, receipt and exception routes. Manifests are published to a public bucket
+    # and committed here, so an unredacted one is a real disclosure. The manifest writer
+    # stores a sha256: digest instead, which this pattern deliberately does not match.
+    ("responder task token", re.compile(r'"task_token"\s*:\s*"(?!sha256:)[A-Za-z0-9_\-]{16,}"')),
 ]
 
 # Files whose whole purpose is to describe the shape of a secret without being one.

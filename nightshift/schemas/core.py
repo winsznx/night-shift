@@ -309,6 +309,10 @@ class IncidentEvent(Strict):
         "state_transition",
         "agent_decision",
         "agent_delegation",
+        # The fleet degrading and coming back: a transport failure backed off and
+        # retried, or malformed agent output re-asked once against the parser's own
+        # error. Kept distinct from agent_decision because no agent decided any of it.
+        "agent_recovery",
         "tool_call",
         "receipt",
         "refusal",

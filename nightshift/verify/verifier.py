@@ -28,6 +28,7 @@ from nightshift.evidence.signing import Signature, verify_signature
 from nightshift.safety_kernel.config import KernelConfig
 from nightshift.safety_kernel.invariants import check_all_invariants
 from nightshift.safety_kernel.world import reconciliation_snapshot
+from nightshift.verify.trusted_keys import key_is_pinned
 
 
 class VerificationStatus(StrEnum):
@@ -144,6 +145,21 @@ def verify_manifest(
                 # Not a failed check — a check that could not be performed.
                 checks.append(Check(name, None, "manifest was written by an unsigned backend"))
                 continue
+            # Pin the signer before trusting the signature. Checking a signature against
+            # the key the same document supplies proves only that the document is
+            # internally consistent, which a forger can arrange trivially.
+            pinned, pin_detail = key_is_pinned(
+                str(data.get("public_key_pem") or ""),
+                backend=str(data.get("backend") or ""),
+                key_ref=str(data.get("key_ref") or ""),
+            )
+            checks.append(
+                Check(
+                    "signing key is pinned" if len(present) == 1 else f"signing key ({label})",
+                    pinned,
+                    pin_detail,
+                )
+            )
             ok, reason = verify_signature(payload, Signature.from_dict(data))
             backend = data.get("backend", "unknown")
             checks.append(Check(name, ok, reason or f"verified against {backend} public key"))

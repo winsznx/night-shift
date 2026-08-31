@@ -43,22 +43,76 @@ from services.gateway.broker import BrokerDeniedError, ToolBroker
 log = logging.getLogger(__name__)
 
 
-def _is_rate_limited(exc: BaseException) -> bool:
-    """True for a model-API quota error, which is infrastructure rather than a refusal."""
+_QUOTA_MARKERS = ("resource_exhausted", "resourceexhausted", "429", "rate limit", "quota")
+
+_TRANSPORT_MARKERS = (
+    "503",
+    "unavailable",
+    "500",
+    "internal server error",
+    "internal error",
+    "504",
+    "deadline exceeded",
+    "deadlineexceeded",
+    "timed out",
+    "timeout",
+    "connection reset",
+    "connection aborted",
+    "connection error",
+    "remote end closed",
+    "broken pipe",
+    "server disconnected",
+)
+
+
+def _transient_class(exc: BaseException) -> str | None:
+    """Name the infrastructure failure class, or ``None`` if this is not one.
+
+    The distinction that matters is between the model *deciding* something and the model
+    being *unreachable*. A refusal, a bad plan, or a schema violation is an agent
+    outcome and belongs on the timeline as one. A 503 from Vertex is someone else's
+    capacity problem, and abandoning a freezer rescue over it would leave 42 specimen
+    containers half-moved because a data centre was busy.
+
+    This used to match quota errors only, so a routine 503 ended the run on the first
+    attempt: the Commander returned no plan, and ``_run_inner`` breaks out of the whole
+    loop when that happens. Every non-quota transport failure was therefore a full
+    rescue abort.
+    """
     text = f"{type(exc).__name__}: {exc}".lower()
-    return any(
-        marker in text
-        for marker in ("resource_exhausted", "resourceexhausted", "429", "rate limit", "quota")
+    if any(marker in text for marker in _QUOTA_MARKERS):
+        return "quota"
+    if any(marker in text for marker in _TRANSPORT_MARKERS):
+        return "transport"
+    return None
+
+
+_REPAIRABLE_ERRORS = ("no JSON object found", "schema validation failed")
+
+
+def _repair_prompt(original: str, result: SpecialistResult) -> str | None:
+    """A second, corrective ask, or ``None`` when the failure is not the agent's to fix.
+
+    Only two failures are worth re-asking: the agent wrote prose where a JSON object was
+    required, or it wrote an object the output schema rejected. Both are the shape a
+    hallucination takes here, and both are recoverable by showing the agent the parser's
+    own complaint.
+
+    A broker denial is not repairable and must not be re-asked: the agent reached for a
+    tool it does not hold, the answer is no, and asking again is asking the authority
+    layer to change its mind. A transport failure is not repairable either, because
+    ``_invoke_once`` has already exhausted its backoff by the time this is reached.
+    """
+    if result.ok or not result.error:
+        return None
+    if not any(marker in result.error for marker in _REPAIRABLE_ERRORS):
+        return None
+    return (
+        f"{original}\n\n"
+        "Your previous reply could not be used. The parser reported: "
+        f"{result.error}. Reply with a single JSON object matching your output schema, "
+        "and nothing else. No prose before it and no code fence around it."
     )
-
-
-SPECIALIST_ORDER = [
-    AgentName.SIGNAL_INVESTIGATOR,
-    AgentName.IMPACT_ANALYST,
-    AgentName.CAPACITY_BROKER,
-    AgentName.DISPATCH_AGENT,
-    AgentName.CUSTODY_AGENT,
-]
 
 
 @dataclass
@@ -365,16 +419,73 @@ class IncidentOrchestrator:
             )
         return result
 
-    _RATE_LIMIT_BACKOFF_S = (15, 45, 90)
-    """Backoff for model rate limiting.
+    _QUOTA_BACKOFF_S = (15, 45, 90)
+    """Backoff for model quota exhaustion.
 
-    A 429 from Vertex is infrastructure, not an agent decision (N12). Abandoning the
-    incident on one would leave a real rescue half-finished because someone else was
-    using the quota, so the orchestrator waits and retries a bounded number of times
-    before recording it as an infrastructure failure.
+    A 429 from Vertex is infrastructure, not an agent decision (N12). Quota refills on a
+    wall-clock window, so the wait has to be long enough to actually clear one.
+    """
+
+    _TRANSPORT_BACKOFF_S = (2, 6, 15)
+    """Backoff for a model endpoint that is reachable but unwell.
+
+    A 503 or a reset connection usually clears on the next attempt, and waiting 15
+    seconds for one burns the incident's wall-clock budget for no reason.
+    """
+
+    _MAX_REPAIR_ATTEMPTS = 1
+    """How many times a malformed agent response is re-asked before it counts as failed.
+
+    Bounded at one on purpose. A model that produced unparseable output once will often
+    produce valid output when handed the parser's own complaint, and a model that fails
+    twice is not going to converge by being asked a third time. An unbounded repair loop
+    is the failure mode this budget exists to prevent.
     """
 
     async def _invoke(self, name: AgentName, message: str) -> SpecialistResult:
+        """Call an agent, recovering from the two failures that are not decisions.
+
+        Transport failures are retried inside ``_invoke_once``. Malformed output is
+        retried here, once, by handing the agent the exact validation error and asking
+        again. Both recoveries are recorded on the incident timeline as
+        ``agent_recovery`` so the reader can see that the fleet degraded and came back
+        rather than silently producing a shorter rescue.
+        """
+        result = await self._invoke_once(name, message)
+        repair = _repair_prompt(message, result)
+        if result.ok or repair is None:
+            return result
+
+        for attempt in range(self._MAX_REPAIR_ATTEMPTS):
+            record_event(
+                self.repo,
+                self.incident_id,
+                kind="agent_recovery",
+                source=name.value,
+                summary=(
+                    f"{name.value} returned output the schema rejected; re-asking once "
+                    "with the validation error attached"
+                ),
+                detail={"error": result.error, "attempt": attempt + 1, "recovery": "reprompt"},
+                agent=name,
+            )
+            retried = await self._invoke_once(name, repair)
+            if retried.ok:
+                record_event(
+                    self.repo,
+                    self.incident_id,
+                    kind="agent_recovery",
+                    source=name.value,
+                    summary=f"{name.value} returned valid output on the repair attempt",
+                    detail={"attempt": attempt + 1, "recovery": "reprompt", "outcome": "recovered"},
+                    agent=name,
+                )
+                return retried
+            result = retried
+
+        return result
+
+    async def _invoke_once(self, name: AgentName, message: str) -> SpecialistResult:
         runner = self._runner_for(name)
         session_id = f"{self.incident_id}-{name.value}"
         await self._ensure_session(name, session_id)
@@ -382,7 +493,7 @@ class IncidentOrchestrator:
         chunks: list[str] = []
         error: str | None = None
 
-        for attempt in range(len(self._RATE_LIMIT_BACKOFF_S) + 1):
+        for attempt in range(len(self._QUOTA_BACKOFF_S) + 1):
             chunks = []
             error = None
             self._model_calls += 1
@@ -403,25 +514,36 @@ class IncidentOrchestrator:
                 break
             except Exception as exc:
                 error = f"{type(exc).__name__}: {exc}"
-                if not _is_rate_limited(exc) or attempt >= len(self._RATE_LIMIT_BACKOFF_S):
+                failure_class = _transient_class(exc)
+                backoff = (
+                    self._QUOTA_BACKOFF_S if failure_class == "quota" else self._TRANSPORT_BACKOFF_S
+                )
+                if failure_class is None or attempt >= len(backoff):
                     break
-                delay = self._RATE_LIMIT_BACKOFF_S[attempt]
+                delay = backoff[attempt]
                 log.warning(
-                    "%s rate limited by the model API; retrying in %ss (attempt %s)",
+                    "%s hit a %s failure from the model API; retrying in %ss (attempt %s)",
                     name.value,
+                    failure_class,
                     delay,
                     attempt + 1,
                 )
                 record_event(
                     self.repo,
                     self.incident_id,
-                    kind="note",
+                    kind="agent_recovery",
                     source=name.value,
                     summary=(
-                        f"Model API rate limited; waiting {delay}s before retrying. "
-                        "This is an infrastructure delay, not an agent decision."
+                        f"Model API {failure_class} failure; waiting {delay}s before "
+                        "retrying. This is an infrastructure delay, not an agent decision."
                     ),
-                    detail={"attempt": attempt + 1, "backoff_s": delay},
+                    detail={
+                        "attempt": attempt + 1,
+                        "backoff_s": delay,
+                        "failure_class": failure_class,
+                        "recovery": "backoff-retry",
+                        "error": error[:300],
+                    },
                     agent=name,
                 )
                 await asyncio.sleep(delay)

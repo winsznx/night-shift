@@ -158,4 +158,6 @@ say "Deployed"
 cat infra/deploy/urls.env
 echo
 echo "Public API:  ${API_URL}"
-echo "Health:      curl -s ${API_URL}/healthz | jq"
+# Google's front end answers /healthz itself with an HTML 404 before the request reaches
+# the container, so the health path has to live under /api.
+echo "Health:      curl -s ${API_URL}/api/healthz | jq"

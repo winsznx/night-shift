@@ -127,7 +127,6 @@ def main() -> int:
     return 0
 
 
-
 def _theme_aware_figure(stem: str, alt: str) -> str:
     """A diagram that follows the reader's GitHub theme.
 

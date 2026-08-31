@@ -258,9 +258,7 @@ def main() -> int:
             for p in iam.get("probes", [])
             if p.get("matrix_expectation") == "forbidden" and p.get("denied_by_platform")
         ]
-        allowed = [
-            p for p in iam.get("probes", []) if p.get("matrix_expectation") == "permitted"
-        ]
+        allowed = [p for p in iam.get("probes", []) if p.get("matrix_expectation") == "permitted"]
         first = denied[0]
         claims.append(
             claim(

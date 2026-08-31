@@ -88,9 +88,7 @@ def reanchor_manifest(path: Path, mapping: dict[str, str], dry_run: bool) -> str
         sidecar.write_text(json.dumps(signature.as_dict(), indent=2), encoding="utf-8")
     if signature.public_key_pem:
         stem = path.name.replace(".manifest.json", "")
-        (path.parent / f"{stem}.pub.pem").write_text(
-            signature.public_key_pem, encoding="utf-8"
-        )
+        (path.parent / f"{stem}.pub.pem").write_text(signature.public_key_pem, encoding="utf-8")
     return f"  {path.name}: re-anchored {old_commit} -> {new_commit}, re-signed ({signer.backend})"
 
 

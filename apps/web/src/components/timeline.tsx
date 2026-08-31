@@ -13,6 +13,7 @@ const KIND_LABEL: Record<string, string> = {
   state_transition: "State",
   agent_decision: "Agent decision",
   agent_delegation: "Delegation",
+  agent_recovery: "Recovered",
   tool_call: "Tool call",
   receipt: "Receipt",
   refusal: "Refused",
@@ -34,6 +35,10 @@ function kindStyle(kind: string): { rail: string; tone: Parameters<typeof Badge>
     case "agent_decision":
     case "agent_delegation":
       return { rail: "bg-[#7c3aed]", tone: "violet" };
+    // Infrastructure, not judgement. Amber rather than violet so a reader does not read
+    // a retried 503 as something an agent decided.
+    case "agent_recovery":
+      return { rail: "bg-[#ca8a04]", tone: "orange" };
     case "field":
       return { rail: "bg-[#ea580c]", tone: "orange" };
     case "fault_injection":

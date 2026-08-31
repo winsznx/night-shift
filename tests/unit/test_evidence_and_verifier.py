@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
@@ -64,7 +65,18 @@ def test_manifest_carries_the_kernel_config_it_was_evaluated_under(closed_state)
 # --------------------------------------------------------------------------------------
 
 
-def test_valid_signed_manifest_passes(closed_state, tmp_path):
+def test_a_locally_signed_manifest_verifies_but_its_provenance_is_not_established(
+    closed_state, tmp_path
+):
+    """A manifest you generated yourself is checkable, and it is not Night Shift's.
+
+    ``LocalSigner`` mints a fresh EC key here, exactly as ``make incident`` does on a
+    machine with no GCP credentials. Every structural and recomputation check must still
+    pass, because the offline path has to produce evidence the offline verifier can
+    read. What cannot pass is provenance: this verifier pins the two published Night
+    Shift signing keys, and an unrecognised key is a check it cannot perform rather than
+    one it failed. PARTIAL, never PASS.
+    """
     signer = LocalSigner(tmp_path / "keys")
     bundle = write_evidence(
         closed_state,
@@ -75,8 +87,12 @@ def test_valid_signed_manifest_passes(closed_state, tmp_path):
         delivered_event_ids=["e1", "e1"],
     )
     result = verify_manifest_file(bundle.manifest_path)
-    assert result.status is VerificationStatus.PASS, result.render()
+
+    assert result.status is VerificationStatus.PARTIAL, result.render()
     assert not result.divergences
+    assert any(c.name.startswith("signature") and c.ok is True for c in result.checks)
+    pin = [c for c in result.checks if c.name.startswith("signing key")]
+    assert pin and all(c.ok is None for c in pin), result.render()
 
 
 def test_unsigned_manifest_is_partial_not_pass(closed_state, tmp_path):
@@ -207,26 +223,30 @@ def test_manifest_claiming_closed_with_unresolved_containers_is_caught(tmp_path)
     assert "N5" in bundle.manifest["failed_invariants"]
 
 
-def test_verifier_needs_no_model_or_network(closed_state, tmp_path, monkeypatch):
-    """Fail loudly if verification ever grows an outbound call."""
+def test_verifier_needs_no_model_or_network(monkeypatch):
+    """Fail loudly if verification ever grows an outbound call.
+
+    Asserted against a *published* manifest rather than a freshly generated one, because
+    that is the claim a reader actually acts on: download the artifact, run the verifier
+    offline, get PASS. Key pinning has to hold on that path with no network, which it
+    does because the trusted public keys are compiled in rather than fetched.
+    """
     import socket
 
-    signer = LocalSigner(tmp_path / "keys")
-    bundle = write_evidence(
-        closed_state,
-        signer=signer,
-        out_dir=tmp_path,
-        upload=False,
-        evaluated_at=NOW,
-        delivered_event_ids=["e1"],
+    published = sorted(
+        (Path(__file__).resolve().parents[2] / "evidence" / "incidents").glob("*.manifest.json")
     )
+    if not published:
+        pytest.skip("no published manifest available")
 
     def _no_network(*_a, **_k):
         raise AssertionError("verification attempted a network connection")
 
     monkeypatch.setattr(socket.socket, "connect", _no_network)
-    result = verify_manifest_file(bundle.manifest_path)
-    assert result.status is VerificationStatus.PASS
+    result = verify_manifest_file(published[0])
+
+    assert result.status is VerificationStatus.PASS, result.render()
+    assert any(c.name.startswith("signing key") and c.ok is True for c in result.checks)
 
 
 def test_kms_and_local_signatures_verify_identically(closed_state, tmp_path):

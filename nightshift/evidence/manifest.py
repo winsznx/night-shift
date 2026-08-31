@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from nightshift.common.canonical import canonical_bytes, sha256_of
+from nightshift.common.canonical import canonical_bytes, sha256_bytes, sha256_of
 from nightshift.common.clock import now_iso
 from nightshift.safety_kernel.config import DEFAULT_CONFIG, KernelConfig
 from nightshift.safety_kernel.invariants import check_all_invariants
@@ -49,6 +49,24 @@ _COLLECTIONS: dict[str, Any] = {
 }
 
 
+def redact_task_token(token: str) -> str:
+    """Replace a live responder token with a stable, non-usable digest.
+
+    A dispatch task token is the only credential in the responder flow: holding one is
+    sufficient to read a responder's batch and to post pickup, receipt and exception
+    events. Manifests are published to a public bucket and committed to a public repo,
+    so shipping the raw token hands that authority to anyone who reads the evidence.
+
+    The digest keeps every property the manifest actually needs. It is stable, so two
+    dispatches remain distinguishable and a verifier still recomputes an identical
+    snapshot hash. No kernel invariant reads this field, so redacting it cannot change
+    a recomputed verdict.
+    """
+    if not token:
+        return token
+    return f"sha256:{sha256_bytes(token.encode('utf-8'))[:16]}"
+
+
 def snapshot_state(state: KernelState) -> dict[str, Any]:
     """Serialize a ``KernelState`` into the manifest's recomputable snapshot."""
     out: dict[str, Any] = {
@@ -62,6 +80,12 @@ def snapshot_state(state: KernelState) -> dict[str, Any]:
         out[name] = {
             key: value.model_dump(mode="json") for key, value in getattr(state, name).items()
         }
+    for key, dispatch in out["dispatches"].items():
+        if "task_token" in dispatch:
+            out["dispatches"][key] = {
+                **dispatch,
+                "task_token": redact_task_token(str(dispatch["task_token"])),
+            }
     return out
 
 
