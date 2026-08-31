@@ -73,7 +73,7 @@ interface CaptureSupport {
  * The responder screen.
  *
  * Not a chat surface. One container at a time, big targets, and the destination
- * temperature front and centre — because that is the number that decides whether the
+ * temperature front and centre, because that is the number that decides whether the
  * commit will be accepted, and a responder should know before they walk.
  *
  * Captures are the second channel. Every one of them is optional: a responder with a dead

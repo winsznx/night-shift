@@ -130,7 +130,7 @@ export async function AppShell({
             </div>
           </header>
           {/* The sidebar carries this notice, and the sidebar is hidden below lg. Without
-              a mobile copy, a phone viewer sees no synthetic-data labelling at all — the
+              a mobile copy, a phone viewer sees no synthetic-data labelling at all, the
               one disclosure that must never depend on viewport width. */}
           <div className="border-b border-[#fed7aa] bg-[#fff7ed] px-4 py-2 lg:hidden">
             <p className="text-[11px] leading-snug text-[#9a3412]">
@@ -175,7 +175,7 @@ export function ApiDown({ what }: { what: string }) {
         {what} is unavailable right now.
       </p>
       <p className="mt-1 text-[13px] text-[#991b1b]">
-        The API did not respond. Nothing is being shown from cache or guessed — this page
+        The API did not respond. Nothing is being shown from cache or guessed. This page
         stays empty rather than displaying stale operational state.
       </p>
     </div>

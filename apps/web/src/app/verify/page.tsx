@@ -36,7 +36,7 @@ export default async function VerifyPage() {
           <Card>
             <h2 className="text-[14px] font-semibold text-[#171717]">Run the verifier</h2>
             <pre className="mono scroll-x mt-2.5 rounded-[8px] border border-[#e5e5e5] bg-[#f5f5f5] px-3 py-2.5 text-[12px] leading-relaxed text-[#171717]">{`git clone https://github.com/winsznx/night-shift.git && cd night-shift
-make setup
+make setup-python
 make verify-demo
 
 # or point it at any single manifest in the clone

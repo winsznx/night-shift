@@ -163,7 +163,7 @@ export default async function IncidentDetail({
           <ul className="mt-1.5 space-y-0.5">
             {failedInvariants.map((i) => (
               <li key={i.invariant} className="text-[13px] text-[#991b1b]">
-                <Mono className="text-[#991b1b]">{i.invariant}</Mono> {i.title} — {i.detail}
+                <Mono className="text-[#991b1b]">{i.invariant}</Mono> {i.title} · {i.detail}
               </li>
             ))}
           </ul>

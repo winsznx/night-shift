@@ -253,7 +253,7 @@ export function SyntheticBanner({ compact = false }: { compact?: boolean }) {
       <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#ea580c]" />
       <p className="text-[12px] text-[#9a3412]">
         <span className="font-semibold">Synthetic environment.</span> All estate and
-        specimen data is generated. Responder movements are simulated — no real biobank
+        specimen data is generated. Responder movements are simulated. No real biobank
         samples were moved.
       </p>
     </div>

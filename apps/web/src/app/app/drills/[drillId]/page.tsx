@@ -29,7 +29,7 @@ export default async function DrillDetail({ params }: { params: Promise<{ drillI
   return (
     <AppShell active="/app/drills">
       <PageHeader
-        title={`${drill.id} — ${drill.title}`}
+        title={`${drill.id} · ${drill.title}`}
         subtitle={drill.description}
         right={
           <>

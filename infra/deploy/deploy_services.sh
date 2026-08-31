@@ -121,8 +121,13 @@ invoker() {
 for sa in ns-commander ns-signal ns-impact ns-capacity ns-dispatch ns-custody ns-ingestor ns-svc-bff; do
   invoker nightshift-telemetry "${sa}"
 done
-# Inventory: impact analysis, custody scoping, and the ingestor's containment reflex.
-for sa in ns-impact ns-custody ns-ingestor ns-svc-bff; do
+# Inventory: impact analysis, custody scoping, the broker's placement requirements, and
+# the ingestor's containment reflex. ns-capacity was missing here, which nothing caught
+# because the drill corpus runs in-process and never crosses the Cloud Run edge. The
+# first rescue driven over HTTP stalled on it: the broker could not read placement
+# requirements, so it placed nothing and the Commander escalated. Note the continued
+# absence of ns-dispatch, which is the denial evidence/iam-denial.json records.
+for sa in ns-impact ns-custody ns-capacity ns-ingestor ns-svc-bff; do
   invoker nightshift-inventory "${sa}"
 done
 # Capacity: the broker writes; custody reads reservations.
@@ -137,8 +142,11 @@ done
 for sa in ns-custody ns-svc-bff; do
   invoker nightshift-custody "${sa}"
 done
-# Incident control: the commander requests transitions; the ingestor opens incidents.
-for sa in ns-commander ns-ingestor ns-svc-bff; do
+# Incident control: every agent reads the incident it is working, the commander requests
+# transitions, and the ingestor opens them. incident.read is held by all six agents in
+# the matrix, so all six belong here. Only three were granted, which is the same
+# matrix-versus-IAM drift the inventory block above describes.
+for sa in ns-commander ns-signal ns-impact ns-capacity ns-dispatch ns-custody ns-ingestor ns-svc-bff; do
   invoker nightshift-incident "${sa}"
 done
 
