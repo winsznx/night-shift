@@ -75,30 +75,42 @@ def _check_and_claim_budget(repo: Any, max_per_day: int, max_total: int) -> tupl
     Claim-before-run on purpose. A crash after the claim costs one slot, which is the
     right way for this to fail: the alternative loses the count on every crash and turns
     a crash loop into unbounded spend.
+
+    Both reads and both writes are inside one transaction, so this is a claim rather
+    than a check. Read-then-write outside a transaction lets two overlapping executions
+    observe the same count, both find room under the cap, and both spend -- which is not
+    a ceiling, and it is the failure mode that matters most across a month of unattended
+    running. It also keeps the daily and lifetime counters from diverging when the
+    second write is the one that fails.
     """
     day = datetime.now(UTC).strftime("%Y-%m-%d")
-    today = repo.store.get(BUDGET_COLLECTION, _budget_key(day)) or {}
-    lifetime = repo.store.get(BUDGET_COLLECTION, "lifetime") or {}
 
-    today_count = int(today.get("count", 0))
-    lifetime_count = int(lifetime.get("count", 0))
+    def claim(ctx: Any) -> tuple[bool, str]:
+        today = ctx.get(BUDGET_COLLECTION, _budget_key(day)) or {}
+        lifetime = ctx.get(BUDGET_COLLECTION, "lifetime") or {}
 
-    if today_count >= max_per_day:
-        return False, f"daily cap reached: {today_count}/{max_per_day} runs on {day}"
-    if lifetime_count >= max_total:
-        return False, f"lifetime cap reached: {lifetime_count}/{max_total} runs"
+        today_count = int(today.get("count", 0))
+        lifetime_count = int(lifetime.get("count", 0))
 
-    repo.store.set(
-        BUDGET_COLLECTION,
-        _budget_key(day),
-        {"day": day, "count": today_count + 1, "updated_at": now_iso()},
-    )
-    repo.store.set(
-        BUDGET_COLLECTION,
-        "lifetime",
-        {"count": lifetime_count + 1, "updated_at": now_iso()},
-    )
-    return True, f"claimed run {today_count + 1}/{max_per_day} for {day}"
+        if today_count >= max_per_day:
+            return False, f"daily cap reached: {today_count}/{max_per_day} runs on {day}"
+        if lifetime_count >= max_total:
+            return False, f"lifetime cap reached: {lifetime_count}/{max_total} runs"
+
+        ctx.set(
+            BUDGET_COLLECTION,
+            _budget_key(day),
+            {"day": day, "count": today_count + 1, "updated_at": now_iso()},
+        )
+        ctx.set(
+            BUDGET_COLLECTION,
+            "lifetime",
+            {"count": lifetime_count + 1, "updated_at": now_iso()},
+        )
+        return True, f"claimed run {today_count + 1}/{max_per_day} for {day}"
+
+    claimed, reason = repo.store.run_transaction(claim)
+    return bool(claimed), str(reason)
 
 
 def run_telemetry_tick(namespace: str | None) -> int:
