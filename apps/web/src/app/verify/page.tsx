@@ -40,14 +40,19 @@ make setup-python
 make verify-demo
 
 # or point it at any single manifest in the clone
-python -m nightshift.verify --manifest evidence/incidents/INC-0E7C54F8B5.manifest.json`}</pre>
+python -m nightshift.verify --manifest evidence/incidents/INC-0E7C54F8B5.manifest.json
+
+# or verify the published copy straight over HTTPS, no clone needed
+python -m nightshift.verify --manifest https://storage.googleapis.com/nightshift-public-evidence-project-2ac1d1fb-7da1-46b4-90e/incidents/INC-0E7C54F8B5/manifest.json`}</pre>
             <p className="mt-3 text-[13px] leading-relaxed text-[#525252]">
-              No model, no network, and no Google Cloud credentials. The manifests are
-              committed to the repository, so the deterministic reference proof runs on a
-              clean clone with nothing configured. The deployment also writes each sealed
-              copy to <Mono>gs://nightshift-evidence-project-2ac1d1fb-7da1-46b4-90e</Mono>,
-              but those objects are not public, so verifying from Cloud Storage needs
-              project access. The local path above is the one that works for everyone.
+              No model and no Google Cloud credentials. The manifests are committed to
+              the repository, so the deterministic reference proof runs on a clean clone
+              with nothing configured and no network at all. Every sealed copy is also
+              published to{" "}
+              <Mono>gs://nightshift-public-evidence-project-2ac1d1fb-7da1-46b4-90e</Mono>,
+              which is world-readable, so the last command above verifies the same
+              document over HTTPS without cloning anything. That bucket holds manifests,
+              signatures and public keys and nothing else.
             </p>
           </Card>
 

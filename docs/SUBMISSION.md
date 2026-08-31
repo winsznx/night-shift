@@ -88,7 +88,7 @@ Five questions, the artifact that answers each, and the command. None needs cred
 
 | # | Question | Artifact | Command |
 |---|---|---|---|
-| 1 | Does the stored verdict follow from the stored state? | the three signed manifests | `make verify-demo` |
+| 1 | Does the stored verdict follow from the stored state? | the two signed manifests | `make verify-demo` |
 | 2 | What happens if I change one byte? | the same manifests | edit a manifest, re-run, get `RESULT: MISMATCH` and exit 1 |
 | 3 | Does it refuse things it should refuse? | the 21-drill corpus | `make drills` |
 | 4 | Does the repo reproduce from scratch? | a clean `git archive` extraction | `make clean-room` |
@@ -126,7 +126,7 @@ that was ever run.
 **Deterministic tier.** 126 runs across the 21-drill corpus, six seeds. A fixed policy
 drives the same broker, the same services and the same kernel with no model in the loop.
 126 passed. 3,252 container custody commits. 54 faults injected across 36 runs. 24 broker
-denials. Median run 0.54s.
+denials. Median run 0.6s.
 
 **Live-agent tier.** 18 runs across 9 of the 21 drills, holdout excluded, two seeds, the
 real Gemini fleet. 17 of 18 passed. 332 container commits, 0 unresolved. 162 model calls.
@@ -176,6 +176,7 @@ whatever the screening concludes.
 | Repository | https://github.com/winsznx/night-shift |
 | Signed proof page | https://nightshift-web-xk6xxtobta-uc.a.run.app/proof/INC-0E7C54F8B5 |
 | Verify it yourself | https://nightshift-web-xk6xxtobta-uc.a.run.app/verify |
+| Signed manifest, public and directly fetchable | https://storage.googleapis.com/nightshift-public-evidence-project-2ac1d1fb-7da1-46b4-90e/incidents/INC-0E7C54F8B5/manifest.json |
 | Permission matrix | https://nightshift-web-xk6xxtobta-uc.a.run.app/app/fleet |
 | Build writeup | *(fill in: public post URL)* |
 | Social post | *(fill in)* |

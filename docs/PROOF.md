@@ -22,6 +22,11 @@ outbound network.
 What each one printed the last time this page was checked:
 
 - `make verify-demo` ends with `2/2 manifest(s) verified PASS.` and exits 0.
+- The same document verifies over HTTPS with no clone and no credentials:
+  `uv run python -m nightshift.verify --manifest https://storage.googleapis.com/nightshift-public-evidence-project-2ac1d1fb-7da1-46b4-90e/incidents/INC-0E7C54F8B5/manifest.json` also prints `RESULT: PASS` and
+  exits 0. The bucket behind that URL is world-readable and holds manifests, signatures
+  and public keys only. The bucket holding the Firestore export is a different bucket and
+  is private.
 - the tamper sequence prints three `FAIL` lines and ends with `RESULT: MISMATCH`, exit 1.
   Which three is the interesting part: the state snapshot hash catches the edit, the
   signature catches it again independently, and the declared incident state no longer

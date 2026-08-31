@@ -13,7 +13,12 @@ REGION="${2:-${NIGHTSHIFT_REGION:-us-central1}}"
 REPO="nightshift"
 IMAGE="${REGION}-docker.pkg.dev/${PROJECT}/${REPO}/nightshift"
 TAG="$(git rev-parse --short HEAD 2>/dev/null || date +%Y%m%d%H%M%S)"
-BUCKET="nightshift-evidence-${PROJECT}"
+# The evidence bucket receives exactly three object kinds: the manifest, its detached
+# signature, and the public key. All three are already published in the repository, so
+# the bucket that holds them is public and a judge can verify a manifest straight from a
+# URL with no credentials. The private nightshift-evidence-* bucket keeps the Firestore
+# export and stays private, which is why these are two buckets and not one made public.
+BUCKET="nightshift-public-evidence-${PROJECT}"
 
 say() { printf '\n\033[1m%s\033[0m\n' "$*"; }
 

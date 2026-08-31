@@ -515,6 +515,12 @@ PASS/FAIL line per check, then:
 ```
 {manifest_count}/{manifest_count} manifest(s) verified PASS.
 ```
+The same document also verifies straight over HTTPS, with no clone:
+```bash
+uv run python -m nightshift.verify --manifest https://storage.googleapis.com/nightshift-public-evidence-project-2ac1d1fb-7da1-46b4-90e/incidents/INC-0E7C54F8B5/manifest.json
+```
+That bucket is world-readable and holds manifests, signatures and public keys only. The
+bucket holding the Firestore export is a different bucket and is private.
 
 ### Cloud
 

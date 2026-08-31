@@ -28,7 +28,7 @@ AUTONOMOUS_NAMESPACE="${NIGHTSHIFT_AUTONOMOUS_NAMESPACE:-demo2}"
 # its own.
 JOB="nightshift-tick"
 SA="ns-scheduler@${PROJECT}.iam.gserviceaccount.com"
-BUCKET="nightshift-evidence-${PROJECT}"
+BUCKET="nightshift-public-evidence-${PROJECT}"
 
 # The scheduler identity is deliberately not the API's. ns-svc-bff serves an
 # unauthenticated public surface, and giving it KMS signing and bucket write so a
