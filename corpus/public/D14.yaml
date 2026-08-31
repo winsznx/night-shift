@@ -5,6 +5,19 @@ description: A container is scanned at a destination it was never planned for. T
   system must mark it unresolved rather than invent a reconciliation.
 holdout: false
 requires_model: true
+scenario:
+  seed: 20260826
+  failed_freezer: F-17
+  profile: null
+  duplicate_delivery: false
+  contradict_container: C-0003
+  skip_containers: []
+  stale_memory_note: null
+  warm_destination_after_reservation: null
+  blocked_agent: null
+  competing_incident_freezer: null
+  max_rounds: 6
+  max_transfers: 50
 faults: []
 expectations:
 - key: all_invariants_hold

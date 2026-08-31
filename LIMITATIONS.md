@@ -15,7 +15,7 @@ themselves.
 
 ## Physical movement is simulated
 
-Claude cannot move a freezer box. The bounded field simulator emits exactly the scan and
+No language model can move a freezer box. The bounded field simulator emits exactly the scan and
 acknowledgment events the responder web interface emits, under the `responder-app`
 principal, marked `simulated: true`, and only in demo, drill, and test namespaces — it
 raises `PermissionError` anywhere else.

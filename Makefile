@@ -12,16 +12,30 @@ help: ## Show this help
 
 # --- setup ---------------------------------------------------------------------------
 
+# `make setup` used to install the web app in the same recipe, so the first command the
+# README hands a judge died with "pnpm: command not found" (error 127) on any machine
+# without pnpm, before a single dependency on the credential-free path was installed.
+# The web app is not on that path, so it gets its own target.
+
 .PHONY: setup
-setup: ## Install Python and web dependencies
+setup: setup-python setup-web ## Install Python and web dependencies
+
+.PHONY: setup-python
+setup-python: ## Install Python dependencies (the whole credential-free path)
 	uv python install 3.12
 	uv sync --all-groups
-	cd apps/web && pnpm install
 	@echo
-	@echo "Setup complete. Deterministic work needs no credentials:"
+	@echo "make setup-python is the whole credential-free path. Nothing below needs"
+	@echo "pnpm, a Google Cloud project, or a key:"
 	@echo "  make test          run every offline test"
 	@echo "  make verify-demo   verify the published reference manifest"
 	@echo "  make drills        run the full drill corpus"
+	@echo
+	@echo "The web app is separate and needs pnpm:  make setup-web"
+
+.PHONY: setup-web
+setup-web: ## Install web dependencies (needs pnpm)
+	cd apps/web && pnpm install
 
 # --- quality -------------------------------------------------------------------------
 
@@ -56,8 +70,10 @@ build: ## Build the web app
 secret-scan: ## Fail if anything that looks like a credential is tracked
 	@$(PY) python scripts/secret_scan.py
 
+# test-all, not test: the adversarial suite is where the drill corpus lives, so gating a
+# PR on `test` alone let all 33 drill-corpus tests go unrun on the way to green.
 .PHONY: check
-check: lint typecheck test secret-scan ## Everything a PR should pass
+check: lint typecheck test-all secret-scan ## Everything a PR should pass
 
 # --- running -------------------------------------------------------------------------
 
@@ -94,20 +110,38 @@ incident: ## Run one live incident with the real agent fleet
 drills: ## Run the full drill corpus (deterministic tier, seconds)
 	$(PY) python -m assurance.campaign --seeds 1 --drivers scripted --out evidence/scratch
 
+.PHONY: corpus
+corpus: ## Re-export the drill corpus to corpus/ as YAML
+	@# `python -m assurance.corpus` prints a runpy RuntimeWarning over the output, because
+	@# assurance/__init__ has already imported this module. Call main() directly instead.
+	$(PY) python -c "from assurance.corpus import main; raise SystemExit(main())" --out corpus
+
 # --- evidence ------------------------------------------------------------------------
+
+# NIGHTSHIFT_COMMIT is passed explicitly because an artifact that cannot name the tree it
+# came from cannot be reproduced from it. Four published artifacts already carry
+# "source_commit": "unknown" because nothing set this.
 
 .PHONY: evidence
 evidence: ## Run the measurement campaign and publish raw results
-	$(PY) python -m assurance.campaign --seeds 6 --drivers scripted --out evidence/campaign
+	NIGHTSHIFT_COMMIT=$$(git rev-parse --short HEAD) \
+		$(PY) python -m assurance.campaign --seeds 6 --drivers scripted --out evidence/campaign
 
 .PHONY: evidence-agent
 evidence-agent: ## Run the live-agent tier of the campaign (slow)
-	$(PY) python -m assurance.campaign --seeds 2 --drivers agent \
+	NIGHTSHIFT_COMMIT=$$(git rev-parse --short HEAD) \
+		$(PY) python -m assurance.campaign --seeds 2 --drivers agent \
 		--drills D1,D2,D3,D5,D8,D9,D10,D13,D16 --no-holdout --out evidence/campaign-agent
 
+.PHONY: evidence-recovery
+evidence-recovery: ## Record how the fleet recovers from a worker that fails without deciding
+	NIGHTSHIFT_COMMIT=$$(git rev-parse --short HEAD) \
+		$(PY) python scripts/measure_agent_recovery.py
+
 .PHONY: evidence-screening
-evidence-screening: ## Measure both content-screening layers against the disclosed payloads
-	$(PY) python scripts/measure_content_screening.py
+evidence-screening: ## Measure every content-screening layer against the disclosed payloads
+	NIGHTSHIFT_COMMIT=$$(git rev-parse --short HEAD) \
+		$(PY) python scripts/measure_content_screening.py
 
 .PHONY: evidence-iam
 evidence-iam: ## Prove a forbidden call is denied by Cloud Run IAM (needs deployed services)
@@ -151,6 +185,10 @@ e2e: ## Run the Playwright judge-path suite
 .PHONY: clean-room
 clean-room: ## Reproduce from a clean clone in a temp directory
 	@./scripts/clean_room.sh
+
+.PHONY: schedule
+schedule: ## Create the Cloud Run Job and Cloud Scheduler jobs that keep the fleet running
+	./infra/deploy/schedule_operations.sh $(PROJECT) $(REGION)
 
 .PHONY: deploy-web
 deploy-web: ## Build and deploy the web app to Cloud Run

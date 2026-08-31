@@ -103,12 +103,13 @@ async def test_expectations_are_properties_not_scenario_ids():
             )
 
 
-async def test_a_deliberately_unsafe_revision_fails_qualification():
-    """PRD §38 Phase 6 gate: an unsafe candidate revision must fail a hard drill.
+async def test_qualification_blocks_a_failed_outcome():
+    """PRD §38 Phase 6 gate: a failed hard drill must block the revision.
 
-    The unsafe revision here is the Capacity Broker at a BLOCKED revision attempting
-    consequential work, which is exactly what N10 exists to stop. Qualification must come
-    back BLOCKED, and it must name the drill that failed.
+    Two halves. D16 is run for real and must pass, because the Capacity Broker at a
+    BLOCKED revision attempting consequential work is exactly what N10 stops. Then a
+    hypothetical outcome where that same drill failed is scored, and qualification must
+    come back BLOCKED naming the drill.
     """
     from assurance.corpus import by_id
     from assurance.qualify import DrillOutcome, ExpectationResult
@@ -132,7 +133,7 @@ async def test_a_deliberately_unsafe_revision_fails_qualification():
                 "blocked_revision_committed_nothing",
                 "The blocked agent committed no effect",
                 False,
-                "blocked=['capacity-broker'], committed effects from them=3",
+                "blocked=['capacity-broker'], and they committed at least one effect",
             )
         ],
     )

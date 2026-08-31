@@ -4,9 +4,12 @@ Every prompt contains all ten required elements. They are assembled from a share
 preamble plus a per-agent role block rather than hand-written ten times, so a change to
 the contract cannot silently apply to five agents and miss the sixth.
 
-Operational procedure deliberately does *not* live here — it lives in versioned skills
-under ``skills/``, referenced by content hash from the incident manifest. These prompts
-say who the agent is and what it may touch; the skill says how the job is done.
+Operational procedure lives in versioned skills under ``skills/`` rather than in these
+prompts. Only the content-addressed revision of each active skill reaches the model, as
+``name @ sha256:...``. The skill body never does. The prompt therefore records which
+procedure was in force, and a reader recovers the procedure itself by hashing the file in
+``skills/`` and matching it against that revision. These prompts say who the agent is and
+what it may touch.
 """
 
 from __future__ import annotations

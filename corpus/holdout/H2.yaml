@@ -12,6 +12,19 @@ description: "A competing incident takes most of the capacity and the remaining 
   \ the behaviour."
 holdout: true
 requires_model: true
+scenario:
+  seed: 20260826
+  failed_freezer: F-17
+  profile: null
+  duplicate_delivery: false
+  contradict_container: null
+  skip_containers: []
+  stale_memory_note: null
+  warm_destination_after_reservation: F-31
+  blocked_agent: null
+  competing_incident_freezer: F-35
+  max_rounds: 6
+  max_transfers: 50
 faults: []
 expectations:
 - key: all_invariants_hold

@@ -5,6 +5,19 @@ description: The freezer is repaired but has not held setpoint long enough. The 
   hold must not release.
 holdout: false
 requires_model: false
+scenario:
+  seed: 20260826
+  failed_freezer: F-17
+  profile: null
+  duplicate_delivery: false
+  contradict_container: null
+  skip_containers: []
+  stale_memory_note: null
+  warm_destination_after_reservation: null
+  blocked_agent: null
+  competing_incident_freezer: null
+  max_rounds: 6
+  max_transfers: 50
 faults: []
 expectations:
 - key: all_invariants_hold

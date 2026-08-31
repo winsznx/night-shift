@@ -1,9 +1,26 @@
 id: D6
 family: idempotency
 title: Work-order response lost after commit
-description: Same shape as D5, on the facilities effect.
+description: The same lost-response shape as D5, on the facilities effect. Instrumented
+  across seeds, a scripted run makes 143 commit_effect calls, exactly one create_work_order
+  call, and replays zero receipts. Nothing retries after the loss, so what this drill
+  establishes is that the lost response leaves one work order behind. The retry path
+  stays unexercised on the scripted tier.
 holdout: false
 requires_model: true
+scenario:
+  seed: 20260826
+  failed_freezer: F-17
+  profile: null
+  duplicate_delivery: false
+  contradict_container: null
+  skip_containers: []
+  stale_memory_note: null
+  warm_destination_after_reservation: null
+  blocked_agent: null
+  competing_incident_freezer: null
+  max_rounds: 6
+  max_transfers: 50
 faults:
 - tool: create_work_order
   call_number: 1

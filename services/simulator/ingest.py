@@ -6,7 +6,7 @@ Two jobs that both sit at the boundary between the synthetic world and the real 
   prompted to start an incident; the incident opens because telemetry crossed a
   threshold, which is what makes "no operator prompt starts the agents" true.
 * **Field simulator** — emits exactly the scan events the responder web interface emits,
-  because Claude cannot physically move a freezer box. Every event it produces is
+  because no language model can physically move a freezer box. Every event it produces is
   labelled ``simulated: true`` and it only runs in demo and drill namespaces.
 """
 

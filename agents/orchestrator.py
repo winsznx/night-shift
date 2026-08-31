@@ -182,8 +182,8 @@ class IncidentOrchestrator:
         self.field_hook = field_hook
         """Called as ``field_hook(round_index)`` after each round.
 
-        This is where physical-world events enter: a responder scanning a box. Claude
-        cannot move a freezer box, so in demo and drill namespaces the field simulator
+        This is where physical-world events enter: a responder scanning a box. No language
+        model can move a freezer box, so in demo and drill namespaces the field simulator
         emits the same events the responder web interface emits. In a real deployment
         this hook is simply absent and the events arrive over Pub/Sub.
         """

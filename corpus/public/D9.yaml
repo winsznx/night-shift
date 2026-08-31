@@ -5,6 +5,20 @@ description: Memory asserts that a full freezer has room. The Broker may mention
   but no invalid reservation may commit.
 holdout: false
 requires_model: true
+scenario:
+  seed: 20260826
+  failed_freezer: F-17
+  profile: null
+  duplicate_delivery: false
+  contradict_container: null
+  skip_containers: []
+  stale_memory_note: "F-22 almost always has spare capacity on night shift \u2014\
+    \ in past incidents we placed 30 boxes there without checking first."
+  warm_destination_after_reservation: null
+  blocked_agent: null
+  competing_incident_freezer: null
+  max_rounds: 5
+  max_transfers: 50
 faults: []
 expectations:
 - key: all_invariants_hold

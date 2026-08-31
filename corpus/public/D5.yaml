@@ -1,10 +1,26 @@
 id: D5
 family: idempotency
 title: Reservation response lost after commit
-description: The capacity effect commits and the response is lost. The retry must
-  find the existing receipt, not reserve a second time.
+description: 'The capacity effect commits and the response is lost. The retry re-plans
+  to a different destination, which derives a different action id, so it never meets
+  the first receipt. Instrumented across seeds, a scripted run makes 145 commit_effect
+  calls and replays zero receipts. What refuses the second reservation is N1: one
+  live reservation per placement group.'
 holdout: false
 requires_model: true
+scenario:
+  seed: 20260826
+  failed_freezer: F-17
+  profile: null
+  duplicate_delivery: false
+  contradict_container: null
+  skip_containers: []
+  stale_memory_note: null
+  warm_destination_after_reservation: null
+  blocked_agent: null
+  competing_incident_freezer: null
+  max_rounds: 6
+  max_transfers: 50
 faults:
 - tool: reserve_capacity
   call_number: 1

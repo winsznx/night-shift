@@ -113,7 +113,7 @@ class TestAdjudication:
         assert sources == []
 
     def test_all_confirmations_allow_and_record_their_sources(self) -> None:
-        allowed, reason, sources = adjudicate(
+        allowed, _reason, sources = adjudicate(
             [
                 corroborate_container_label("C-0421", "C-0421"),
                 corroborate_destination_display(-79.4, -80.0),

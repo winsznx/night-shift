@@ -7,6 +7,7 @@ absolute paths, ever (PRD §40).
 from __future__ import annotations
 
 import os
+import subprocess
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
@@ -16,6 +17,33 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 
 def _env(name: str, default: str = "") -> str:
     return os.environ.get(name, default).strip()
+
+
+@lru_cache(maxsize=1)
+def _git_commit() -> str:
+    """Short HEAD sha of this checkout, or ``unknown`` when there is no git repo.
+
+    ``source_commit`` used to be the literal string ``unknown`` whenever nothing set
+    ``NIGHTSHIFT_COMMIT``, and four published evidence artifacts still carry that string,
+    so the field whose whole job is to name the tree an artifact came from named nothing.
+
+    ``unknown`` survives as the last resort because the clean-room reproduction runs from
+    a ``git archive`` export with no ``.git`` directory at all, and a missing commit there
+    is expected rather than an error.
+    """
+    try:
+        probe = subprocess.run(  # noqa: S603 - fixed argv, no shell, no caller input
+            ["git", "-C", str(REPO_ROOT), "rev-parse", "--short", "HEAD"],  # noqa: S607
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return "unknown"
+    if probe.returncode != 0:
+        return "unknown"
+    return probe.stdout.strip() or "unknown"
 
 
 def _flag(name: str, default: bool = False) -> bool:
@@ -65,7 +93,6 @@ class Settings:
     documents for Gemini.
     """
 
-    memory_bank_name: str = field(default_factory=lambda: _env("NIGHTSHIFT_MEMORY_BANK"))
     agent_registry_location: str = field(
         default_factory=lambda: _env("NIGHTSHIFT_REGISTRY_LOCATION", "us-central1")
     )
@@ -101,7 +128,7 @@ class Settings:
     """HMAC secret backing local agent principal tokens. In the live plane, service
     identity is carried by Google-issued ID tokens instead; this is the offline path."""
 
-    source_commit: str = field(default_factory=lambda: _env("NIGHTSHIFT_COMMIT", "unknown"))
+    source_commit: str = field(default_factory=lambda: _env("NIGHTSHIFT_COMMIT") or _git_commit())
     deployment_env: str = field(default_factory=lambda: _env("NIGHTSHIFT_ENV", "local"))
 
     @property

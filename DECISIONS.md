@@ -17,7 +17,7 @@ from `global`. Only `gemini-2.5-flash` is available regionally.
 component stays in `us-central1`. PRD §6.4 permits a coherent alternative where service
 availability forces one.
 
-**Rejected.** Dropping to 2.5 Flash to keep a single region — that trades a hard model
+**Rejected.** Dropping to 2.5 Flash to keep a single region. That trades a hard model
 requirement for a soft locality preference.
 
 ---
@@ -35,7 +35,7 @@ verifier has to reproduce.
 **Consequence.** The Commander needed a deterministic "what is needed next" readout.
 Without it, live runs had it delegate to custody before any capacity was reserved and
 never request a signal verdict, leaving containment permanently unplaced. The readout
-reports pipeline facts computed by the same guards that would refuse the transition — it
+reports pipeline facts computed by the same guards that would refuse the transition. It
 does not tell the Commander what to decide.
 
 ---
@@ -75,7 +75,7 @@ actually withholding from other incidents.
 
 **Found by.** Drill D5. The reservation response was lost after the effect committed, the
 broker re-planned to a different destination, derived a *different* action ID, and
-legitimately created a second reservation — booking the same boxes into two freezers.
+legitimately created a second reservation, booking the same boxes into two freezers.
 
 **Why idempotency does not catch this.** Two different destinations are genuinely two
 different semantic actions. N2 is correct to allow both. The problem is operational, not
@@ -109,7 +109,7 @@ transitions remain legal but require an explicit request.
 placed, so an uncontained incident looked identical to a properly contained one.
 
 **Decision.** `_containment_blockers` requires a hold that exists, is released, and carries
-recovery evidence. Separately, `RESCUE_PLANNING` now requires an active hold — the graph
+recovery evidence. Separately, `RESCUE_PLANNING` now requires an active hold. The graph
 allowed `CONFIRMED → ESCALATED → RESCUE_PLANNING`, and an early run took exactly that
 route and planned a rescue while normal traffic continued on the failing freezer. Guarding
 the destination state, not just the path to it, closes both.
@@ -150,7 +150,7 @@ and a retry meeting an empty store.
 **Decision.** Idempotency drills carry a `fault_actually_fired` expectation.
 
 **Why.** A drill that was supposed to inject a commit loss and did not proves nothing, and
-without this it would pass — the loudest possible false green.
+without this it would pass. That is the loudest possible false green.
 
 ---
 
@@ -160,9 +160,9 @@ without this it would pass — the loudest possible false green.
 app. Each deploys as a separate Cloud Run service with a separate service account.
 
 **Why.** The authority boundaries are the product story and must be real. What differs
-between services is the identity they run as and the routes they expose — both runtime
-configuration, not build output. Seven near-identical images would add build time and
-drift risk for nothing.
+between services is the identity they run as and the routes they expose. Both are
+runtime configuration, not build output. Seven near-identical images would add build
+time and drift risk for nothing.
 
 ---
 
@@ -175,7 +175,7 @@ destination as stale.
 
 **Decision.** `build_estate(epoch=None)` anchors to the current time; drills and the
 published reference proof pass an explicit epoch. The structural layout is seeded either
-way — only timestamps move.
+way. Only timestamps move.
 
 ---
 
@@ -197,7 +197,7 @@ glance, and tangerine is already carrying "in progress". It is never used decora
 
 **Found by.** A 42-container incident hit the tool-call budget before it could close.
 
-**Decision.** `ToolBroker.call(..., system=True)` marks deterministic progress —
+**Decision.** `ToolBroker.call(..., system=True)` marks deterministic progress:
 requesting the transition the evidence already supports, or attempting closure. Those
 still pass every authorization and policy layer and are still recorded; they just do not
 count against a guard whose purpose is detecting an agent looping.
@@ -292,3 +292,67 @@ whether a template exists. The deployment sets it; local runs and CI do not.
 
 **Why this is worth recording.** A property that holds only on an unconfigured machine is
 not a property. It is a coincidence that passes CI.
+
+---
+
+## D-20 · No embedding index
+
+**Context.** The operational corpus is six versioned playbooks in `skills/`, each routed
+to the agents it applies to by `skills_for_agent`, and referenced in the manifest by the
+SHA-256 of its body.
+
+**Decision.** Procedures are selected by agent identity and referenced by content hash.
+There is no vector store, no embedding, and no similarity retrieval anywhere in the
+system.
+
+**Why.** A manifest has to let the offline verifier reproduce exactly which procedure was
+in force, and an approximate-nearest-neighbour lookup over a mutable index is not
+reproducible. With six fixed playbooks routed by identity, an approximate match is a
+correctness regression rather than a retrieval improvement.
+
+**Rejected.** Embedding the playbooks so an agent could retrieve across them. At this
+corpus size it buys nothing an explicit routing table does not already give, and it costs
+the reproducibility the whole evidence chain rests on.
+
+---
+
+## D-21 · Corroborating capture evidence for custody scans
+
+**Found by.** Reading the responder scan path against a published manifest.
+
+**What was wrong.** A custody commit rested entirely on a bearer task token, and that
+token was published in plaintext inside the signed manifest, so it was not even a secret.
+Anyone holding the string could post a pickup or a receipt for any container in the batch.
+The token proved a session had been issued. It was being asked to prove that a physical
+box had moved, which it never could.
+
+**Decision.** A responder may attach capture evidence to a scan: a photographed container
+label, a photographed freezer display, a spoken confirmation. Gemini reads it in
+[`nightshift/multimodal/reader.py`](nightshift/multimodal/reader.py) and returns strings
+and numbers describing what it saw or heard, nothing else. Deterministic code in
+[`nightshift/safety_kernel/corroboration.py`](nightshift/safety_kernel/corroboration.py)
+then compares those readings against authoritative state: the label against the container
+being scanned, normalised for case, spacing and punctuation and nothing more; the display
+against the telemetry reading for that destination, within a 2.0C agreement window and
+below the same N4 ceiling a commit needs; the transcript against a negation check that
+runs before the affirmation check, because "no, that is not confirmed" contains an
+affirmative token. The token still authenticates the session.
+
+**The property that makes this safe.** Capture evidence can refuse a scan the token would
+have allowed, and can never permit one the token would not. `adjudicate` refuses on any
+single contradiction, and its allow path returns exactly the authority the token already
+granted. A forged photograph therefore gains an attacker nothing, and that asymmetry is
+why the adjudication can run on an unauthenticated responder route at all.
+
+**Absence degrades, it does not block.** Every reader fails to `None` rather than raising,
+and an all-absent result is allowed and recorded as having rested on the token alone. A
+responder in a cold room with a dead phone battery still has to be able to move specimens.
+The receipt records which channel carried the authority, and a digest of each capture
+travels into the manifest while the capture itself is never stored.
+
+**Deliberately not a confidence threshold.** "The model was 0.83 sure" is not evidence
+about a freezer. Either the string it read equals the container the responder claims to be
+holding or it does not, and either the temperature it read agrees with the telemetry this
+system already holds or it does not. A model that hallucinates a container id produces a
+MISMATCH, which is a correct outcome. A model allowed to conclude anything would produce a
+commit, which is not.

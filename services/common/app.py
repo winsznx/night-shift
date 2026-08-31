@@ -4,10 +4,10 @@ Each domain service is a separate app with a separate authority boundary and, in
 live plane, a separate Cloud Run service and service account. They share this factory
 and one container image; ``NIGHTSHIFT_SERVICE`` selects which app the image serves.
 
-Every mutating route depends on ``require_tool(...)``, which re-runs the §11.3 check
-server-side. That is deliberate belt-and-braces: the tool broker already refused the
-call, and the service refuses it again, so skipping the broker buys an attacker
-nothing.
+Every agent-callable mutating route depends on ``require_tool(...)``, which re-runs the
+§11.3 check server-side. That is deliberate belt-and-braces: the tool broker already
+refused the call, and the service refuses it again, so skipping the broker buys an
+attacker nothing.
 """
 
 from __future__ import annotations

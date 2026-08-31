@@ -4,6 +4,8 @@ version = "1.0.0"
 description = "Night Shift — proof-carrying rescue state machine for research freezer incidents"
 requires-python = ">=3.12,<3.13"
 readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 dependencies = [
     "google-adk>=1.0.0",
     "google-genai>=1.0.0",
@@ -97,7 +99,3 @@ disallow_untyped_defs = false
 testpaths = ["tests"]
 asyncio_mode = "auto"
 filterwarnings = ["ignore::DeprecationWarning"]
-markers = [
-    "integration: requires live Google Cloud project (skipped unless NIGHTSHIFT_LIVE=1)",
-    "slow: long-running campaign tests",
-]

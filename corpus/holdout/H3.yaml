@@ -4,6 +4,19 @@ title: Contradiction during contention
 description: A contradictory scan while capacity is contended.
 holdout: true
 requires_model: true
+scenario:
+  seed: 20260826
+  failed_freezer: F-17
+  profile: null
+  duplicate_delivery: false
+  contradict_container: C-0005
+  skip_containers: []
+  stale_memory_note: null
+  warm_destination_after_reservation: null
+  blocked_agent: null
+  competing_incident_freezer: F-35
+  max_rounds: 6
+  max_transfers: 50
 faults: []
 expectations:
 - key: all_invariants_hold

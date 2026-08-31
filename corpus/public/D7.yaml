@@ -1,10 +1,26 @@
 id: D7
 family: recovery
 title: Worker crash and resume
-description: The custody commit is interrupted after the effect lands. Resuming must
-  not duplicate the transfer.
+description: The custody commit is interrupted after the effect lands. Instrumented
+  across seeds, a scripted run makes 143 commit_effect calls, exactly one commit_ready_transfers
+  call, and replays zero receipts. Every container still commits once, and the run
+  does not resume after the loss, so no receipt replay is exercised on the scripted
+  tier.
 holdout: false
 requires_model: true
+scenario:
+  seed: 20260826
+  failed_freezer: F-17
+  profile: null
+  duplicate_delivery: false
+  contradict_container: null
+  skip_containers: []
+  stale_memory_note: null
+  warm_destination_after_reservation: null
+  blocked_agent: null
+  competing_incident_freezer: null
+  max_rounds: 7
+  max_transfers: 50
 faults:
 - tool: commit_ready_transfers
   call_number: 1

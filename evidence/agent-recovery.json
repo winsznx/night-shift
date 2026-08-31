@@ -1,0 +1,124 @@
+{
+  "generated_at": "2026-08-31T07:22:14.320Z",
+  "source_commit": "3982d45",
+  "note": "Recovery from a worker that failed without deciding anything. Only the model call is replaced; the orchestrator, the repository and the event writer are the ones a live incident uses, so these timeline entries are the entries a live incident produces. Retry used to match HTTP 429 only, so a routine Vertex 503 on the Commander produced no plan, and the run loop breaks on that. One busy data centre aborted a 42-container rescue.",
+  "backoff": {
+    "quota_s": [
+      15,
+      45,
+      90
+    ],
+    "transport_s": [
+      2,
+      6,
+      15
+    ],
+    "max_repair_attempts": 1
+  },
+  "failure_classification": {
+    "429 Too Many Requests": "quota",
+    "RESOURCE_EXHAUSTED: quota exceeded": "quota",
+    "ServerError: 503 Service Unavailable": "transport",
+    "ServerError: 500 internal error encountered": "transport",
+    "504 Deadline Exceeded": "transport",
+    "connection reset by peer": "transport",
+    "tool authorization denied: not permitted": null,
+    "schema validation failed: 2 error(s)": null
+  },
+  "scenarios": [
+    {
+      "scenario": "hallucination-recovered",
+      "description": "The agent answers in prose where a JSON object was required. It is re-asked once with the parser's own error attached and returns valid output.",
+      "model_outcomes_scripted": 2,
+      "invocations_made": 2,
+      "recovered": true,
+      "final_error": null,
+      "timeline_events": [
+        {
+          "kind": "agent_recovery",
+          "source": "incident-commander",
+          "summary": "incident-commander returned valid output on the repair attempt",
+          "detail": {
+            "attempt": 1,
+            "recovery": "reprompt",
+            "outcome": "recovered"
+          }
+        },
+        {
+          "kind": "agent_recovery",
+          "source": "incident-commander",
+          "summary": "incident-commander returned output the schema rejected; re-asking once with the validation error attached",
+          "detail": {
+            "error": "no JSON object found in the final message",
+            "attempt": 1,
+            "recovery": "reprompt"
+          }
+        }
+      ],
+      "recovery_events": [
+        {
+          "kind": "agent_recovery",
+          "source": "incident-commander",
+          "summary": "incident-commander returned valid output on the repair attempt",
+          "detail": {
+            "attempt": 1,
+            "recovery": "reprompt",
+            "outcome": "recovered"
+          }
+        },
+        {
+          "kind": "agent_recovery",
+          "source": "incident-commander",
+          "summary": "incident-commander returned output the schema rejected; re-asking once with the validation error attached",
+          "detail": {
+            "error": "no JSON object found in the final message",
+            "attempt": 1,
+            "recovery": "reprompt"
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "hallucination-persistent",
+      "description": "The agent never returns parseable output. The repair budget is one, so it stops after two attempts instead of looping.",
+      "model_outcomes_scripted": 4,
+      "invocations_made": 2,
+      "recovered": false,
+      "final_error": "no JSON object found in the final message",
+      "timeline_events": [
+        {
+          "kind": "agent_recovery",
+          "source": "incident-commander",
+          "summary": "incident-commander returned output the schema rejected; re-asking once with the validation error attached",
+          "detail": {
+            "error": "no JSON object found in the final message",
+            "attempt": 1,
+            "recovery": "reprompt"
+          }
+        }
+      ],
+      "recovery_events": [
+        {
+          "kind": "agent_recovery",
+          "source": "incident-commander",
+          "summary": "incident-commander returned output the schema rejected; re-asking once with the validation error attached",
+          "detail": {
+            "error": "no JSON object found in the final message",
+            "attempt": 1,
+            "recovery": "reprompt"
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "authorization-denied-not-retried",
+      "description": "The agent reached for a tool it does not hold. A denial is a decision by the authority layer, so it is recorded and never re-asked.",
+      "model_outcomes_scripted": 1,
+      "invocations_made": 1,
+      "recovered": false,
+      "final_error": "tool authorization denied: dispatch may not read inventory",
+      "timeline_events": [],
+      "recovery_events": []
+    }
+  ]
+}

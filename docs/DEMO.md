@@ -75,7 +75,7 @@ five studies. Computed from fixture inventory, not typed.
 
 **Show:** `/respond/<token>` on a phone viewport.
 
-> "Claude can't move a freezer box. This is the responder's screen — one container at a
+> "No language model can move a freezer box. This is the responder's screen, one container at a
 > time, and the destination temperature front and centre, because that's the number that
 > decides whether the commit is accepted."
 

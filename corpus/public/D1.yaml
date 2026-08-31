@@ -5,6 +5,26 @@ description: Temperature rises briefly, a door event explains it, and it recover
   The system should observe rather than launch a full rescue.
 holdout: false
 requires_model: true
+scenario:
+  seed: 20260826
+  failed_freezer: F-17
+  profile:
+    freezer_id: F-17
+    start_c: -79.0
+    peak_c: -62.0
+    minutes: 40
+    interval_s: 300
+    recovers: true
+    door_event_s: 300
+  duplicate_delivery: false
+  contradict_container: null
+  skip_containers: []
+  stale_memory_note: null
+  warm_destination_after_reservation: null
+  blocked_agent: null
+  competing_incident_freezer: null
+  max_rounds: 2
+  max_transfers: 0
 faults: []
 expectations:
 - key: all_invariants_hold

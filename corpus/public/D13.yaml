@@ -4,6 +4,21 @@ title: Partial transfer
 description: Some containers move and one is left behind. The incident cannot close.
 holdout: false
 requires_model: true
+scenario:
+  seed: 20260826
+  failed_freezer: F-17
+  profile: null
+  duplicate_delivery: false
+  contradict_container: null
+  skip_containers:
+  - C-0001
+  - C-0002
+  stale_memory_note: null
+  warm_destination_after_reservation: null
+  blocked_agent: null
+  competing_incident_freezer: null
+  max_rounds: 7
+  max_transfers: 50
 faults: []
 expectations:
 - key: all_invariants_hold

@@ -111,10 +111,19 @@ test.describe("incident detail", () => {
     await expect(page.getByText(/impacted/i).first()).toBeVisible();
     await expect(page.getByText(/unresolved/i).first()).toBeVisible();
 
-    // The safety kernel panel lists all thirteen invariants.
-    await expect(page.getByRole("heading", { name: "Safety kernel" })).toBeVisible();
+    // The safety kernel panel lists all thirteen invariants and every one of them holds.
+    // Asserting only that N1..N13 are named stayed green while an invariant was FAILING,
+    // which is the single state this panel exists to make impossible to miss, so the
+    // count badge and the absence of a FAIL row are both asserted inside the panel.
+    const kernel = page
+      .locator("div.ns-panel")
+      .filter({ has: page.getByRole("heading", { name: "Safety kernel" }) });
+    await expect(kernel).toBeVisible();
+    await expect(kernel.getByText("13/13", { exact: true })).toBeVisible();
+    await expect(kernel.locator("tbody tr")).toHaveCount(13);
+    await expect(kernel.getByText("FAIL", { exact: true })).toHaveCount(0);
     for (const n of ["N1", "N5", "N6", "N13"]) {
-      await expect(page.getByText(n, { exact: true }).first()).toBeVisible();
+      await expect(kernel.getByText(n, { exact: true }).first()).toBeVisible();
     }
 
     // Agent decisions and deterministic receipts are both present and distinguished.

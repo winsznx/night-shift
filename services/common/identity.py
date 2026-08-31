@@ -108,9 +108,12 @@ def authorize(principal: AgentPrincipal | None, tool_name: str) -> Decision:
 def responder_task_signature(task_token: str, body: dict[str, object]) -> str:
     """HMAC over a responder scan body, keyed by the task token.
 
-    Threat model §31 "forged responder event": the token is unguessable and scoped to
-    one dispatch, and the body is bound to it, so a replayed body from a different task
-    fails verification rather than silently entering the custody chain.
+    Threat model §31 "forged responder event": the task token is unguessable and scoped
+    to one dispatch, and this digest binds a scan body to the token it arrived under.
+
+    The digest is recorded alongside the scan and nothing checks it on the way in.
+    ``verify_responder_signature`` has no call site, so a replayed body is not rejected
+    on this path today.
     """
     return hmac.new(task_token.encode("utf-8"), canonical_bytes(body), hashlib.sha256).hexdigest()
 

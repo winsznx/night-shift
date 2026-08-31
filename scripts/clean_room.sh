@@ -20,9 +20,11 @@ cd "${WORK}"
 [[ ! -f .env ]] || fail ".env was committed — it must never be tracked"
 [[ ! -d keys ]] || [[ -z "$(find keys -name '*.key.pem' 2>/dev/null)" ]] || fail "a private key is tracked"
 
-say "2. make setup (Python side only; the web app is not on the deterministic path)"
-uv python install 3.12 >/dev/null 2>&1
-uv sync --all-groups >/dev/null 2>&1 || fail "uv sync failed on a clean clone"
+say "2. make setup-python (the web app is not on the deterministic path)"
+# Run the documented target rather than a hand-copied transcript of it. The copy drifted
+# from the Makefile once already, which meant the clean room proved a setup path that no
+# judge was ever told to run.
+make setup-python >/dev/null 2>&1 || fail "make setup-python failed on a clean clone"
 
 say "3. make test"
 uv run pytest tests/unit tests/property tests/integration -q || fail "tests failed on a clean clone"
@@ -32,7 +34,10 @@ uv run python -m assurance.campaign --seeds 1 --drivers scripted --out evidence/
   | tail -4 || fail "drill corpus failed on a clean clone"
 
 say "5. make verify-demo"
-uv run python scripts/verify_all.py || true
+# This ended in `|| true`, so a manifest that failed verification in the clean clone was
+# swallowed and the run still printed "Clean-room reproduction PASSED". The signed
+# evidence is the thing being reproduced, so a failure here has to fail the script.
+uv run python scripts/verify_all.py || fail "published manifest verification failed on a clean clone"
 
 say "6. Secret scan"
 uv run python scripts/secret_scan.py || fail "secret scan found something"

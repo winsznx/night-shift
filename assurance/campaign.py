@@ -269,6 +269,12 @@ def write_results(campaign: Campaign, out_dir: Path, *, command: str) -> dict[st
 
     from google.adk.version import __version__ as adk_version
 
+    # A scripted run puts no model in the loop at all. Stamping the fleet's model id, its
+    # serving location, and the ADK version into that run's provenance described a
+    # dependency the run never had, and invited a reader to attribute a deterministic
+    # result to Gemini. Null means "no model was involved", which is the truth.
+    model_ran = any(row.driver == "agent" for row in campaign.rows)
+
     metrics = campaign.metrics()
     provenance = {
         "command": command,
@@ -278,9 +284,9 @@ def write_results(campaign: Campaign, out_dir: Path, *, command: str) -> dict[st
         "corpus_version": CORPUS_VERSION,
         "seeds": campaign.seeds,
         "include_holdout": campaign.include_holdout,
-        "model_id": settings.model_id,
-        "model_location": settings.model_location,
-        "adk_version": adk_version,
+        "model_id": settings.model_id if model_ran else None,
+        "model_location": settings.model_location if model_ran else None,
+        "adk_version": adk_version if model_ran else None,
         "source_commit": settings.source_commit,
         "skill_revisions": skill_refs(),
         "deployment_env": settings.deployment_env,
@@ -339,9 +345,13 @@ def main() -> int:  # pragma: no cover - CLI
             progress=progress,
         )
     )
+    # --drills was left out of the recorded command, so the live-agent tier published a
+    # command that runs the whole corpus and reproduces a different experiment than the
+    # nine drills the artifact actually measured.
     command = (
         f"uv run python -m assurance.campaign --seeds {args.seeds} "
         f"--base-seed {args.base_seed} --drivers {args.drivers}"
+        + (f" --drills {args.drills}" if args.drills else "")
         + (" --no-holdout" if args.no_holdout else "")
     )
     results = write_results(campaign, Path(args.out), command=command)
