@@ -48,3 +48,10 @@ evidence/**/*.tmp
 # Regenerable diagram QA output. The specifications and the delivered HTML are tracked;
 # the containment screenshots and receipts are rebuilt on demand.
 docs/diagrams/*.visual-check.*
+
+# Authoring scratch. Working notes and transcripts stay out of the published repo.
+# Anchored to the root so agent skill files under skills/ are unaffected.
+/SKILL*.md
+/chat.md
+/hack.md
+/.submission-audit/

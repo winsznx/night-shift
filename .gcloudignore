@@ -15,6 +15,14 @@
 __pycache__/
 *.pyc
 
+# Authoring scratch. gcloud ignores .gitignore entirely when a .gcloudignore exists,
+# so these need repeating here or the deploy uploads them to the Cloud Build source bucket.
+/SKILL*.md
+/chat.md
+/hack.md
+/.submission-audit/
+/docs/design/
+
 # Published evidence ships WITH the image. The manifests, campaign results, and claim
 # ledger are what the public evidence, drills, and proof surfaces read; excluding them
 # left three judge-facing pages empty in production while looking fine locally.
