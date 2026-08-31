@@ -1,4 +1,26 @@
 {
+  "provenance": {
+    "command": "uv run python -m assurance.ablation --seeds 6",
+    "generated_at": "2026-08-31T19:50:48.550Z",
+    "source_commit": "25f0f37",
+    "corpus_version": "1.0.0",
+    "seeds": [
+      20260826,
+      20260927,
+      20261028,
+      20261129,
+      20261230,
+      20261331
+    ],
+    "base_seed": 20260826,
+    "drivers": [
+      "scripted"
+    ],
+    "store_backend": "memory",
+    "model_calls": 0,
+    "ablation_target": "services.common.effects.evaluate_action",
+    "note": "The kernel arm rebinds one imported symbol and duplicates no logic. The transaction, receipt lookup, authorization check and write all still run, so what is measured is the kernel's contribution alone."
+  },
   "seeds": [
     20260826,
     20260927,
@@ -13,7 +35,1269 @@
       "passed": 126,
       "failed": 0,
       "failed_invariants": {},
-      "failing_drills": []
+      "failing_drills": [],
+      "runs": [
+        {
+          "drill_id": "D1",
+          "family": "signal",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "OBSERVING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D2",
+          "family": "core",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D3",
+          "family": "idempotency",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D4",
+          "family": "concurrency",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D5",
+          "family": "idempotency",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D6",
+          "family": "idempotency",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D7",
+          "family": "recovery",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D8",
+          "family": "safety",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D9",
+          "family": "memory",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D10",
+          "family": "security",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D11",
+          "family": "security",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D12",
+          "family": "idempotency",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D13",
+          "family": "partial",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D14",
+          "family": "partial",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D15",
+          "family": "availability",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CONTAINED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D16",
+          "family": "governance",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RESCUE_PLANNING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D17",
+          "family": "availability",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RESCUE_PLANNING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D18",
+          "family": "recovery",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H1",
+          "family": "idempotency",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H2",
+          "family": "safety",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H3",
+          "family": "partial",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D1",
+          "family": "signal",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "OBSERVING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D2",
+          "family": "core",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D3",
+          "family": "idempotency",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D4",
+          "family": "concurrency",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D5",
+          "family": "idempotency",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D6",
+          "family": "idempotency",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D7",
+          "family": "recovery",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D8",
+          "family": "safety",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D9",
+          "family": "memory",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D10",
+          "family": "security",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D11",
+          "family": "security",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D12",
+          "family": "idempotency",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D13",
+          "family": "partial",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D14",
+          "family": "partial",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D15",
+          "family": "availability",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CONTAINED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D16",
+          "family": "governance",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RESCUE_PLANNING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D17",
+          "family": "availability",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RESCUE_PLANNING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D18",
+          "family": "recovery",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H1",
+          "family": "idempotency",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H2",
+          "family": "safety",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H3",
+          "family": "partial",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D1",
+          "family": "signal",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "OBSERVING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D2",
+          "family": "core",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D3",
+          "family": "idempotency",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D4",
+          "family": "concurrency",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D5",
+          "family": "idempotency",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D6",
+          "family": "idempotency",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D7",
+          "family": "recovery",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D8",
+          "family": "safety",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D9",
+          "family": "memory",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D10",
+          "family": "security",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D11",
+          "family": "security",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D12",
+          "family": "idempotency",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D13",
+          "family": "partial",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D14",
+          "family": "partial",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D15",
+          "family": "availability",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CONTAINED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D16",
+          "family": "governance",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RESCUE_PLANNING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D17",
+          "family": "availability",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RESCUE_PLANNING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D18",
+          "family": "recovery",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H1",
+          "family": "idempotency",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H2",
+          "family": "safety",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H3",
+          "family": "partial",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D1",
+          "family": "signal",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "OBSERVING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D2",
+          "family": "core",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D3",
+          "family": "idempotency",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D4",
+          "family": "concurrency",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D5",
+          "family": "idempotency",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D6",
+          "family": "idempotency",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D7",
+          "family": "recovery",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D8",
+          "family": "safety",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D9",
+          "family": "memory",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D10",
+          "family": "security",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D11",
+          "family": "security",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D12",
+          "family": "idempotency",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D13",
+          "family": "partial",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D14",
+          "family": "partial",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D15",
+          "family": "availability",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CONTAINED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D16",
+          "family": "governance",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RESCUE_PLANNING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D17",
+          "family": "availability",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RESCUE_PLANNING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D18",
+          "family": "recovery",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H1",
+          "family": "idempotency",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H2",
+          "family": "safety",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H3",
+          "family": "partial",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D1",
+          "family": "signal",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "OBSERVING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D2",
+          "family": "core",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D3",
+          "family": "idempotency",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D4",
+          "family": "concurrency",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D5",
+          "family": "idempotency",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D6",
+          "family": "idempotency",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D7",
+          "family": "recovery",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D8",
+          "family": "safety",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D9",
+          "family": "memory",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D10",
+          "family": "security",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D11",
+          "family": "security",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D12",
+          "family": "idempotency",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D13",
+          "family": "partial",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D14",
+          "family": "partial",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D15",
+          "family": "availability",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CONTAINED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D16",
+          "family": "governance",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RESCUE_PLANNING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D17",
+          "family": "availability",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RESCUE_PLANNING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D18",
+          "family": "recovery",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H1",
+          "family": "idempotency",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H2",
+          "family": "safety",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H3",
+          "family": "partial",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D1",
+          "family": "signal",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "OBSERVING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D2",
+          "family": "core",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D3",
+          "family": "idempotency",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D4",
+          "family": "concurrency",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D5",
+          "family": "idempotency",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D6",
+          "family": "idempotency",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D7",
+          "family": "recovery",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D8",
+          "family": "safety",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D9",
+          "family": "memory",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D10",
+          "family": "security",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D11",
+          "family": "security",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D12",
+          "family": "idempotency",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D13",
+          "family": "partial",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D14",
+          "family": "partial",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D15",
+          "family": "availability",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CONTAINED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D16",
+          "family": "governance",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RESCUE_PLANNING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D17",
+          "family": "availability",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RESCUE_PLANNING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D18",
+          "family": "recovery",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H1",
+          "family": "idempotency",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H2",
+          "family": "safety",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H3",
+          "family": "partial",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        }
+      ]
     },
     "kernel": {
       "total_runs": 126,
@@ -29,6 +1313,1382 @@
         "D5",
         "D8",
         "H3"
+      ],
+      "runs": [
+        {
+          "drill_id": "D1",
+          "family": "signal",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "OBSERVING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D2",
+          "family": "core",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D3",
+          "family": "idempotency",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D4",
+          "family": "concurrency",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D5",
+          "family": "idempotency",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": [
+            "one_reservation_per_group"
+          ]
+        },
+        {
+          "drill_id": "D6",
+          "family": "idempotency",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D7",
+          "family": "recovery",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D8",
+          "family": "safety",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [
+            "N4"
+          ],
+          "unmet_expectations": [
+            "all_invariants_hold",
+            "unsafe_destination_refused",
+            "incident_not_closed"
+          ]
+        },
+        {
+          "drill_id": "D9",
+          "family": "memory",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D10",
+          "family": "security",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D11",
+          "family": "security",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D12",
+          "family": "idempotency",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D13",
+          "family": "partial",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D14",
+          "family": "partial",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": [
+            "contradiction_refused",
+            "incident_not_closed"
+          ]
+        },
+        {
+          "drill_id": "D15",
+          "family": "availability",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CONTAINED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D16",
+          "family": "governance",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "RECONCILING",
+          "failed_invariants": [
+            "N10"
+          ],
+          "unmet_expectations": [
+            "all_invariants_hold",
+            "blocked_revision_committed_nothing",
+            "no_reservations"
+          ]
+        },
+        {
+          "drill_id": "D17",
+          "family": "availability",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RESCUE_PLANNING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D18",
+          "family": "recovery",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H1",
+          "family": "idempotency",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H2",
+          "family": "safety",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H3",
+          "family": "partial",
+          "seed": 20260826,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": [
+            "incident_not_closed"
+          ]
+        },
+        {
+          "drill_id": "D1",
+          "family": "signal",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "OBSERVING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D2",
+          "family": "core",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D3",
+          "family": "idempotency",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D4",
+          "family": "concurrency",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D5",
+          "family": "idempotency",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": [
+            "one_reservation_per_group"
+          ]
+        },
+        {
+          "drill_id": "D6",
+          "family": "idempotency",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D7",
+          "family": "recovery",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D8",
+          "family": "safety",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [
+            "N4"
+          ],
+          "unmet_expectations": [
+            "all_invariants_hold",
+            "unsafe_destination_refused",
+            "incident_not_closed"
+          ]
+        },
+        {
+          "drill_id": "D9",
+          "family": "memory",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D10",
+          "family": "security",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D11",
+          "family": "security",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D12",
+          "family": "idempotency",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D13",
+          "family": "partial",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D14",
+          "family": "partial",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": [
+            "contradiction_refused",
+            "incident_not_closed"
+          ]
+        },
+        {
+          "drill_id": "D15",
+          "family": "availability",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CONTAINED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D16",
+          "family": "governance",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "RECONCILING",
+          "failed_invariants": [
+            "N10"
+          ],
+          "unmet_expectations": [
+            "all_invariants_hold",
+            "blocked_revision_committed_nothing",
+            "no_reservations"
+          ]
+        },
+        {
+          "drill_id": "D17",
+          "family": "availability",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RESCUE_PLANNING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D18",
+          "family": "recovery",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H1",
+          "family": "idempotency",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H2",
+          "family": "safety",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H3",
+          "family": "partial",
+          "seed": 20260927,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": [
+            "incident_not_closed"
+          ]
+        },
+        {
+          "drill_id": "D1",
+          "family": "signal",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "OBSERVING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D2",
+          "family": "core",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D3",
+          "family": "idempotency",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D4",
+          "family": "concurrency",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D5",
+          "family": "idempotency",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": [
+            "one_reservation_per_group"
+          ]
+        },
+        {
+          "drill_id": "D6",
+          "family": "idempotency",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D7",
+          "family": "recovery",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D8",
+          "family": "safety",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [
+            "N4"
+          ],
+          "unmet_expectations": [
+            "all_invariants_hold",
+            "unsafe_destination_refused",
+            "incident_not_closed"
+          ]
+        },
+        {
+          "drill_id": "D9",
+          "family": "memory",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D10",
+          "family": "security",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D11",
+          "family": "security",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D12",
+          "family": "idempotency",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D13",
+          "family": "partial",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D14",
+          "family": "partial",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": [
+            "contradiction_refused",
+            "incident_not_closed"
+          ]
+        },
+        {
+          "drill_id": "D15",
+          "family": "availability",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CONTAINED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D16",
+          "family": "governance",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "RECONCILING",
+          "failed_invariants": [
+            "N10"
+          ],
+          "unmet_expectations": [
+            "all_invariants_hold",
+            "blocked_revision_committed_nothing",
+            "no_reservations"
+          ]
+        },
+        {
+          "drill_id": "D17",
+          "family": "availability",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RESCUE_PLANNING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D18",
+          "family": "recovery",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H1",
+          "family": "idempotency",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H2",
+          "family": "safety",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H3",
+          "family": "partial",
+          "seed": 20261028,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": [
+            "incident_not_closed"
+          ]
+        },
+        {
+          "drill_id": "D1",
+          "family": "signal",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "OBSERVING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D2",
+          "family": "core",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D3",
+          "family": "idempotency",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D4",
+          "family": "concurrency",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D5",
+          "family": "idempotency",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": [
+            "one_reservation_per_group"
+          ]
+        },
+        {
+          "drill_id": "D6",
+          "family": "idempotency",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D7",
+          "family": "recovery",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D8",
+          "family": "safety",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [
+            "N4"
+          ],
+          "unmet_expectations": [
+            "all_invariants_hold",
+            "unsafe_destination_refused",
+            "incident_not_closed"
+          ]
+        },
+        {
+          "drill_id": "D9",
+          "family": "memory",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D10",
+          "family": "security",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D11",
+          "family": "security",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D12",
+          "family": "idempotency",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D13",
+          "family": "partial",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D14",
+          "family": "partial",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": [
+            "contradiction_refused",
+            "incident_not_closed"
+          ]
+        },
+        {
+          "drill_id": "D15",
+          "family": "availability",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CONTAINED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D16",
+          "family": "governance",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "RECONCILING",
+          "failed_invariants": [
+            "N10"
+          ],
+          "unmet_expectations": [
+            "all_invariants_hold",
+            "blocked_revision_committed_nothing",
+            "no_reservations"
+          ]
+        },
+        {
+          "drill_id": "D17",
+          "family": "availability",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RESCUE_PLANNING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D18",
+          "family": "recovery",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H1",
+          "family": "idempotency",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H2",
+          "family": "safety",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H3",
+          "family": "partial",
+          "seed": 20261129,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": [
+            "incident_not_closed"
+          ]
+        },
+        {
+          "drill_id": "D1",
+          "family": "signal",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "OBSERVING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D2",
+          "family": "core",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D3",
+          "family": "idempotency",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D4",
+          "family": "concurrency",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D5",
+          "family": "idempotency",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": [
+            "one_reservation_per_group"
+          ]
+        },
+        {
+          "drill_id": "D6",
+          "family": "idempotency",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D7",
+          "family": "recovery",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D8",
+          "family": "safety",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [
+            "N4"
+          ],
+          "unmet_expectations": [
+            "all_invariants_hold",
+            "unsafe_destination_refused",
+            "incident_not_closed"
+          ]
+        },
+        {
+          "drill_id": "D9",
+          "family": "memory",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D10",
+          "family": "security",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D11",
+          "family": "security",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D12",
+          "family": "idempotency",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D13",
+          "family": "partial",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D14",
+          "family": "partial",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": [
+            "contradiction_refused",
+            "incident_not_closed"
+          ]
+        },
+        {
+          "drill_id": "D15",
+          "family": "availability",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CONTAINED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D16",
+          "family": "governance",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "RECONCILING",
+          "failed_invariants": [
+            "N10"
+          ],
+          "unmet_expectations": [
+            "all_invariants_hold",
+            "blocked_revision_committed_nothing",
+            "no_reservations"
+          ]
+        },
+        {
+          "drill_id": "D17",
+          "family": "availability",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RESCUE_PLANNING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D18",
+          "family": "recovery",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H1",
+          "family": "idempotency",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H2",
+          "family": "safety",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H3",
+          "family": "partial",
+          "seed": 20261230,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": [
+            "incident_not_closed"
+          ]
+        },
+        {
+          "drill_id": "D1",
+          "family": "signal",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "OBSERVING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D2",
+          "family": "core",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D3",
+          "family": "idempotency",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D4",
+          "family": "concurrency",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D5",
+          "family": "idempotency",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": [
+            "one_reservation_per_group"
+          ]
+        },
+        {
+          "drill_id": "D6",
+          "family": "idempotency",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D7",
+          "family": "recovery",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D8",
+          "family": "safety",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [
+            "N4"
+          ],
+          "unmet_expectations": [
+            "all_invariants_hold",
+            "unsafe_destination_refused",
+            "incident_not_closed"
+          ]
+        },
+        {
+          "drill_id": "D9",
+          "family": "memory",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D10",
+          "family": "security",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D11",
+          "family": "security",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CAPACITY_RESERVED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D12",
+          "family": "idempotency",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D13",
+          "family": "partial",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RECONCILING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D14",
+          "family": "partial",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": [
+            "contradiction_refused",
+            "incident_not_closed"
+          ]
+        },
+        {
+          "drill_id": "D15",
+          "family": "availability",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CONTAINED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D16",
+          "family": "governance",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "RECONCILING",
+          "failed_invariants": [
+            "N10"
+          ],
+          "unmet_expectations": [
+            "all_invariants_hold",
+            "blocked_revision_committed_nothing",
+            "no_reservations"
+          ]
+        },
+        {
+          "drill_id": "D17",
+          "family": "availability",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "RESCUE_PLANNING",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "D18",
+          "family": "recovery",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H1",
+          "family": "idempotency",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H2",
+          "family": "safety",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": true,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": []
+        },
+        {
+          "drill_id": "H3",
+          "family": "partial",
+          "seed": 20261331,
+          "driver": "scripted",
+          "passed": false,
+          "final_state": "CLOSED",
+          "failed_invariants": [],
+          "unmet_expectations": [
+            "incident_not_closed"
+          ]
+        }
       ]
     }
   }

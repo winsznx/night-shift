@@ -36,11 +36,13 @@ import json
 from pathlib import Path
 from typing import Any
 
+from nightshift.common.clock import now_iso
 from nightshift.common.config import get_settings
 from nightshift.safety_kernel import ActionRequest, Decision, KernelState
 from nightshift.safety_kernel.config import DEFAULT_CONFIG, KernelConfig
 from nightshift.safety_kernel.decision import Verdict
 
+CORPUS_VERSION = "1.0.0"
 BASE_SEED = 20260826
 ARMS = ("control", "kernel")
 
@@ -94,13 +96,49 @@ def _summarise(campaign: Any) -> dict[str, Any]:
         "failed": sum(1 for r in rows if not r.passed),
         "failed_invariants": dict(sorted(failed_invariants.items())),
         "failing_drills": sorted({r.drill_id for r in rows if not r.passed}),
+        # Every run, not just the summary. A comparison whose rows cannot be inspected is
+        # a claim rather than a measurement.
+        "runs": [
+            {
+                "drill_id": r.drill_id,
+                "family": r.family,
+                "seed": r.seed,
+                "driver": r.driver,
+                "passed": r.passed,
+                "final_state": r.final_state,
+                "failed_invariants": list(r.failed_invariants),
+                "unmet_expectations": list(r.unmet_expectations),
+            }
+            for r in rows
+        ],
     }
 
 
 async def main_async(seed_count: int) -> dict[str, Any]:
     _guard()
     seeds = [BASE_SEED + i * 101 for i in range(seed_count)]
-    results: dict[str, Any] = {"seeds": seeds, "arms": {}}
+    settings = get_settings()
+    results: dict[str, Any] = {
+        "provenance": {
+            "command": f"uv run python -m assurance.ablation --seeds {seed_count}",
+            "generated_at": now_iso(),
+            "source_commit": settings.source_commit,
+            "corpus_version": CORPUS_VERSION,
+            "seeds": seeds,
+            "base_seed": BASE_SEED,
+            "drivers": ["scripted"],
+            "store_backend": settings.store_backend,
+            "model_calls": 0,
+            "ablation_target": "services.common.effects.evaluate_action",
+            "note": (
+                "The kernel arm rebinds one imported symbol and duplicates no logic. "
+                "The transaction, receipt lookup, authorization check and write all "
+                "still run, so what is measured is the kernel's contribution alone."
+            ),
+        },
+        "seeds": seeds,
+        "arms": {},
+    }
 
     for arm in ARMS:
         print(f"\n=== arm: {arm} ===", flush=True)

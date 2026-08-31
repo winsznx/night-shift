@@ -65,41 +65,34 @@ An earlier version of this document claimed layer 4 applied generally. It did no
 transport used the container's ambient identity for every call, so the per-agent grants
 were never exercised. That is fixed, and the correction is recorded in DECISIONS.md.
 
-### Layer 3 runs on a committed default secret
+### Layer 3 ran on a committed default secret, and now does not
 
 An earlier version of this section said layers 1 to 3 hold unconditionally in every
-configuration. That is false for layer 3 in the shipped deployment, and the correction
-matters more than the sentence did.
+configuration. That was false for layer 3 in the shipped deployment, and the failure is
+worth recording even though it is closed.
 
 The domain service route guard identifies its caller from an HMAC principal assertion,
 verified in `services/common/app.py` against `agent_shared_secret` in
 `nightshift/common/config.py`. That field falls back to the literal string
 `nightshift-local-dev-secret` when `NIGHTSHIFT_AGENT_SECRET` is unset, and that string is
-committed to this public repository.
+committed to this public repository. Nothing set the variable, and the deploy script
+forwarded it only when it happened to be exported in the deploying shell, so the
+deployment that produced the earlier published evidence verified every principal
+assertion against a public string. Anyone who could read this repository could mint an
+assertion naming any agent identity, and layer 3 would have accepted it.
 
-Nothing in this repository sets the variable. `.env.example` carries it with a
-placeholder, and `infra/deploy/deploy_services.sh` forwards it to Cloud Run only when it
-is already exported in the deploying shell. In the deployment that produced the published
-evidence it was not, so every deployed service verifies principal assertions against the
-committed default. Anyone who can read this repository can mint an assertion naming any
-agent identity, and layer 3 will accept it.
+**What changed.** `infra/deploy/deploy_services.sh` now refuses to deploy when
+`NIGHTSHIFT_AGENT_SECRET` is unset, rather than silently forwarding the fallback, and the
+running services carry a generated secret. A warning would have been the wrong fix: the
+whole failure was that nothing forced anyone to notice.
 
-What that costs, and what it does not:
-
-- Layer 3 is a server-side re-check that catches a broker bug or a mis-wired transport.
-  In the shipped deployment it is not an independent barrier against an attacker who has
-  read the source, and it should not be counted as one.
-- Reaching a domain service in order to present a forged assertion still means passing
-  layer 4. The six domain services require authentication and grant `run.invoker` per the
-  permission matrix, so a caller holding a forged Night Shift principal and no Google
-  identity never gets a connection. The measured denial in the next section is that
-  check, and it is the reason this disclosure is a weakened layer rather than an open
-  door.
-- Local runs, the drill corpus and the test suite are unaffected in kind. They execute in
-  one process where the secret was never a trust boundary.
-
-Exporting a generated `NIGHTSHIFT_AGENT_SECRET` before `make deploy` closes it, and
-`SETUP.md` already documents how to generate one. No code change is required.
+Two things worth keeping from it. Layer 4 was the reason this was a weakened layer rather
+than an open door: reaching a domain service to present a forged assertion still means
+passing Cloud Run IAM, and the six domain services require authentication and grant
+`run.invoker` per the permission matrix, so a caller holding a forged Night Shift
+principal and no Google identity never gets a connection. That is the denial measured in
+the next section. And local runs, the drill corpus and the test suite were unaffected in
+kind, because they execute in one process where the secret was never a trust boundary.
 
 ### Layer 4, measured against the deployed system
 

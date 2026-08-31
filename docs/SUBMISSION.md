@@ -157,11 +157,16 @@ whatever the screening concludes.
 - Every estate, specimen, responder and study record is synthetic. Physical responder
   movements are simulated by a bounded field simulator, disclosed on every page, in
   `/api/meta`, and inside every signed manifest.
-- The deployment runs on the committed default HMAC secret for the offline agent-token
-  path. It is disclosed in `SECURITY.md` and in `LIMITATIONS.md`.
+- Two responder task tokens were published inside signed manifests before the writer
+  redacted them. Both are rotated and dead; git history keeps them because rewriting it
+  would invalidate the signatures. Disclosed in `LIMITATIONS.md`.
 - What is not delivered is listed in `LIMITATIONS.md`, including agent cataloging via
-  Agent Registry, Pub/Sub as an exercised transport, and the absence of a
-  kernel-disabled control arm.
+  Agent Registry and Pub/Sub as an exercised transport.
+- The Safety Kernel was ablated and measured. The same corpus at the same six seeds runs
+  126 of 126 with the kernel and 96 of 126 without it, unmasking six N4 and six N10
+  violations. Raw output in `evidence/ablation/ablation.json`, reproducible with
+  `make ablation`. The live-agent tier was not ablated, and N1, N2 and N3 hold in both
+  arms because authorization and the transactional commit are separate mechanisms.
 
 ---
 

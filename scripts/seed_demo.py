@@ -19,7 +19,6 @@ from typing import Any
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from nightshift.common.clock import now_iso
 from nightshift.common.config import get_settings
 from nightshift.common.skills import load_skills
 from nightshift.evidence.store import record_manifest_in_store, write_evidence
@@ -151,7 +150,10 @@ async def publish_run(
         state,
         settings=settings,
         upload=upload,
-        evaluated_at=now_iso(),
+        # No evaluated_at here on purpose. write_evidence pins a terminal incident to its
+        # own closed_at and falls back to wall clock while a rescue is still running.
+        # Passing now_iso() overrode that, which is benign for an incident sealed seconds
+        # after it closed and wrong the moment anything re-seals an older one.
         estate_fixture_hash=run.estate_hash,
         opening_evidence=[{"event_id": eid, "kind": "sensor"} for eid in run.delivered_event_ids],
         agents=[
