@@ -24,7 +24,7 @@ export default async function DrillsPage() {
       {!drills ? (
         <ApiDown what="The drill range" />
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-5">
           {Object.entries(drills.campaign?.by_driver ?? {}).map(([driver, block]) => (
             <Card key={driver} padded={false}>
               <CardHeader

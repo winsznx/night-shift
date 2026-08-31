@@ -218,8 +218,15 @@ Node dependencies.
 make test
 ```
 Unit, property, and integration tests, no credentials touched. Expect a pytest summary
-line in under ten seconds, `234 passed` at this commit. The count grows with the suite.
+line in under ten seconds, `245 passed` at this commit. The count grows with the suite.
 What matters is zero failures.
+
+```bash
+make test-all
+```
+Runs the complete offline suite, including the adversarial tests that exercise denial,
+replay, capacity-race, and failure-recovery paths. Expect `289 passed` at this commit and
+zero failures. This is the test target used by the repository's full quality gate.
 
 ```bash
 make drills
@@ -246,6 +253,27 @@ uv run python -m nightshift.verify --manifest https://storage.googleapis.com/nig
 ```
 That bucket is world-readable and holds manifests, signatures and public keys only. The
 bucket holding the Firestore export is a different bucket and is private.
+
+For the complete pre-submission gate, install the web dependencies with `make setup-web`,
+then run:
+
+```bash
+make check
+```
+
+That runs Python lint and formatting checks, Python and TypeScript type checks, the complete
+offline test suite, and the secret scan. To prove that the credential-free path does not
+depend on untracked files or an existing environment, reproduce it from the committed tree
+in a temporary directory:
+
+```bash
+make clean-room
+```
+
+The clean-room run installs Python dependencies, runs the fast test suite and all 21
+deterministic drills, verifies every published manifest, scans for secrets, and compares
+the deterministic estate hash. It finishes with `Clean-room reproduction PASSED` or exits
+non-zero at the first failed step.
 
 ### Cloud
 

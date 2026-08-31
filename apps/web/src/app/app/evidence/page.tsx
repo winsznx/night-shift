@@ -18,7 +18,7 @@ export default async function EvidencePage() {
       {!evidence ? (
         <ApiDown what="Evidence" />
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-5">
           <Card padded={false}>
             <CardHeader title="Incident manifests" subtitle="Verified live when this page rendered" />
             {evidence.manifests.length === 0 ? (

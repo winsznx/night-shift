@@ -11,7 +11,6 @@ import {
   StateBadge,
   Table,
   Td,
-  timeAgo,
 } from "@/components/ui";
 import { getDrills, getOverview } from "@/lib/api";
 
@@ -30,7 +29,7 @@ export default async function OperationsOverview() {
       {!overview ? (
         <ApiDown what="The operations overview" />
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-5">
           <Card padded={false}>
             <div className="grid grid-cols-2 gap-5 p-4 sm:grid-cols-3 lg:grid-cols-5">
               <Metric
@@ -66,7 +65,7 @@ export default async function OperationsOverview() {
             </div>
           </Card>
 
-          <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+          <div className="grid items-start gap-5 lg:grid-cols-[1.4fr_1fr]">
             <Card padded={false}>
               <CardHeader
                 title="Incidents"
@@ -86,7 +85,7 @@ export default async function OperationsOverview() {
                   body="Nothing has crossed an alarm threshold in this namespace yet."
                 />
               ) : (
-                <Table headers={["Incident", "State", "Freezer", "Impacted", "Unresolved", "Opened"]} minWidth={720}>
+                <Table headers={["Incident", "State", "Freezer", "Impacted", "Unresolved"]} minWidth={520}>
                   {overview.incidents.map((i) => (
                     <tr key={i.incident_id} className="hover:bg-[#f5f5f5]">
                       <Td>
@@ -116,9 +115,6 @@ export default async function OperationsOverview() {
                         ) : (
                           <Badge tone="green">0</Badge>
                         )}
-                      </Td>
-                      <Td className="text-[13px] text-[#737373]">
-                        {timeAgo(i.opened_at, overview.evaluated_at)}
                       </Td>
                     </tr>
                   ))}

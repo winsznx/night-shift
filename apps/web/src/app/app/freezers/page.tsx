@@ -44,7 +44,7 @@ export default async function FreezersPage() {
       {!overview ? (
         <ApiDown what="The freezer estate" />
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-5">
           <Card padded={false}>
             <CardHeader title="All units" subtitle={`Evaluated ${overview.evaluated_at}`} />
             <Table

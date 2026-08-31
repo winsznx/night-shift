@@ -55,7 +55,7 @@ export function Logo({ size = 14 }: { size?: number }) {
         <span className="absolute right-[-18%] bottom-[5%] h-px w-[45%] bg-[#2563eb]" />
       </span>
       <span
-        className="font-semibold tracking-[-0.01em] text-[#0a0a0a]"
+        className="font-semibold tracking-[-0.01em] whitespace-nowrap text-midnight-ink"
         style={{ fontSize: size }}
       >
         Night Shift
@@ -74,9 +74,9 @@ export async function AppShell({
   const meta = await getMeta();
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="mx-auto flex max-w-[1400px]">
-        <aside className="sticky top-0 hidden h-screen w-[228px] shrink-0 flex-col border-r border-[#e5e5e5] bg-white px-3 py-4 lg:flex">
+    <div className="min-h-screen bg-paper-mist">
+      <div className="mx-auto flex max-w-[1500px] gap-4 p-3 lg:gap-5 lg:p-5">
+        <aside className="sticky top-5 hidden h-[calc(100vh-2.5rem)] w-[244px] shrink-0 flex-col rounded-2xl border border-ash bg-canvas-white px-4 py-5 shadow-subtle lg:flex">
           <Link href="/" className="px-2 pb-4">
             <Logo />
           </Link>
@@ -121,12 +121,14 @@ export async function AppShell({
             ))}
           </nav>
 
-          <div className="ns-route mt-5 px-3 py-2 pl-4">
-            <p className="mono text-[10px] tracking-[0.12em] text-[#737373] uppercase">Control plane</p>
-            <p className="mt-1 text-[12px] leading-snug text-[#525252]">Operational state, authority boundaries, and independently checkable proof.</p>
+          <div className="mt-6 rounded-xl bg-paper-mist px-3.5 py-3">
+            <p className="mono text-[10px] tracking-[0.12em] text-silver uppercase">Control plane</p>
+            <p className="mt-1.5 text-[12px] leading-snug text-steel">
+              Operational state, authority boundaries, and independently checkable proof.
+            </p>
           </div>
 
-          <div className="mt-auto space-y-2 border-t border-[#e5e5e5] pt-3">
+          <div className="mt-auto space-y-2 pt-4">
             <div className="rounded-[8px] border border-[#fed7aa] bg-[#fff7ed] px-2.5 py-2">
               <p className="text-[11px] leading-snug text-[#9a3412]">
                 <span className="font-semibold">Synthetic data.</span> Field events are
@@ -157,11 +159,11 @@ export async function AppShell({
         </aside>
 
         <div className="min-w-0 flex-1">
-          <header className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-[#e5e5e5] bg-white/92 px-4 py-3 backdrop-blur lg:px-6">
-            <Link href="/" className="lg:hidden">
+          <header className="sticky top-0 z-10 mb-1 flex items-center justify-between gap-4 rounded-2xl bg-paper-mist/80 px-1 py-3 backdrop-blur lg:px-2">
+            <Link href="/" className="shrink-0 lg:hidden">
               <Logo size={13} />
             </Link>
-            <nav className="scroll-x flex gap-1 lg:hidden">
+            <nav className="scroll-x flex min-w-0 flex-1 gap-1 lg:hidden">
               {NAV.map((item) => (
                 <Link
                   key={item.href}
@@ -186,7 +188,7 @@ export async function AppShell({
               simulated.
             </p>
           </div>
-          <main className="min-h-[calc(100vh-53px)] px-4 py-5 lg:px-6 lg:py-6">{children}</main>
+          <main className="min-h-[calc(100vh-53px)] pb-6">{children}</main>
         </div>
       </div>
     </div>
@@ -203,7 +205,7 @@ export function PageHeader({
   right?: ReactNode;
 }) {
   return (
-    <div className="mb-5 flex flex-wrap items-end justify-between gap-3 border-b border-[#e5e5e5] pb-4">
+    <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
       <div className="min-w-0">
         <p className="ns-eyebrow mb-2">Night Shift / {title}</p>
         <h1 className="text-[24px] leading-tight font-semibold tracking-[-0.025em] text-[#171717]">{title}</h1>

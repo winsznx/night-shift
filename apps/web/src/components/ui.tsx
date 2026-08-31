@@ -19,7 +19,7 @@ export function Card({
 }) {
   return (
     <div
-      className={`ns-panel rounded-[12px] border border-[#e5e5e5] bg-white ${padded ? "p-4" : ""} ${className}`}
+      className={`ns-panel rounded-2xl border border-ash bg-canvas-white shadow-subtle ${padded ? "p-5" : ""} ${className}`}
     >
       {children}
     </div>
@@ -36,10 +36,10 @@ export function CardHeader({
   right?: ReactNode;
 }) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-[#e5e5e5] px-4 py-3">
+    <div className="flex items-start justify-between gap-4 px-5 pt-5 pb-3">
       <div className="min-w-0">
-        <h2 className="text-[14px] font-semibold text-[#171717]">{title}</h2>
-        {subtitle ? <p className="mt-0.5 text-[12px] text-[#737373]">{subtitle}</p> : null}
+        <h2 className="text-[15px] font-semibold tracking-[-0.01em] text-charcoal">{title}</h2>
+        {subtitle ? <p className="mt-1 text-[12px] leading-snug text-fog">{subtitle}</p> : null}
       </div>
       {right ? <div className="shrink-0">{right}</div> : null}
     </div>
@@ -130,13 +130,14 @@ export function Metric({
           ? "text-[#16a34a]"
           : "text-[#171717]";
   return (
-    <div className="min-w-0">
+    // An inset tile rather than a bare column. Four numbers in one undivided strip read
+    // as a run-on sentence; giving each its own ground lets the eye land on one at a time
+    // without nesting a second border inside the card that holds them.
+    <div className="min-w-0 rounded-xl bg-paper-mist px-3.5 py-3">
       <div className="mono text-[10px] font-medium tracking-[0.12em] text-silver uppercase">
         {label}
       </div>
-      <div
-        className={`mono mt-1.5 text-[26px] leading-none font-medium tabular-nums ${color}`}
-      >
+      <div className={`mono mt-2 text-[26px] leading-none font-medium tabular-nums ${color}`}>
         {value}
       </div>
       {hint ? <div className="mt-1.5 text-[12px] leading-snug text-fog">{hint}</div> : null}
@@ -198,25 +199,39 @@ export function Table({
   minWidth?: number;
 }) {
   return (
-    <div className="scroll-x relative">
-      <table
-        className="w-full border-collapse text-left"
-        style={minWidth ? { minWidth: `${minWidth}px` } : undefined}
+    // A table that outgrows its card used to clip at the rounded edge with nothing to say
+    // it could scroll, so it read as broken layout rather than as more content sideways.
+    // The fade marks the boundary, and the region takes focus so a keyboard can reach it.
+    <div className="relative">
+      <div
+        className="scroll-x focus-visible:ring-2 focus-visible:ring-electric-blue/40 focus-visible:outline-none"
+        tabIndex={0}
+        role="region"
+        aria-label="Table, scrolls horizontally"
       >
-        <thead>
-          <tr className="bg-[#fafafa]">
-            {headers.map((h) => (
-              <th
-                key={h}
-                className="border-b border-[#e5e5e5] px-4 py-2.5 text-[11px] font-semibold tracking-[0.08em] text-[#737373] uppercase whitespace-nowrap first:before:mr-2 first:before:inline-block first:before:h-1.5 first:before:w-1.5 first:before:rounded-full first:before:bg-[#2563eb] first:before:content-['']"
-              >
-                {h}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>{children}</tbody>
-      </table>
+        <table
+          className="w-full border-collapse text-left"
+          style={minWidth ? { minWidth: `${minWidth}px` } : undefined}
+        >
+          <thead>
+            <tr>
+              {headers.map((h) => (
+                <th
+                  key={h}
+                  className="bg-paper-mist/70 px-4 py-2.5 text-[11px] font-semibold tracking-[0.08em] text-fog uppercase whitespace-nowrap first:rounded-l-lg last:rounded-r-lg"
+                >
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>{children}</tbody>
+        </table>
+      </div>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-canvas-white via-canvas-white/70 to-transparent"
+      />
     </div>
   );
 }
@@ -233,7 +248,7 @@ export function Td({
   return (
     <td
       colSpan={colSpan}
-      className={`border-b border-[#e5e5e5] px-4 py-2.5 align-middle text-[14px] text-[#171717] ${className}`}
+      className={`border-b border-ash/60 px-4 py-3 align-middle text-[14px] text-charcoal ${className}`}
     >
       {children}
     </td>

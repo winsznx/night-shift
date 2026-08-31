@@ -25,7 +25,7 @@ export default async function CapacityPage() {
       {!overview ? (
         <ApiDown what="Capacity" />
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-5">
           <Card padded={false}>
             <div className="grid grid-cols-2 gap-5 p-4 sm:grid-cols-4">
               <Metric label="Estate slots" value={overview.capacity.total_slots} />

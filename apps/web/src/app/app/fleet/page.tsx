@@ -61,7 +61,7 @@ export default async function FleetPage() {
       {!fleet ? (
         <ApiDown what="The fleet view" />
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-5">
           <Card padded={false}>
             <CardHeader
               title="Qualification and identity"
